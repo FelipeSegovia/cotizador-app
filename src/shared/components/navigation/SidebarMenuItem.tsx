@@ -6,6 +6,7 @@ export type NavigationMenuItem = {
   icon: ReactElement;
   to?: string;
   end?: boolean;
+  onClick?: () => void;
 };
 
 type SidebarMenuItemProps = {

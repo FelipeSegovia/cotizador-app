@@ -14,7 +14,14 @@ const SidebarMenuList = ({
   return (
     <div className={className}>
       {items.map((item) => (
-        <SidebarMenuItem key={item.label} item={item} onClick={onItemClick} />
+        <SidebarMenuItem
+          key={item.label}
+          item={item}
+          onClick={() => {
+            item.onClick?.();
+            onItemClick?.();
+          }}
+        />
       ))}
     </div>
   );

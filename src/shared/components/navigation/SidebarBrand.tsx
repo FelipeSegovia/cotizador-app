@@ -9,10 +9,10 @@ const SidebarBrand = ({ rightContent }: SidebarBrandProps) => {
     <div className="flex items-start justify-between gap-3">
       <div>
         <h1 className="text-2xl font-black tracking-[-0.02em] text-slate-900">
-          QuoteFlow Chile
+          NeuralCode Chile
         </h1>
         <p className="mt-2 text-xs font-medium text-emerald-700">
-          IVA 19% Enabled
+          Valor IVA 19%
         </p>
       </div>
 

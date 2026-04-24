@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Outlet } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 import {
+  HiArrowRightOnRectangle,
   HiBars3,
   HiBell,
   HiChartBar,
@@ -8,7 +9,6 @@ import {
   HiCog6Tooth,
   HiDocumentText,
   HiMagnifyingGlass,
-  HiQuestionMarkCircle,
   HiUserCircle,
   HiXMark,
 } from "react-icons/hi2";
@@ -26,21 +26,33 @@ const mainMenu: NavigationMenuItem[] = [
     end: true,
   },
   {
-    label: "Cotización",
+    label: "Cotizaciones",
     icon: <HiDocumentText className="text-lg" />,
     to: "/dashboard/cotizaciones",
   },
-  { label: "Servicios", icon: <HiClipboardDocumentList className="text-lg" /> },
-  { label: "Configuración", icon: <HiCog6Tooth className="text-lg" /> },
-];
-
-const secondaryMenu: NavigationMenuItem[] = [
-  { label: "Soporte", icon: <HiQuestionMarkCircle className="text-lg" /> },
-  { label: "Cuenta", icon: <HiUserCircle className="text-lg" /> },
+  {
+    label: "Gastos",
+    icon: <HiClipboardDocumentList className="text-lg" />,
+    to: "/dashboard/gastos",
+  },
+  {
+    label: "Configuración",
+    icon: <HiCog6Tooth className="text-lg" />,
+    to: "/dashboard/configuracion",
+  },
 ];
 
 const DashboardLayout = () => {
+  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const secondaryMenu: NavigationMenuItem[] = [
+    {
+      label: "Cerrar sesión",
+      icon: <HiArrowRightOnRectangle className="text-lg" />,
+      onClick: () => navigate("/login"),
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-[#eff2f8] text-slate-900">
