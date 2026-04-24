@@ -1,12 +1,34 @@
 import {
   HiArrowRight,
   HiGlobeAlt,
-  HiLockClosed,
   HiOutlineClipboardDocumentList,
-  HiOutlineEnvelope,
 } from "react-icons/hi2";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { HiLockClosed, HiOutlineEnvelope } from "react-icons/hi2";
+import { FormField, FormSubmitButton } from "../shared/components/forms";
+
+type LoginFormValues = {
+  email: string;
+  password: string;
+};
 
 const LoginPage = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormValues>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    mode: "onBlur",
+  });
+
+  const onSubmit: SubmitHandler<LoginFormValues> = async (values) => {
+    void values;
+  };
+
   return (
     <main className="min-h-screen bg-[#f5f7fb] px-4 py-8 text-slate-800 sm:px-6 lg:px-8">
       <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-md flex-col items-center justify-center">
@@ -25,46 +47,40 @@ const LoginPage = () => {
             </p>
           </div>
 
-          <form className="mt-8 space-y-5">
-            <div className="space-y-2">
-              <label
-                className="block text-sm font-semibold text-slate-700"
-                htmlFor="email"
-              >
-                Correo electrónico
-              </label>
+          <form className="mt-8 space-y-5" onSubmit={handleSubmit(onSubmit)}>
+            <FormField
+              id="email"
+              type="email"
+              label="Correo electrónico"
+              placeholder="nombre@empresa.cl"
+              icon={HiOutlineEnvelope}
+              autoComplete="email"
+              registration={register("email", {
+                required: "El correo electrónico es obligatorio",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Ingresa un correo electrónico válido",
+                },
+              })}
+              error={errors.email?.message}
+            />
 
-              <div className="flex items-center rounded-xl border border-slate-200 bg-white px-3 shadow-[inset_0_1px_2px_rgba(15,23,42,0.04)] transition focus-within:border-emerald-600 focus-within:ring-2 focus-within:ring-emerald-100">
-                <HiOutlineEnvelope className="shrink-0 text-lg text-slate-400" />
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="nombre@empresa.cl"
-                  className="w-full border-none bg-transparent px-2 py-3 text-sm text-slate-700 outline-none placeholder:text-slate-400"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label
-                className="block text-sm font-semibold text-slate-700"
-                htmlFor="password"
-              >
-                Contraseña
-              </label>
-
-              <div className="flex items-center rounded-xl border border-slate-200 bg-white px-3 shadow-[inset_0_1px_2px_rgba(15,23,42,0.04)] transition focus-within:border-emerald-600 focus-within:ring-2 focus-within:ring-emerald-100">
-                <HiLockClosed className="shrink-0 text-lg text-slate-400" />
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="••••••••••"
-                  className="w-full border-none bg-transparent px-2 py-3 text-sm text-slate-700 outline-none placeholder:text-slate-400"
-                />
-              </div>
-            </div>
+            <FormField
+              id="password"
+              type="password"
+              label="Contraseña"
+              placeholder="••••••••••"
+              icon={HiLockClosed}
+              autoComplete="current-password"
+              registration={register("password", {
+                required: "La contraseña es obligatoria",
+                minLength: {
+                  value: 8,
+                  message: "Debe tener al menos 8 caracteres",
+                },
+              })}
+              error={errors.password?.message}
+            />
 
             <div className="flex items-center justify-end gap-4 text-sm">
               <button
@@ -75,13 +91,11 @@ const LoginPage = () => {
               </button>
             </div>
 
-            <button
-              type="submit"
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0f7a4a] px-4 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(15,122,74,0.25)] transition hover:bg-[#0c6a40]"
-            >
-              Iniciar sesión
-              <HiArrowRight className="text-base" />
-            </button>
+            <FormSubmitButton
+              label="Iniciar sesión"
+              isLoading={isSubmitting}
+              icon={<HiArrowRight className="text-base" />}
+            />
           </form>
         </section>
 
