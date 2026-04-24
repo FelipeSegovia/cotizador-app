@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
-import { LoginPage, RootPage } from "./pages";
+import { LoginPage, QuotationPage, RootPage } from "./pages";
 import { DashboardLayout } from "./shared/components/layouts";
 
 const AppRouter = () => {
@@ -9,6 +9,7 @@ const AppRouter = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<RootPage />} />
+          <Route path="cotizaciones" element={<QuotationPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
