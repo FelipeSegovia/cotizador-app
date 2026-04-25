@@ -11,7 +11,11 @@ export interface QuotationItem {
 export interface Quotation {
   id: string;
   clientName: string;
+  clientRut: string;
+  clientEmail: string;
   projectTitle: string;
+  projectDeadline: string;
+  projectNotes: string;
   items: QuotationItem[];
   total: number;
   status: QuotationStatus;
