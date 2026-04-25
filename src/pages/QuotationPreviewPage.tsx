@@ -5,7 +5,7 @@ import {
   HiOutlinePencilSquare,
   HiOutlineArrowDownTray,
 } from "react-icons/hi2";
-import { LABELS_QUOTATION_PREVIEW_PAGE } from "../shared/data";
+import { LABELS_QUOTATION_PREVIEW_PAGE, PATHS } from "../shared/data";
 import { useQuotationDraftStore } from "../shared/store";
 
 const IVA_RATE = 0.19;
@@ -57,7 +57,7 @@ const QuotationPreviewPage = () => {
 
   const handleBackToList = () => {
     resetDraft();
-    navigate("/dashboard/cotizaciones");
+    navigate(PATHS.QUOTATIONS);
   };
 
   return (

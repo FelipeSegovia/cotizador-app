@@ -17,31 +17,32 @@ import {
   SidebarMenuList,
   type NavigationMenuItem,
 } from "../navigation";
+import { PATHS } from "../../data";
 
 const mainMenu: NavigationMenuItem[] = [
   {
     label: "Dashboard",
     icon: <HiChartBar className="text-lg" />,
-    to: "/dashboard",
+    to: PATHS.DASHBOARD,
     end: true,
   },
   {
     label: "Cotizaciones",
     icon: <HiDocumentText className="text-lg" />,
     children: [
-      { label: "Listado", to: "/dashboard/cotizaciones", end: true },
-      { label: "Crear Cotización", to: "/dashboard/cotizaciones/nueva" },
+      { label: "Listado", to: PATHS.QUOTATIONS, end: true },
+      { label: "Crear Cotización", to: PATHS.NEW_QUOTATION },
     ],
   },
   {
     label: "Gastos",
     icon: <HiClipboardDocumentList className="text-lg" />,
-    to: "/dashboard/gastos",
+    to: PATHS.COMPANY_EXPENSES,
   },
   {
     label: "Configuración",
     icon: <HiCog6Tooth className="text-lg" />,
-    to: "/dashboard/configuracion",
+    to: PATHS.SETTINGS,
   },
 ];
 
@@ -53,7 +54,7 @@ const DashboardLayout = () => {
     {
       label: "Cerrar sesión",
       icon: <HiArrowRightOnRectangle className="text-lg" />,
-      onClick: () => navigate("/login"),
+      onClick: () => navigate(PATHS.LOGIN),
     },
   ];
 

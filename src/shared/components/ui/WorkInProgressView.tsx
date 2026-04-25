@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router";
 import { HiArrowLeft, HiBellAlert, HiWrenchScrewdriver } from "react-icons/hi2";
+import { PATHS } from "../../data";
 
 type WorkInProgressViewProps = {
   title: string;
@@ -34,7 +35,7 @@ const WorkInProgressView = ({
         <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
           <button
             type="button"
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate(PATHS.DASHBOARD)}
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800"
           >
             <HiArrowLeft className="text-lg" />

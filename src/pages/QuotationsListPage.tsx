@@ -5,7 +5,7 @@ import {
   HiOutlineDocumentText,
 } from "react-icons/hi2";
 import { useQuotations } from "../shared/hooks";
-import { LABELS_QUOTATIONS_LIST_PAGE } from "../shared/data";
+import { LABELS_QUOTATIONS_LIST_PAGE, PATHS } from "../shared/data";
 import type { QuotationStatus } from "../shared/types/quotation";
 
 const STATUS_LABELS: Record<QuotationStatus, string> = {
@@ -50,7 +50,7 @@ const QuotationsListPage = () => {
         </div>
         <button
           type="button"
-          onClick={() => navigate("/dashboard/cotizaciones/nueva")}
+          onClick={() => navigate(PATHS.NEW_QUOTATION)}
           className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
         >
           <HiOutlineDocumentPlus className="text-base" />
@@ -80,7 +80,7 @@ const QuotationsListPage = () => {
             </p>
             <button
               type="button"
-              onClick={() => navigate("/dashboard/cotizaciones/nueva")}
+              onClick={() => navigate(PATHS.NEW_QUOTATION)}
               className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
             >
               <HiOutlineDocumentPlus className="text-base" />
