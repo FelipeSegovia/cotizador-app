@@ -1,8 +1,14 @@
 import { WorkInProgressView } from "../shared/components/ui";
+import { LABELS_SETTINGS_PAGE } from "../shared/data";
 
 const SettingsPage = () => {
   return (
-    <WorkInProgressView description="Estamos perfeccionando el modulo de configuracion avanzada para brindarte una mejor experiencia en la gestion de tus cotizaciones B2B." />
+    <WorkInProgressView
+      title={LABELS_SETTINGS_PAGE.title}
+      description={LABELS_SETTINGS_PAGE.description}
+      backButtonLabel={LABELS_SETTINGS_PAGE.backButton}
+      notifyButtonLabel={LABELS_SETTINGS_PAGE.notifyButton}
+    />
   );
 };
 

@@ -12,6 +12,7 @@ import {
 import { MdOutlineEmail } from "react-icons/md";
 import { FormField, FormTextareaField } from "../shared/components/forms";
 import { SectionCard } from "../shared/components/ui";
+import { LABELS_QUOTATION_PAGE } from "../shared/data";
 import { useQuotationDraftStore } from "../shared/store";
 import type { QuotationFormData } from "../shared/types/quotation";
 
@@ -69,12 +70,14 @@ const QuotationPage = () => {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <nav className="flex items-center gap-1.5 text-sm text-slate-500">
-            <span>Cotizaciones</span>
+            <span>{LABELS_QUOTATION_PAGE.breadcrumb.list}</span>
             <span>/</span>
-            <span className="font-medium text-slate-700">Crear Nueva</span>
+            <span className="font-medium text-slate-700">
+              {LABELS_QUOTATION_PAGE.breadcrumb.createNew}
+            </span>
           </nav>
           <h1 className="mt-0.5 text-2xl font-bold text-slate-800">
-            Generador
+            {LABELS_QUOTATION_PAGE.title}
           </h1>
         </div>
         <div className="flex items-center gap-3">
@@ -82,7 +85,7 @@ const QuotationPage = () => {
             type="button"
             className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
           >
-            Descartar Borrador
+            {LABELS_QUOTATION_PAGE.actions.discardDraft}
           </button>
           <button
             type="button"
@@ -90,7 +93,7 @@ const QuotationPage = () => {
             className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
           >
             <HiOutlineEye className="text-base" />
-            Guardar y Previsualizar
+            {LABELS_QUOTATION_PAGE.actions.saveAndPreview}
           </button>
         </div>
       </div>
@@ -103,38 +106,64 @@ const QuotationPage = () => {
           className="min-w-0 flex-1 space-y-6"
         >
           {/* Client Information */}
-          <SectionCard title="Información del Cliente" icon={HiOutlineUser}>
+          <SectionCard
+            title={LABELS_QUOTATION_PAGE.clientSection.title}
+            icon={HiOutlineUser}
+          >
             <div className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <FormField
                   id="clientName"
-                  label="Nombre"
-                  placeholder="ej. Constructora Andes S.A."
+                  label={
+                    LABELS_QUOTATION_PAGE.clientSection.fields.clientName.label
+                  }
+                  placeholder={
+                    LABELS_QUOTATION_PAGE.clientSection.fields.clientName
+                      .placeholder
+                  }
                   registration={register("clientName", {
-                    required: "El nombre del cliente es obligatorio",
+                    required:
+                      LABELS_QUOTATION_PAGE.clientSection.fields.clientName
+                        .required,
                   })}
                   error={errors.clientName?.message}
                 />
                 <FormField
                   id="clientRut"
-                  label="RUT"
-                  placeholder="76.123.456-K"
+                  label={
+                    LABELS_QUOTATION_PAGE.clientSection.fields.clientRut.label
+                  }
+                  placeholder={
+                    LABELS_QUOTATION_PAGE.clientSection.fields.clientRut
+                      .placeholder
+                  }
                   registration={register("clientRut", {
-                    required: "El RUT es obligatorio",
+                    required:
+                      LABELS_QUOTATION_PAGE.clientSection.fields.clientRut
+                        .required,
                   })}
                   error={errors.clientRut?.message}
                 />
               </div>
               <FormField
                 id="clientEmail"
-                label="Email"
+                label={
+                  LABELS_QUOTATION_PAGE.clientSection.fields.clientEmail.label
+                }
                 type="email"
-                placeholder="facturacion@constructoraandes.cl"
+                placeholder={
+                  LABELS_QUOTATION_PAGE.clientSection.fields.clientEmail
+                    .placeholder
+                }
                 registration={register("clientEmail", {
-                  required: "El email es obligatorio",
+                  required:
+                    LABELS_QUOTATION_PAGE.clientSection.fields.clientEmail
+                      .required,
                   pattern: {
                     value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: "Ingresa un email válido",
+                    message:
+                      LABELS_QUOTATION_PAGE.clientSection.fields.clientEmail
+                        .invalid,
                   },
                 })}
                 error={errors.clientEmail?.message}
@@ -144,32 +173,48 @@ const QuotationPage = () => {
 
           {/* Project Details */}
           <SectionCard
-            title="Detalles del Proyecto"
+            title={LABELS_QUOTATION_PAGE.projectSection.title}
             icon={HiOutlineClipboardDocument}
           >
             <div className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <FormField
                   id="projectTitle"
-                  label="Nombre del Proyecto"
-                  placeholder="Renovación Interior - Fase 1"
+                  label={
+                    LABELS_QUOTATION_PAGE.projectSection.fields.projectTitle
+                      .label
+                  }
+                  placeholder={
+                    LABELS_QUOTATION_PAGE.projectSection.fields.projectTitle
+                      .placeholder
+                  }
                   registration={register("projectTitle", {
-                    required: "El nombre del proyecto es obligatorio",
+                    required:
+                      LABELS_QUOTATION_PAGE.projectSection.fields.projectTitle
+                        .required,
                   })}
                   error={errors.projectTitle?.message}
                 />
                 <FormField
                   id="projectDeadline"
-                  label="Fecha Estimada de Entrega"
+                  label={
+                    LABELS_QUOTATION_PAGE.projectSection.fields.projectDeadline
+                      .label
+                  }
                   type="date"
                   registration={register("projectDeadline")}
                 />
               </div>
               <FormTextareaField
                 id="projectNotes"
-                label="Descripción / Notas Internas"
+                label={
+                  LABELS_QUOTATION_PAGE.projectSection.fields.projectNotes.label
+                }
                 rows={4}
-                placeholder="Detalles adicionales sobre el alcance del trabajo..."
+                placeholder={
+                  LABELS_QUOTATION_PAGE.projectSection.fields.projectNotes
+                    .placeholder
+                }
                 registration={register("projectNotes")}
               />
             </div>
@@ -177,7 +222,7 @@ const QuotationPage = () => {
 
           {/* Itemized List */}
           <SectionCard
-            title="Lista de Ítems"
+            title={LABELS_QUOTATION_PAGE.itemsSection.title}
             icon={HiOutlineTableCells}
             action={
               <button
@@ -188,7 +233,7 @@ const QuotationPage = () => {
                 className="flex items-center gap-1.5 text-sm font-semibold text-emerald-700 transition hover:text-emerald-800"
               >
                 <HiPlusCircle className="text-base" />
-                Agregar Ítem
+                {LABELS_QUOTATION_PAGE.itemsSection.addItem}
               </button>
             }
           >
@@ -196,10 +241,18 @@ const QuotationPage = () => {
               <table className="w-full min-w-130">
                 <thead>
                   <tr className="border-b border-slate-200 text-left text-sm font-semibold text-slate-600">
-                    <th className="pb-3 pr-4">Descripción</th>
-                    <th className="pb-3 pr-4 text-right">Precio Unitario</th>
-                    <th className="pb-3 pr-4 text-right">Cantidad</th>
-                    <th className="pb-3 pr-4 text-right">Total</th>
+                    <th className="pb-3 pr-4">
+                      {LABELS_QUOTATION_PAGE.itemsSection.columns.description}
+                    </th>
+                    <th className="pb-3 pr-4 text-right">
+                      {LABELS_QUOTATION_PAGE.itemsSection.columns.unitPrice}
+                    </th>
+                    <th className="pb-3 pr-4 text-right">
+                      {LABELS_QUOTATION_PAGE.itemsSection.columns.quantity}
+                    </th>
+                    <th className="pb-3 pr-4 text-right">
+                      {LABELS_QUOTATION_PAGE.itemsSection.columns.total}
+                    </th>
                     <th className="w-10 pb-3" />
                   </tr>
                 </thead>
@@ -215,7 +268,10 @@ const QuotationPage = () => {
                         <td className="py-3 pr-4">
                           <input
                             type="text"
-                            placeholder="Descripción del servicio"
+                            placeholder={
+                              LABELS_QUOTATION_PAGE.itemsSection.placeholders
+                                .description
+                            }
                             className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-100"
                             {...register(`items.${index}.description`, {
                               required: true,
@@ -226,7 +282,10 @@ const QuotationPage = () => {
                           <input
                             type="number"
                             min={0}
-                            placeholder="0"
+                            placeholder={
+                              LABELS_QUOTATION_PAGE.itemsSection.placeholders
+                                .unitPrice
+                            }
                             className="w-28 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-right text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-100"
                             {...register(`items.${index}.unitPrice`, {
                               valueAsNumber: true,
@@ -237,7 +296,10 @@ const QuotationPage = () => {
                           <input
                             type="number"
                             min={1}
-                            placeholder="1"
+                            placeholder={
+                              LABELS_QUOTATION_PAGE.itemsSection.placeholders
+                                .quantity
+                            }
                             className="w-20 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-right text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-100"
                             {...register(`items.${index}.quantity`, {
                               valueAsNumber: true,
@@ -252,7 +314,10 @@ const QuotationPage = () => {
                             type="button"
                             disabled={fields.length === 1}
                             onClick={() => remove(index)}
-                            aria-label="Eliminar ítem"
+                            aria-label={
+                              LABELS_QUOTATION_PAGE.itemsSection
+                                .removeItemAriaLabel
+                            }
                             className="text-slate-300 transition hover:text-red-500 disabled:pointer-events-none disabled:opacity-30"
                           >
                             <HiOutlineTrash className="text-lg" />
@@ -273,44 +338,48 @@ const QuotationPage = () => {
           <div className="rounded-2xl bg-[#1c2b3a] p-6 text-white">
             <h3 className="mb-5 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
               <HiOutlineDocumentText className="text-base" />
-              Resumen de Cotización
+              {LABELS_QUOTATION_PAGE.summary.title}
             </h3>
 
             <div className="space-y-3">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-400">Subtotal</span>
+                <span className="text-slate-400">
+                  {LABELS_QUOTATION_PAGE.summary.subtotal}
+                </span>
                 <span className="font-medium text-white">
                   {formatCLP(subtotal)}
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-400">IVA (19%)</span>
+                <span className="text-slate-400">
+                  {LABELS_QUOTATION_PAGE.summary.iva}
+                </span>
                 <span className="font-medium text-white">{formatCLP(iva)}</span>
               </div>
               <div className="my-3 border-t border-slate-600" />
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold text-white">
-                  Total Final
+                  {LABELS_QUOTATION_PAGE.summary.total}
                 </span>
                 <span className="text-lg font-bold text-emerald-400">
                   {formatCLP(total)}
                 </span>
               </div>
               <p className="text-right text-xs text-slate-500">
-                Moneda: CLP (Peso Chileno)
+                {LABELS_QUOTATION_PAGE.summary.currency}
               </p>
             </div>
 
             {/* Status */}
             <div className="mt-6 rounded-xl bg-slate-700/50 p-4">
               <p className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-400">
-                Estado: Borrador
+                {LABELS_QUOTATION_PAGE.summary.status}
               </p>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-600">
                 <div className="h-full w-2/3 rounded-full bg-emerald-500" />
               </div>
               <p className="mt-2 text-xs italic text-slate-400">
-                "Listo para revisión y aprobación"
+                {`"${LABELS_QUOTATION_PAGE.summary.statusMessage}"`}
               </p>
             </div>
 
@@ -322,14 +391,14 @@ const QuotationPage = () => {
                 className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 text-sm font-semibold text-white transition hover:bg-emerald-400"
               >
                 <HiOutlineEye className="text-base" />
-                Guardar y Previsualizar
+                {LABELS_QUOTATION_PAGE.actions.saveAndPreview}
               </button>
               <button
                 type="button"
                 className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-500 bg-transparent py-3 text-sm font-semibold text-slate-200 transition hover:bg-slate-700"
               >
                 <MdOutlineEmail className="text-base" />
-                Enviar al Cliente
+                {LABELS_QUOTATION_PAGE.actions.sendToClient}
               </button>
             </div>
           </div>
@@ -337,14 +406,10 @@ const QuotationPage = () => {
           {/* Quick Help */}
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
             <h3 className="mb-3 text-sm font-semibold text-slate-700">
-              Ayuda Rápida
+              {LABELS_QUOTATION_PAGE.quickHelp.title}
             </h3>
             <ul className="space-y-2">
-              {[
-                "Los valores se calculan automáticamente en CLP.",
-                "La validación del RUT se realiza al guardar.",
-                "La vista previa en PDF se generará automáticamente.",
-              ].map((tip) => (
+              {LABELS_QUOTATION_PAGE.quickHelp.tips.map((tip) => (
                 <li
                   key={tip}
                   className="flex items-start gap-2 text-xs text-slate-600"

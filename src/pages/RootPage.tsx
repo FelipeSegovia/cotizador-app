@@ -4,6 +4,7 @@ import {
   HiSparkles,
   HiUsers,
 } from "react-icons/hi2";
+import { LABELS_ROOT_PAGE } from "../shared/data";
 import { useQuotations } from "../shared/hooks";
 import type { QuotationStatus } from "../shared/types/quotation";
 
@@ -20,10 +21,10 @@ const dateFormatter = new Intl.DateTimeFormat("es-CL", {
 });
 
 const statusLabelMap: Record<QuotationStatus, string> = {
-  approved: "Aceptada",
-  draft: "Borrador",
-  rejected: "Rechazada",
-  sent: "Enviada",
+  approved: LABELS_ROOT_PAGE.statusLabels.approved,
+  draft: LABELS_ROOT_PAGE.statusLabels.draft,
+  rejected: LABELS_ROOT_PAGE.statusLabels.rejected,
+  sent: LABELS_ROOT_PAGE.statusLabels.sent,
 };
 
 const statusClassMap: Record<QuotationStatus, string> = {
@@ -65,10 +66,10 @@ const RootPage = () => {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h2 className="text-3xl font-extrabold tracking-[-0.03em] text-slate-900">
-            Dashboard
+            {LABELS_ROOT_PAGE.title}
           </h2>
           <p className="mt-1 text-sm text-slate-500">
-            Bienvenido de nuevo, QuoteFlow Chile Operations.
+            {LABELS_ROOT_PAGE.welcome}
           </p>
         </div>
 
@@ -77,7 +78,7 @@ const RootPage = () => {
           className="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(5,150,105,0.35)] transition hover:bg-emerald-800"
         >
           <HiSparkles className="text-base" />
-          Nueva Cotizacion
+          {LABELS_ROOT_PAGE.newQuotationButton}
         </button>
       </div>
 
@@ -87,7 +88,7 @@ const RootPage = () => {
             <HiClipboardDocumentList className="text-xl" />
           </div>
           <p className="mt-4 text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">
-            Total Quoted (30 days)
+            {LABELS_ROOT_PAGE.metrics.totalQuoted}
           </p>
           <p className="mt-1 text-4xl font-black tracking-[-0.03em] text-slate-900">
             {currencyFormatter.format(totalQuoted)}
@@ -99,7 +100,7 @@ const RootPage = () => {
             <HiUsers className="text-xl" />
           </div>
           <p className="mt-4 text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">
-            Pending Quotes
+            {LABELS_ROOT_PAGE.metrics.pendingQuotes}
           </p>
           <p className="mt-1 text-4xl font-black tracking-[-0.03em] text-slate-900">
             {pendingQuotes}
@@ -111,7 +112,7 @@ const RootPage = () => {
             <HiCheckCircle className="text-xl" />
           </div>
           <p className="mt-4 text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">
-            Accepted Quotes
+            {LABELS_ROOT_PAGE.metrics.acceptedQuotes}
           </p>
           <p className="mt-1 text-4xl font-black tracking-[-0.03em] text-slate-900">
             {acceptedQuotes}
@@ -123,25 +124,27 @@ const RootPage = () => {
         <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex items-center justify-between">
             <h3 className="text-3xl font-bold tracking-[-0.03em] text-slate-900">
-              Cotizaciones Recientes
+              {LABELS_ROOT_PAGE.recentQuotations.title}
             </h3>
             <button
               type="button"
               className="text-sm font-semibold text-emerald-700 transition hover:text-emerald-800"
             >
-              Ver Todo
+              {LABELS_ROOT_PAGE.recentQuotations.viewAll}
             </button>
           </div>
 
           <div className="mt-5 overflow-x-auto">
             {isLoading ? (
-              <p className="text-sm text-slate-500">Cargando cotizaciones...</p>
+              <p className="text-sm text-slate-500">
+                {LABELS_ROOT_PAGE.recentQuotations.loading}
+              </p>
             ) : null}
 
             {isError ? (
               <p className="text-sm text-rose-600">
                 {(error as Error).message ||
-                  "No se pudieron cargar las cotizaciones"}
+                  LABELS_ROOT_PAGE.recentQuotations.loadError}
               </p>
             ) : null}
 
@@ -149,10 +152,18 @@ const RootPage = () => {
               <table className="min-w-full border-separate border-spacing-y-3 text-sm">
                 <thead className="text-left text-xs uppercase tracking-[0.07em] text-slate-500">
                   <tr>
-                    <th className="pb-1 pr-3">Cliente</th>
-                    <th className="pb-1 pr-3">Fecha</th>
-                    <th className="pb-1 pr-3">Monto (CLP)</th>
-                    <th className="pb-1 pr-3">Estado</th>
+                    <th className="pb-1 pr-3">
+                      {LABELS_ROOT_PAGE.recentQuotations.headers.client}
+                    </th>
+                    <th className="pb-1 pr-3">
+                      {LABELS_ROOT_PAGE.recentQuotations.headers.date}
+                    </th>
+                    <th className="pb-1 pr-3">
+                      {LABELS_ROOT_PAGE.recentQuotations.headers.amount}
+                    </th>
+                    <th className="pb-1 pr-3">
+                      {LABELS_ROOT_PAGE.recentQuotations.headers.status}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -185,7 +196,7 @@ const RootPage = () => {
 
             {!isLoading && !isError && !hasData ? (
               <p className="text-sm text-slate-500">
-                Aun no tienes cotizaciones creadas.
+                {LABELS_ROOT_PAGE.recentQuotations.empty}
               </p>
             ) : null}
           </div>
@@ -194,13 +205,13 @@ const RootPage = () => {
         <div className="space-y-4">
           <article className="rounded-2xl bg-[#0f2648] p-5 text-slate-100 shadow-[0_15px_45px_rgba(15,38,72,0.35)]">
             <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-300">
-              Tasa de conversion
+              {LABELS_ROOT_PAGE.conversionCard.title}
             </p>
             <p className="mt-2 text-5xl font-black tracking-[-0.03em]">
               {conversionRate}%
             </p>
             <p className="mt-2 text-sm font-medium text-emerald-300">
-              Basado en cotizaciones aprobadas
+              {LABELS_ROOT_PAGE.conversionCard.subtitle}
             </p>
             <div className="mt-4 h-2 rounded-full bg-slate-700">
               <div
@@ -212,7 +223,7 @@ const RootPage = () => {
 
           <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <h4 className="text-lg font-bold text-slate-900">
-              Actividad Reciente
+              {LABELS_ROOT_PAGE.activity.title}
             </h4>
             <ul className="mt-4 space-y-3 text-sm text-slate-600">
               <li>Cotizacion #4592 aceptada</li>

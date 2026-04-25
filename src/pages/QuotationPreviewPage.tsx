@@ -5,6 +5,7 @@ import {
   HiOutlinePencilSquare,
   HiOutlineArrowDownTray,
 } from "react-icons/hi2";
+import { LABELS_QUOTATION_PREVIEW_PAGE } from "../shared/data";
 import { useQuotationDraftStore } from "../shared/store";
 
 const IVA_RATE = 0.19;
@@ -70,11 +71,11 @@ const QuotationPreviewPage = () => {
             className="flex items-center gap-1.5 text-sm font-semibold text-slate-600 transition hover:text-slate-900"
           >
             <HiOutlineArrowLeft className="text-base" />
-            Volver al Listado
+            {LABELS_QUOTATION_PREVIEW_PAGE.topBar.backToList}
           </button>
           <span className="h-4 w-px bg-slate-300" />
           <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-amber-700">
-            Borrador
+            {LABELS_QUOTATION_PREVIEW_PAGE.topBar.draftBadge}
           </span>
         </div>
 
@@ -85,21 +86,21 @@ const QuotationPreviewPage = () => {
             className="flex items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-100"
           >
             <HiOutlinePencilSquare className="text-base" />
-            Volver a Editar
+            {LABELS_QUOTATION_PREVIEW_PAGE.topBar.backToEdit}
           </button>
           <button
             type="button"
             className="flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
           >
             <HiOutlineArrowDownTray className="text-base" />
-            Descargar PDF
+            {LABELS_QUOTATION_PREVIEW_PAGE.topBar.downloadPdf}
           </button>
           <button
             type="button"
             className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
           >
             <HiOutlineEnvelope className="text-base" />
-            Enviar Cotización
+            {LABELS_QUOTATION_PREVIEW_PAGE.topBar.sendQuotation}
           </button>
         </div>
       </div>
@@ -131,14 +132,18 @@ const QuotationPreviewPage = () => {
 
             <div className="text-left sm:text-right">
               <p className="text-3xl font-black uppercase tracking-tight text-slate-900">
-                Cotización
+                {LABELS_QUOTATION_PREVIEW_PAGE.document.title}
               </p>
-              <p className="mt-0.5 text-lg font-bold text-emerald-600">#001</p>
+              <p className="mt-0.5 text-lg font-bold text-emerald-600">
+                {LABELS_QUOTATION_PREVIEW_PAGE.document.quoteNumber}
+              </p>
               <p className="mt-2 text-xs text-slate-500">
-                Fecha de Emisión: {formatDate(emissionDate)}
+                {LABELS_QUOTATION_PREVIEW_PAGE.document.emissionDate}:{" "}
+                {formatDate(emissionDate)}
               </p>
               <p className="text-xs text-slate-500">
-                Válido hasta: {formatDate(validDate)}
+                {LABELS_QUOTATION_PREVIEW_PAGE.document.validUntil}:{" "}
+                {formatDate(validDate)}
               </p>
             </div>
           </div>
@@ -149,7 +154,7 @@ const QuotationPreviewPage = () => {
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
               <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-                Cliente
+                {LABELS_QUOTATION_PREVIEW_PAGE.summary.client}
               </p>
               <p className="text-lg font-bold text-slate-900">
                 {draft.clientName}
@@ -165,7 +170,7 @@ const QuotationPreviewPage = () => {
             </div>
             <div>
               <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-                Resumen del Proyecto
+                {LABELS_QUOTATION_PREVIEW_PAGE.summary.projectSummary}
               </p>
               <p className="text-sm italic text-slate-700">
                 {draft.projectNotes || draft.projectTitle}
@@ -179,10 +184,21 @@ const QuotationPreviewPage = () => {
           <table className="w-full">
             <thead>
               <tr className="border-b border-slate-200 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
-                <th className="pb-3">Descripción</th>
-                <th className="pb-3 text-center">Cant.</th>
-                <th className="pb-3 text-right">Precio Unit.</th>
-                <th className="pb-3 text-right">Total</th>
+                <th className="pb-3">
+                  {
+                    LABELS_QUOTATION_PREVIEW_PAGE.summary.tableHeaders
+                      .description
+                  }
+                </th>
+                <th className="pb-3 text-center">
+                  {LABELS_QUOTATION_PREVIEW_PAGE.summary.tableHeaders.quantity}
+                </th>
+                <th className="pb-3 text-right">
+                  {LABELS_QUOTATION_PREVIEW_PAGE.summary.tableHeaders.unitPrice}
+                </th>
+                <th className="pb-3 text-right">
+                  {LABELS_QUOTATION_PREVIEW_PAGE.summary.tableHeaders.total}
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -209,16 +225,20 @@ const QuotationPreviewPage = () => {
           <div className="mt-6 flex justify-end">
             <div className="w-full max-w-xs space-y-2">
               <div className="flex justify-between text-sm text-slate-600">
-                <span>Subtotal</span>
+                <span>
+                  {LABELS_QUOTATION_PREVIEW_PAGE.summary.totals.subtotal}
+                </span>
                 <span>{formatCLP(subtotal)}</span>
               </div>
               <div className="flex justify-between text-sm text-slate-600">
-                <span>IVA (19%)</span>
+                <span>{LABELS_QUOTATION_PREVIEW_PAGE.summary.totals.iva}</span>
                 <span>{formatCLP(iva)}</span>
               </div>
               <div className="border-t border-slate-300 pt-2">
                 <div className="flex justify-between text-base font-black text-slate-900">
-                  <span>TOTAL</span>
+                  <span>
+                    {LABELS_QUOTATION_PREVIEW_PAGE.summary.totals.total}
+                  </span>
                   <span>{formatCLP(total)}</span>
                 </div>
               </div>
@@ -230,7 +250,7 @@ const QuotationPreviewPage = () => {
           {/* Terms */}
           <div>
             <p className="mb-4 text-xs font-bold uppercase tracking-wider text-slate-500">
-              Términos y Condiciones
+              {LABELS_QUOTATION_PREVIEW_PAGE.terms.title}
             </p>
             <div className="grid gap-x-8 gap-y-1.5 sm:grid-cols-2">
               {TERMS.map((term) => (
@@ -248,10 +268,13 @@ const QuotationPreviewPage = () => {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <div className="mb-1 h-px w-48 bg-slate-400" />
-              <p className="text-xs text-slate-500">Firma Aceptación Cliente</p>
+              <p className="text-xs text-slate-500">
+                {LABELS_QUOTATION_PREVIEW_PAGE.footer.signature}
+              </p>
             </div>
             <p className="text-xs italic text-slate-400">
-              Documento generado electrónicamente por {COMPANY_INFO.name}
+              {LABELS_QUOTATION_PREVIEW_PAGE.footer.generatedBy}{" "}
+              {COMPANY_INFO.name}
             </p>
           </div>
         </div>

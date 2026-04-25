@@ -2,10 +2,18 @@ import { useNavigate } from "react-router";
 import { HiArrowLeft, HiBellAlert, HiWrenchScrewdriver } from "react-icons/hi2";
 
 type WorkInProgressViewProps = {
+  title: string;
   description: string;
+  backButtonLabel: string;
+  notifyButtonLabel: string;
 };
 
-const WorkInProgressView = ({ description }: WorkInProgressViewProps) => {
+const WorkInProgressView = ({
+  title,
+  description,
+  backButtonLabel,
+  notifyButtonLabel,
+}: WorkInProgressViewProps) => {
   const navigate = useNavigate();
 
   return (
@@ -16,7 +24,7 @@ const WorkInProgressView = ({ description }: WorkInProgressViewProps) => {
         </div>
 
         <h1 className="mt-7 text-4xl font-extrabold tracking-[-0.03em] text-slate-900 sm:text-5xl">
-          Estamos trabajando en esta funcion
+          {title}
         </h1>
 
         <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-slate-500">
@@ -30,7 +38,7 @@ const WorkInProgressView = ({ description }: WorkInProgressViewProps) => {
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-700 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800"
           >
             <HiArrowLeft className="text-lg" />
-            Volver al Dashboard
+            {backButtonLabel}
           </button>
 
           <button
@@ -38,7 +46,7 @@ const WorkInProgressView = ({ description }: WorkInProgressViewProps) => {
             className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-600 transition hover:border-slate-400 hover:text-slate-700"
           >
             <HiBellAlert className="text-lg" />
-            Notificarme al finalizar
+            {notifyButtonLabel}
           </button>
         </div>
       </section>
