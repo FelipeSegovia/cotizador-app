@@ -4,8 +4,62 @@ import {
   HiSparkles,
   HiUsers,
 } from "react-icons/hi2";
+import { useQuotations } from "../shared/hooks";
+import type { QuotationStatus } from "../shared/types/quotation";
+
+const currencyFormatter = new Intl.NumberFormat("es-CL", {
+  style: "currency",
+  currency: "CLP",
+  maximumFractionDigits: 0,
+});
+
+const dateFormatter = new Intl.DateTimeFormat("es-CL", {
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+});
+
+const statusLabelMap: Record<QuotationStatus, string> = {
+  approved: "Aceptada",
+  draft: "Borrador",
+  rejected: "Rechazada",
+  sent: "Enviada",
+};
+
+const statusClassMap: Record<QuotationStatus, string> = {
+  approved: "bg-emerald-100 text-emerald-700",
+  draft: "bg-slate-200 text-slate-700",
+  rejected: "bg-rose-100 text-rose-700",
+  sent: "bg-blue-100 text-blue-700",
+};
 
 const RootPage = () => {
+  const { data: quotations = [], isError, isLoading, error } = useQuotations();
+
+  const totalQuoted = quotations.reduce(
+    (sum, quotation) => sum + quotation.total,
+    0,
+  );
+  const pendingQuotes = quotations.filter(
+    (quotation) => quotation.status === "draft" || quotation.status === "sent",
+  ).length;
+  const acceptedQuotes = quotations.filter(
+    (quotation) => quotation.status === "approved",
+  ).length;
+  const conversionRate =
+    quotations.length === 0
+      ? 0
+      : Math.round((acceptedQuotes / quotations.length) * 100);
+  const recentQuotations = [...quotations]
+    .sort(
+      (first, second) =>
+        new Date(second.updatedAt).getTime() -
+        new Date(first.updatedAt).getTime(),
+    )
+    .slice(0, 5);
+
+  const hasData = recentQuotations.length > 0;
+
   return (
     <>
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -36,7 +90,7 @@ const RootPage = () => {
             Total Quoted (30 days)
           </p>
           <p className="mt-1 text-4xl font-black tracking-[-0.03em] text-slate-900">
-            $14.250.000
+            {currencyFormatter.format(totalQuoted)}
           </p>
         </article>
 
@@ -48,7 +102,7 @@ const RootPage = () => {
             Pending Quotes
           </p>
           <p className="mt-1 text-4xl font-black tracking-[-0.03em] text-slate-900">
-            24
+            {pendingQuotes}
           </p>
         </article>
 
@@ -60,7 +114,7 @@ const RootPage = () => {
             Accepted Quotes
           </p>
           <p className="mt-1 text-4xl font-black tracking-[-0.03em] text-slate-900">
-            18
+            {acceptedQuotes}
           </p>
         </article>
       </section>
@@ -80,54 +134,60 @@ const RootPage = () => {
           </div>
 
           <div className="mt-5 overflow-x-auto">
-            <table className="min-w-full border-separate border-spacing-y-3 text-sm">
-              <thead className="text-left text-xs uppercase tracking-[0.07em] text-slate-500">
-                <tr>
-                  <th className="pb-1 pr-3">Cliente</th>
-                  <th className="pb-1 pr-3">Fecha</th>
-                  <th className="pb-1 pr-3">Monto (CLP)</th>
-                  <th className="pb-1 pr-3">Estado</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="rounded-xl bg-slate-50 text-slate-700">
-                  <td className="rounded-l-xl px-3 py-2.5 font-medium">
-                    Sodimac S.A.
-                  </td>
-                  <td className="px-3 py-2.5">24 Oct 2023</td>
-                  <td className="px-3 py-2.5">$2.450.000</td>
-                  <td className="rounded-r-xl px-3 py-2.5">
-                    <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">
-                      Accepted
-                    </span>
-                  </td>
-                </tr>
-                <tr className="rounded-xl bg-slate-50 text-slate-700">
-                  <td className="rounded-l-xl px-3 py-2.5 font-medium">
-                    CCU Chile
-                  </td>
-                  <td className="px-3 py-2.5">22 Oct 2023</td>
-                  <td className="px-3 py-2.5">$850.000</td>
-                  <td className="rounded-r-xl px-3 py-2.5">
-                    <span className="rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-700">
-                      Sent
-                    </span>
-                  </td>
-                </tr>
-                <tr className="rounded-xl bg-slate-50 text-slate-700">
-                  <td className="rounded-l-xl px-3 py-2.5 font-medium">
-                    LATAM Airlines
-                  </td>
-                  <td className="px-3 py-2.5">21 Oct 2023</td>
-                  <td className="px-3 py-2.5">$5.120.000</td>
-                  <td className="rounded-r-xl px-3 py-2.5">
-                    <span className="rounded-full bg-slate-200 px-2.5 py-1 text-xs font-semibold text-slate-700">
-                      Draft
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            {isLoading ? (
+              <p className="text-sm text-slate-500">Cargando cotizaciones...</p>
+            ) : null}
+
+            {isError ? (
+              <p className="text-sm text-rose-600">
+                {(error as Error).message ||
+                  "No se pudieron cargar las cotizaciones"}
+              </p>
+            ) : null}
+
+            {!isLoading && !isError && hasData ? (
+              <table className="min-w-full border-separate border-spacing-y-3 text-sm">
+                <thead className="text-left text-xs uppercase tracking-[0.07em] text-slate-500">
+                  <tr>
+                    <th className="pb-1 pr-3">Cliente</th>
+                    <th className="pb-1 pr-3">Fecha</th>
+                    <th className="pb-1 pr-3">Monto (CLP)</th>
+                    <th className="pb-1 pr-3">Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentQuotations.map((quotation) => (
+                    <tr
+                      key={quotation.id}
+                      className="rounded-xl bg-slate-50 text-slate-700"
+                    >
+                      <td className="rounded-l-xl px-3 py-2.5 font-medium">
+                        {quotation.clientName}
+                      </td>
+                      <td className="px-3 py-2.5">
+                        {dateFormatter.format(new Date(quotation.updatedAt))}
+                      </td>
+                      <td className="px-3 py-2.5">
+                        {currencyFormatter.format(quotation.total)}
+                      </td>
+                      <td className="rounded-r-xl px-3 py-2.5">
+                        <span
+                          className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusClassMap[quotation.status]}`}
+                        >
+                          {statusLabelMap[quotation.status]}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : null}
+
+            {!isLoading && !isError && !hasData ? (
+              <p className="text-sm text-slate-500">
+                Aun no tienes cotizaciones creadas.
+              </p>
+            ) : null}
           </div>
         </article>
 
@@ -136,12 +196,17 @@ const RootPage = () => {
             <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-300">
               Tasa de conversion
             </p>
-            <p className="mt-2 text-5xl font-black tracking-[-0.03em]">75%</p>
+            <p className="mt-2 text-5xl font-black tracking-[-0.03em]">
+              {conversionRate}%
+            </p>
             <p className="mt-2 text-sm font-medium text-emerald-300">
-              +5% vs mes anterior
+              Basado en cotizaciones aprobadas
             </p>
             <div className="mt-4 h-2 rounded-full bg-slate-700">
-              <div className="h-2 w-3/4 rounded-full bg-emerald-400" />
+              <div
+                className="h-2 rounded-full bg-emerald-400"
+                style={{ width: `${conversionRate}%` }}
+              />
             </div>
           </article>
 

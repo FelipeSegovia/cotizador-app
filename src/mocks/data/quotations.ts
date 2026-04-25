@@ -1,0 +1,100 @@
+import type { Quotation } from "../../shared/types/quotation";
+
+export const mockQuotations: Quotation[] = [
+  {
+    id: "1",
+    clientName: "Empresa ABC Ltda.",
+    projectTitle: "Desarrollo de tienda online",
+    status: "sent",
+    items: [
+      {
+        id: "1-1",
+        description: "Diseño UI/UX",
+        quantity: 1,
+        unitPrice: 800000,
+        subtotal: 800000,
+      },
+      {
+        id: "1-2",
+        description: "Desarrollo frontend (React)",
+        quantity: 1,
+        unitPrice: 1200000,
+        subtotal: 1200000,
+      },
+      {
+        id: "1-3",
+        description: "Integración pasarela de pagos",
+        quantity: 1,
+        unitPrice: 400000,
+        subtotal: 400000,
+      },
+    ],
+    total: 2400000,
+    createdAt: "2026-04-01T10:00:00.000Z",
+    updatedAt: "2026-04-02T14:30:00.000Z",
+  },
+  {
+    id: "2",
+    clientName: "Consultora XYZ S.A.",
+    projectTitle: "Sistema de gestión interna",
+    status: "approved",
+    items: [
+      {
+        id: "2-1",
+        description: "Análisis y levantamiento de requerimientos",
+        quantity: 1,
+        unitPrice: 350000,
+        subtotal: 350000,
+      },
+      {
+        id: "2-2",
+        description: "Desarrollo backend (API REST)",
+        quantity: 1,
+        unitPrice: 1500000,
+        subtotal: 1500000,
+      },
+      {
+        id: "2-3",
+        description: "Desarrollo frontend (React)",
+        quantity: 1,
+        unitPrice: 1000000,
+        subtotal: 1000000,
+      },
+      {
+        id: "2-4",
+        description: "Despliegue en servidor cloud",
+        quantity: 1,
+        unitPrice: 200000,
+        subtotal: 200000,
+      },
+    ],
+    total: 3050000,
+    createdAt: "2026-03-15T09:00:00.000Z",
+    updatedAt: "2026-03-20T11:00:00.000Z",
+  },
+  {
+    id: "3",
+    clientName: "Startup Delta",
+    projectTitle: "Landing page + blog",
+    status: "draft",
+    items: [
+      {
+        id: "3-1",
+        description: "Landing page responsive",
+        quantity: 1,
+        unitPrice: 500000,
+        subtotal: 500000,
+      },
+      {
+        id: "3-2",
+        description: "Blog con CMS",
+        quantity: 1,
+        unitPrice: 600000,
+        subtotal: 600000,
+      },
+    ],
+    total: 1100000,
+    createdAt: "2026-04-20T16:00:00.000Z",
+    updatedAt: "2026-04-20T16:00:00.000Z",
+  },
+];
