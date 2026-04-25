@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import {
   HiOutlineClipboardDocument,
@@ -11,22 +12,8 @@ import {
 import { MdOutlineEmail } from "react-icons/md";
 import { FormField, FormTextareaField } from "../shared/components/forms";
 import { SectionCard } from "../shared/components/ui";
-
-type QuotationItemRow = {
-  description: string;
-  unitPrice: number;
-  quantity: number;
-};
-
-type QuotationFormData = {
-  clientName: string;
-  clientRut: string;
-  clientEmail: string;
-  projectTitle: string;
-  projectDeadline: string;
-  projectNotes: string;
-  items: QuotationItemRow[];
-};
+import { useQuotationDraftStore } from "../shared/store";
+import type { QuotationFormData } from "../shared/types/quotation";
 
 const IVA_RATE = 0.19;
 
@@ -34,16 +21,27 @@ const formatCLP = (value: number) =>
   `$${Math.round(value).toLocaleString("es-CL")}`;
 
 const QuotationPage = () => {
+  const { draft, setDraft, setPreviewMode } = useQuotationDraftStore();
+
   const {
     register,
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<QuotationFormData>({
     defaultValues: {
       items: [{ description: "", unitPrice: 0, quantity: 1 }],
     },
   });
+
+  const initialDraft = useRef(draft);
+
+  useEffect(() => {
+    if (initialDraft.current !== null) {
+      reset(initialDraft.current);
+    }
+  }, [reset]);
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -61,7 +59,8 @@ const QuotationPage = () => {
   const total = subtotal + iva;
 
   const onSubmit = (data: QuotationFormData) => {
-    console.log(data);
+    setDraft(data);
+    setPreviewMode(true);
   };
 
   return (

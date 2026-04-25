@@ -28,7 +28,10 @@ const mainMenu: NavigationMenuItem[] = [
   {
     label: "Cotizaciones",
     icon: <HiDocumentText className="text-lg" />,
-    to: "/dashboard/cotizaciones",
+    children: [
+      { label: "Listado", to: "/dashboard/cotizaciones", end: true },
+      { label: "Crear Cotización", to: "/dashboard/cotizaciones/nueva" },
+    ],
   },
   {
     label: "Gastos",

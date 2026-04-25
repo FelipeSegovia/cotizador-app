@@ -1,5 +1,10 @@
 import SidebarBrand from "./SidebarBrand";
 import SidebarMenuList from "./SidebarMenuList";
-import type { NavigationMenuItem } from "./SidebarMenuItem";
+import type { NavigationMenuItem, SubMenuItem } from "./SidebarMenuItem";
 
-export { SidebarBrand, SidebarMenuList, type NavigationMenuItem };
+export {
+  SidebarBrand,
+  SidebarMenuList,
+  type NavigationMenuItem,
+  type SubMenuItem,
+};

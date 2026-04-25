@@ -2,7 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import {
   CompanyExpensesPage,
   LoginPage,
-  QuotationPage,
+  QuotationCreatorPage,
+  QuotationsListPage,
   RootPage,
   SettingsPage,
 } from "./pages";
@@ -15,7 +16,8 @@ const AppRouter = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<RootPage />} />
-          <Route path="cotizaciones" element={<QuotationPage />} />
+          <Route path="cotizaciones" element={<QuotationsListPage />} />
+          <Route path="cotizaciones/nueva" element={<QuotationCreatorPage />} />
           <Route path="gastos" element={<CompanyExpensesPage />} />
           <Route path="configuracion" element={<SettingsPage />} />
         </Route>

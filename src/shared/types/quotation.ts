@@ -11,17 +11,33 @@ export interface QuotationItem {
 export interface Quotation {
   id: string;
   clientName: string;
-  clientRut: string;
-  clientEmail: string;
+  clientRut?: string;
+  clientEmail?: string;
   projectTitle: string;
-  projectDeadline: string;
-  projectNotes: string;
+  projectDeadline?: string;
+  projectNotes?: string;
   items: QuotationItem[];
   total: number;
   status: QuotationStatus;
   createdAt: string;
   updatedAt: string;
 }
+
+export type QuotationItemFormRow = {
+  description: string;
+  unitPrice: number;
+  quantity: number;
+};
+
+export type QuotationFormData = {
+  clientName: string;
+  clientRut: string;
+  clientEmail: string;
+  projectTitle: string;
+  projectDeadline: string;
+  projectNotes: string;
+  items: QuotationItemFormRow[];
+};
 
 export type CreateQuotationDto = Omit<
   Quotation,
