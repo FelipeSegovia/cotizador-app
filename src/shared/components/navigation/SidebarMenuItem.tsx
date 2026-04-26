@@ -67,7 +67,9 @@ const SidebarMenuItem = ({
   }, [isCollapsed, isOpen]);
 
   const handleChildItemClick = () => {
-    setIsOpen(false);
+    if (isCollapsed) {
+      setIsOpen(false);
+    }
     onClick?.();
   };
 
