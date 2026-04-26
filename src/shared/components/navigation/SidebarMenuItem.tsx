@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactElement } from "react";
 import { NavLink, useLocation } from "react-router";
 import { HiChevronDown } from "react-icons/hi2";
@@ -30,9 +30,41 @@ const SidebarMenuItem = ({
   isCollapsed = false,
 }: SidebarMenuItemProps) => {
   const location = useLocation();
+  const collapsedItemRef = useRef<HTMLDivElement | null>(null);
   const isChildActive =
     item.children?.some((c) => location.pathname.startsWith(c.to)) ?? false;
   const [isOpen, setIsOpen] = useState(isChildActive);
+
+  useEffect(() => {
+    if (isCollapsed) {
+      setIsOpen(false);
+      return;
+    }
+
+    if (isChildActive) {
+      setIsOpen(true);
+    }
+  }, [isCollapsed, isChildActive]);
+
+  useEffect(() => {
+    if (!isCollapsed || !isOpen) {
+      return;
+    }
+
+    const handlePointerDownOutside = (event: MouseEvent) => {
+      const targetNode = event.target as Node;
+
+      if (!collapsedItemRef.current?.contains(targetNode)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDownOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDownOutside);
+    };
+  }, [isCollapsed, isOpen]);
 
   const handleChildItemClick = () => {
     setIsOpen(false);
@@ -42,21 +74,21 @@ const SidebarMenuItem = ({
   if (item.children) {
     if (isCollapsed) {
       return (
-        <div className="relative">
+        <div ref={collapsedItemRef} className="relative">
           <button
             type="button"
             title={item.label}
             aria-label={item.label}
             onClick={() => setIsOpen((prev) => !prev)}
             className={`group flex h-11 w-11 items-center justify-center rounded-xl transition ${
-              isChildActive || isOpen
+              isChildActive
                 ? "bg-emerald-50 text-emerald-800"
                 : "text-slate-600 hover:bg-white hover:text-slate-900"
             }`}
           >
             <span
               className={`transition ${
-                isChildActive || isOpen
+                isChildActive
                   ? "text-emerald-700"
                   : "text-slate-400 group-hover:text-slate-700"
               }`}
