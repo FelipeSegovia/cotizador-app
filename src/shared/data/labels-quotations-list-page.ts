@@ -1,12 +1,12 @@
 const LABELS_QUOTATIONS_LIST_PAGE = {
   title: "Cotizaciones",
   subtitle: "Gestiona y da seguimiento a tus cotizaciones",
-  newQuotationButton: "Nueva Cotizacion",
+  newQuotationButton: "Nueva Cotización",
   loading: "Cargando cotizaciones...",
   loadError: "Error al cargar las cotizaciones. Intenta de nuevo.",
   emptyState: {
     title: "No hay cotizaciones aun.",
-    action: "Crear Primera Cotizacion",
+    action: "Crear Primera Cotización",
   },
   table: {
     number: "#",

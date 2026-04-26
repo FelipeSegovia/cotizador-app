@@ -1,11 +1,11 @@
 const LABELS_ROOT_PAGE = {
   title: "Dashboard",
-  welcome: "Bienvenido de nuevo, QuoteFlow Chile Operations.",
+  welcome: "Bienvenido de nuevo.",
   newQuotationButton: "Nueva Cotizacion",
   metrics: {
-    totalQuoted: "Total Quoted (30 days)",
-    pendingQuotes: "Pending Quotes",
-    acceptedQuotes: "Accepted Quotes",
+    totalQuoted: "Total de cotizaciones (30 días)",
+    pendingQuotes: "Cotizaciones Pendientes",
+    acceptedQuotes: "Cotizaciones Aceptadas",
   },
   recentQuotations: {
     title: "Cotizaciones Recientes",

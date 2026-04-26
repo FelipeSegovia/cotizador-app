@@ -91,21 +91,23 @@ const DashboardLayout = () => {
           }
         />
 
-        <nav className="mt-10">
-          <SidebarMenuList
-            items={mainMenu}
-            onItemClick={() => setIsMobileMenuOpen(false)}
-          />
-        </nav>
+        <div className="mt-10 min-h-0 flex-1 overflow-y-auto">
+          <nav>
+            <SidebarMenuList
+              items={mainMenu}
+              onItemClick={() => setIsMobileMenuOpen(false)}
+            />
+          </nav>
+        </div>
 
-        <div className="mt-auto border-t border-slate-200 pt-6">
+        <div className="mt-6 border-t border-slate-200 pt-6">
           <SidebarMenuList items={secondaryMenu} />
         </div>
       </aside>
       {/* Desktop sidebar */}
       <div className="mx-auto flex min-h-screen max-w-screen-2xl">
         <aside
-          className={`hidden flex-col border-r border-slate-200 bg-[#f5f7fb] py-8 transition-all duration-300 md:flex ${
+          className={`hidden flex-col border-r border-slate-200 bg-[#f5f7fb] py-8 transition-all duration-300 md:sticky md:top-0 md:flex md:h-screen md:self-start md:overflow-hidden ${
             isDesktopSidebarCollapsed ? "w-24 px-4" : "w-72 px-6"
           }`}
         >
@@ -137,14 +139,16 @@ const DashboardLayout = () => {
             }
           />
 
-          <nav className="mt-10">
-            <SidebarMenuList
-              items={mainMenu}
-              isCollapsed={isDesktopSidebarCollapsed}
-            />
-          </nav>
+          <div className="mt-10 min-h-0 flex-1 overflow-y-auto">
+            <nav>
+              <SidebarMenuList
+                items={mainMenu}
+                isCollapsed={isDesktopSidebarCollapsed}
+              />
+            </nav>
+          </div>
 
-          <div className="mt-auto border-t border-slate-200 pt-6">
+          <div className="mt-6 border-t border-slate-200 pt-6">
             <SidebarMenuList
               items={secondaryMenu}
               isCollapsed={isDesktopSidebarCollapsed}

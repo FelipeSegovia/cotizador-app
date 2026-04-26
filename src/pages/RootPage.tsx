@@ -1,7 +1,7 @@
 import {
   HiCheckCircle,
   HiClipboardDocumentList,
-  HiSparkles,
+  HiOutlineDocumentPlus,
   HiUsers,
 } from "react-icons/hi2";
 import { LABELS_ROOT_PAGE } from "../shared/data";
@@ -77,7 +77,7 @@ const RootPage = () => {
           type="button"
           className="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(5,150,105,0.35)] transition hover:bg-emerald-800"
         >
-          <HiSparkles className="text-base" />
+          <HiOutlineDocumentPlus className="text-base" />
           {LABELS_ROOT_PAGE.newQuotationButton}
         </button>
       </div>
