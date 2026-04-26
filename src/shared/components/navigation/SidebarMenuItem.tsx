@@ -21,15 +21,80 @@ export type NavigationMenuItem = {
 type SidebarMenuItemProps = {
   item: NavigationMenuItem;
   onClick?: () => void;
+  isCollapsed?: boolean;
 };
 
-const SidebarMenuItem = ({ item, onClick }: SidebarMenuItemProps) => {
+const SidebarMenuItem = ({
+  item,
+  onClick,
+  isCollapsed = false,
+}: SidebarMenuItemProps) => {
   const location = useLocation();
   const isChildActive =
     item.children?.some((c) => location.pathname.startsWith(c.to)) ?? false;
   const [isOpen, setIsOpen] = useState(isChildActive);
 
+  const handleChildItemClick = () => {
+    setIsOpen(false);
+    onClick?.();
+  };
+
   if (item.children) {
+    if (isCollapsed) {
+      return (
+        <div className="relative">
+          <button
+            type="button"
+            title={item.label}
+            aria-label={item.label}
+            onClick={() => setIsOpen((prev) => !prev)}
+            className={`group flex h-11 w-11 items-center justify-center rounded-xl transition ${
+              isChildActive || isOpen
+                ? "bg-emerald-50 text-emerald-800"
+                : "text-slate-600 hover:bg-white hover:text-slate-900"
+            }`}
+          >
+            <span
+              className={`transition ${
+                isChildActive || isOpen
+                  ? "text-emerald-700"
+                  : "text-slate-400 group-hover:text-slate-700"
+              }`}
+            >
+              {item.icon}
+            </span>
+          </button>
+
+          {isOpen && (
+            <div className="absolute left-full top-1/2 z-50 ml-3 w-56 -translate-y-1/2 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+              <p className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                {item.label}
+              </p>
+              <div className="space-y-1">
+                {item.children.map((child) => (
+                  <NavLink
+                    key={child.to}
+                    to={child.to}
+                    end={child.end}
+                    onClick={handleChildItemClick}
+                    className={({ isActive }) =>
+                      `flex w-full items-center rounded-xl px-3 py-2 text-sm font-medium transition ${
+                        isActive
+                          ? "bg-emerald-50 text-emerald-800"
+                          : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                      }`
+                    }
+                  >
+                    {child.label}
+                  </NavLink>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
     return (
       <div>
         <button
@@ -63,7 +128,7 @@ const SidebarMenuItem = ({ item, onClick }: SidebarMenuItemProps) => {
                 key={child.to}
                 to={child.to}
                 end={child.end}
-                onClick={onClick}
+                onClick={handleChildItemClick}
                 className={({ isActive }) =>
                   `flex w-full items-center rounded-xl px-3 py-2 text-sm font-medium transition ${
                     isActive
@@ -87,8 +152,14 @@ const SidebarMenuItem = ({ item, onClick }: SidebarMenuItemProps) => {
         to={item.to}
         end={item.end}
         onClick={onClick}
+        title={isCollapsed ? item.label : undefined}
+        aria-label={isCollapsed ? item.label : undefined}
         className={({ isActive }) =>
-          `group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
+          `group flex items-center rounded-xl text-sm font-semibold transition ${
+            isCollapsed
+              ? "mx-auto h-11 w-11 justify-center px-0"
+              : "w-full gap-3 px-3 py-2.5"
+          } ${
             isActive
               ? "bg-emerald-50 text-emerald-800"
               : "text-slate-600 hover:bg-white hover:text-slate-900"
@@ -106,7 +177,7 @@ const SidebarMenuItem = ({ item, onClick }: SidebarMenuItemProps) => {
             >
               {item.icon}
             </span>
-            {item.label}
+            {!isCollapsed ? item.label : null}
           </>
         )}
       </NavLink>
@@ -117,12 +188,18 @@ const SidebarMenuItem = ({ item, onClick }: SidebarMenuItemProps) => {
     <button
       type="button"
       onClick={onClick}
-      className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-white hover:text-slate-900"
+      title={isCollapsed ? item.label : undefined}
+      aria-label={isCollapsed ? item.label : undefined}
+      className={`group flex items-center rounded-xl text-sm font-semibold text-slate-600 transition hover:bg-white hover:text-slate-900 ${
+        isCollapsed
+          ? "mx-auto h-11 w-11 justify-center px-0"
+          : "w-full gap-3 px-3 py-2.5"
+      }`}
     >
       <span className="text-slate-400 transition group-hover:text-slate-700">
         {item.icon}
       </span>
-      {item.label}
+      {!isCollapsed ? item.label : null}
     </button>
   );
 };

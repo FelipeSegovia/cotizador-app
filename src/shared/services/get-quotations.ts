@@ -8,7 +8,7 @@ export const getQuotations = async (
   params: GetQuotationsParams = {},
 ): Promise<Quotation[]> => {
   const { signal } = params;
-  const res = await fetch("/api/quotations", { signal });
+  const res = await fetch(import.meta.env.VITE_BASE_URL_MOCK, { signal });
 
   if (!res.ok) {
     throw new Error("Error al obtener las cotizaciones");

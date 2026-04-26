@@ -5,6 +5,8 @@ import {
   HiBars3,
   HiBell,
   HiChartBar,
+  HiChevronDoubleLeft,
+  HiChevronDoubleRight,
   HiClipboardDocumentList,
   HiCog6Tooth,
   HiDocumentText,
@@ -49,6 +51,8 @@ const mainMenu: NavigationMenuItem[] = [
 const DashboardLayout = () => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDesktopSidebarCollapsed, setIsDesktopSidebarCollapsed] =
+    useState(false);
 
   const secondaryMenu: NavigationMenuItem[] = [
     {
@@ -100,15 +104,51 @@ const DashboardLayout = () => {
       </aside>
       {/* Desktop sidebar */}
       <div className="mx-auto flex min-h-screen max-w-screen-2xl">
-        <aside className="hidden w-72 flex-col border-r border-slate-200 bg-[#f5f7fb] px-6 py-8 md:flex">
-          <SidebarBrand />
+        <aside
+          className={`hidden flex-col border-r border-slate-200 bg-[#f5f7fb] py-8 transition-all duration-300 md:flex ${
+            isDesktopSidebarCollapsed ? "w-24 px-4" : "w-72 px-6"
+          }`}
+        >
+          <SidebarBrand
+            isCollapsed={isDesktopSidebarCollapsed}
+            rightContent={
+              <button
+                type="button"
+                aria-label={
+                  isDesktopSidebarCollapsed
+                    ? "Expandir navegación"
+                    : "Minimizar navegación"
+                }
+                className={`flex items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-slate-300 hover:text-slate-800 ${
+                  isDesktopSidebarCollapsed ? "h-11 w-11" : "h-9 w-9"
+                }`}
+                onClick={() =>
+                  setIsDesktopSidebarCollapsed(
+                    (prevCollapsed) => !prevCollapsed,
+                  )
+                }
+              >
+                {isDesktopSidebarCollapsed ? (
+                  <HiChevronDoubleRight className="text-base" />
+                ) : (
+                  <HiChevronDoubleLeft className="text-base" />
+                )}
+              </button>
+            }
+          />
 
           <nav className="mt-10">
-            <SidebarMenuList items={mainMenu} />
+            <SidebarMenuList
+              items={mainMenu}
+              isCollapsed={isDesktopSidebarCollapsed}
+            />
           </nav>
 
           <div className="mt-auto border-t border-slate-200 pt-6">
-            <SidebarMenuList items={secondaryMenu} />
+            <SidebarMenuList
+              items={secondaryMenu}
+              isCollapsed={isDesktopSidebarCollapsed}
+            />
           </div>
         </aside>
 
