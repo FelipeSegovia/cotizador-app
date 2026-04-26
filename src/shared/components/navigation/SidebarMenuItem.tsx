@@ -33,18 +33,11 @@ const SidebarMenuItem = ({
   const collapsedItemRef = useRef<HTMLDivElement | null>(null);
   const isChildActive =
     item.children?.some((c) => location.pathname.startsWith(c.to)) ?? false;
-  const [isOpen, setIsOpen] = useState(isChildActive);
-
-  useEffect(() => {
-    if (isCollapsed) {
-      setIsOpen(false);
-      return;
-    }
-
-    if (isChildActive) {
-      setIsOpen(true);
-    }
-  }, [isCollapsed, isChildActive]);
+  const [isExpandedOpen, setIsExpandedOpen] = useState(isChildActive);
+  const [isCollapsedOpen, setIsCollapsedOpen] = useState(false);
+  const isOpen = isCollapsed
+    ? isCollapsedOpen
+    : isChildActive || isExpandedOpen;
 
   useEffect(() => {
     if (!isCollapsed || !isOpen) {
@@ -55,7 +48,7 @@ const SidebarMenuItem = ({
       const targetNode = event.target as Node;
 
       if (!collapsedItemRef.current?.contains(targetNode)) {
-        setIsOpen(false);
+        setIsCollapsedOpen(false);
       }
     };
 
@@ -68,7 +61,7 @@ const SidebarMenuItem = ({
 
   const handleChildItemClick = () => {
     if (isCollapsed) {
-      setIsOpen(false);
+      setIsCollapsedOpen(false);
     }
     onClick?.();
   };
@@ -81,7 +74,7 @@ const SidebarMenuItem = ({
             type="button"
             title={item.label}
             aria-label={item.label}
-            onClick={() => setIsOpen((prev) => !prev)}
+            onClick={() => setIsCollapsedOpen((prev) => !prev)}
             className={`group flex h-11 w-11 items-center justify-center rounded-xl transition ${
               isChildActive
                 ? "bg-emerald-50 text-emerald-800"
@@ -133,7 +126,7 @@ const SidebarMenuItem = ({
       <div>
         <button
           type="button"
-          onClick={() => setIsOpen((prev) => !prev)}
+          onClick={() => setIsExpandedOpen((prev) => !prev)}
           className={`group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
             isChildActive
               ? "bg-emerald-50 text-emerald-800"
