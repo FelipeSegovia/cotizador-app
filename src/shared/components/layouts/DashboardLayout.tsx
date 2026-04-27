@@ -112,7 +112,7 @@ const DashboardLayout = () => {
       {/* Desktop sidebar */}
       <div className="mx-auto flex min-h-screen max-w-screen-2xl">
         <aside
-          className={`hidden flex-col border-r border-slate-200 bg-[#f5f7fb] py-8 transition-all duration-300 md:sticky md:top-0 md:flex md:h-screen md:self-start md:overflow-hidden ${
+          className={`hidden flex-col border-r border-slate-200 bg-[#f5f7fb] py-8 transition-all duration-300 md:sticky md:top-0 md:z-20 md:flex md:h-screen md:self-start md:overflow-visible ${
             isDesktopSidebarCollapsed ? "w-24 px-4" : "w-72 px-6"
           }`}
         >
@@ -144,7 +144,11 @@ const DashboardLayout = () => {
             }
           />
 
-          <div className="mt-10 min-h-0 flex-1 overflow-y-auto">
+          <div
+            className={`mt-10 min-h-0 flex-1 ${
+              isDesktopSidebarCollapsed ? "overflow-visible" : "overflow-y-auto"
+            }`}
+          >
             <nav>
               <SidebarMenuList
                 items={mainMenu}
