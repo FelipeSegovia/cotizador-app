@@ -5,7 +5,10 @@ import {
 } from "react-icons/hi2";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { HiLockClosed, HiOutlineEnvelope } from "react-icons/hi2";
+import { useNavigate } from "react-router";
 import { FormField, FormSubmitButton } from "../shared/components/forms";
+import { LABELS_LOGIN, PATHS } from "../shared/data";
+import useAuthStore from "../shared/store/useAuthStore";
 
 type LoginFormValues = {
   email: string;
@@ -13,6 +16,9 @@ type LoginFormValues = {
 };
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const { login, error: authError, clearError } = useAuthStore();
+
   const {
     register,
     handleSubmit,
@@ -26,7 +32,14 @@ const LoginPage = () => {
   });
 
   const onSubmit: SubmitHandler<LoginFormValues> = async (values) => {
-    void values;
+    try {
+      clearError();
+      await login(values.email, values.password);
+      navigate(PATHS.DASHBOARD);
+    } catch (error) {
+      // El error ya está en el store
+      void error;
+    }
   };
 
   return (
@@ -39,11 +52,11 @@ const LoginPage = () => {
             </div>
 
             <h1 className="mt-5 text-[2.1rem] font-extrabold tracking-[-0.03em] text-slate-900">
-              Bienvenido
+              {LABELS_LOGIN.title}
             </h1>
 
             <p className="mt-2 text-sm font-medium text-slate-500">
-              Sitio de cotizaciones para NeuralCode
+              {LABELS_LOGIN.description}
             </p>
           </div>
 
@@ -51,15 +64,15 @@ const LoginPage = () => {
             <FormField
               id="email"
               type="email"
-              label="Correo electrónico"
-              placeholder="nombre@empresa.cl"
+              label={LABELS_LOGIN.labelEmail}
+              placeholder={LABELS_LOGIN.placeholderEmail}
               icon={HiOutlineEnvelope}
               autoComplete="email"
               registration={register("email", {
-                required: "El correo electrónico es obligatorio",
+                required: LABELS_LOGIN.requiredField.email,
                 pattern: {
                   value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Ingresa un correo electrónico válido",
+                  message: LABELS_LOGIN.errorField.email,
                 },
               })}
               error={errors.email?.message}
@@ -68,31 +81,37 @@ const LoginPage = () => {
             <FormField
               id="password"
               type="password"
-              label="Contraseña"
-              placeholder="••••••••••"
+              label={LABELS_LOGIN.labelPassword}
+              placeholder={LABELS_LOGIN.placeholderPassword}
               icon={HiLockClosed}
               autoComplete="current-password"
               registration={register("password", {
-                required: "La contraseña es obligatoria",
+                required: LABELS_LOGIN.requiredField.password,
                 minLength: {
                   value: 8,
-                  message: "Debe tener al menos 8 caracteres",
+                  message: LABELS_LOGIN.errorField.password,
                 },
               })}
               error={errors.password?.message}
             />
+
+            {authError && (
+              <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">
+                {authError}
+              </div>
+            )}
 
             <div className="flex items-center justify-end gap-4 text-sm">
               <button
                 type="button"
                 className="font-medium text-emerald-700 transition hover:text-emerald-800"
               >
-                ¿Olvidé mi contraseña?
+                {LABELS_LOGIN.forgotPassword}
               </button>
             </div>
 
             <FormSubmitButton
-              label="Iniciar sesión"
+              label={LABELS_LOGIN.submitButton}
               isLoading={isSubmitting}
               icon={<HiArrowRight className="text-base" />}
             />
@@ -102,7 +121,7 @@ const LoginPage = () => {
         <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-slate-500">
           <div className="flex items-center gap-2">
             <HiGlobeAlt className="text-base text-slate-400" />
-            <span>Soluciones digitales en todo Chile</span>
+            <span>{LABELS_LOGIN.footer}</span>
           </div>
         </div>
       </div>

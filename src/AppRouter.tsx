@@ -2,24 +2,40 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import {
   CompanyExpensesPage,
   LoginPage,
-  QuotationPage,
+  QuotationCreatorPage,
+  QuotationsListPage,
   RootPage,
   SettingsPage,
 } from "./pages";
-import { DashboardLayout } from "./shared/components/layouts";
+import { DashboardLayout, ProtectedRoute } from "./shared/components/layouts";
+import { PATHS } from "./shared/data";
 
 const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/dashboard" element={<DashboardLayout />}>
+        <Route path={PATHS.LOGIN} element={<LoginPage />} />
+        <Route
+          path={PATHS.DASHBOARD}
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<RootPage />} />
-          <Route path="cotizaciones" element={<QuotationPage />} />
-          <Route path="gastos" element={<CompanyExpensesPage />} />
-          <Route path="configuracion" element={<SettingsPage />} />
+          <Route path={PATHS.QUOTATIONS} element={<QuotationsListPage />} />
+          <Route
+            path={PATHS.NEW_QUOTATION}
+            element={<QuotationCreatorPage />}
+          />
+          <Route
+            path={PATHS.COMPANY_EXPENSES}
+            element={<CompanyExpensesPage />}
+          />
+          <Route path={PATHS.SETTINGS} element={<SettingsPage />} />
         </Route>
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="*" element={<Navigate to={PATHS.LOGIN} />} />
       </Routes>
     </BrowserRouter>
   );
