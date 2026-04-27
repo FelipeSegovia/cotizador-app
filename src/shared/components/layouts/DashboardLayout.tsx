@@ -20,6 +20,7 @@ import {
   type NavigationMenuItem,
 } from "../navigation";
 import { PATHS } from "../../data";
+import useAuthStore from "../../store/useAuthStore";
 
 const mainMenu: NavigationMenuItem[] = [
   {
@@ -50,6 +51,7 @@ const mainMenu: NavigationMenuItem[] = [
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
+  const logout = useAuthStore((state) => state.logout);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDesktopSidebarCollapsed, setIsDesktopSidebarCollapsed] =
     useState(false);
@@ -58,7 +60,10 @@ const DashboardLayout = () => {
     {
       label: "Cerrar sesión",
       icon: <HiArrowRightOnRectangle className="text-lg" />,
-      onClick: () => navigate(PATHS.LOGIN),
+      onClick: () => {
+        logout();
+        navigate(PATHS.LOGIN, { replace: true });
+      },
     },
   ];
 

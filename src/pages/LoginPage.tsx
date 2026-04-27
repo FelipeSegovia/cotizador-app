@@ -5,8 +5,10 @@ import {
 } from "react-icons/hi2";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { HiLockClosed, HiOutlineEnvelope } from "react-icons/hi2";
+import { useNavigate } from "react-router";
 import { FormField, FormSubmitButton } from "../shared/components/forms";
-import { LABELS_LOGIN } from "../shared/data";
+import { LABELS_LOGIN, PATHS } from "../shared/data";
+import useAuthStore from "../shared/store/useAuthStore";
 
 type LoginFormValues = {
   email: string;
@@ -14,6 +16,9 @@ type LoginFormValues = {
 };
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const { login, error: authError, clearError } = useAuthStore();
+
   const {
     register,
     handleSubmit,
@@ -27,7 +32,14 @@ const LoginPage = () => {
   });
 
   const onSubmit: SubmitHandler<LoginFormValues> = async (values) => {
-    void values;
+    try {
+      clearError();
+      await login(values.email, values.password);
+      navigate(PATHS.DASHBOARD);
+    } catch (error) {
+      // El error ya está en el store
+      void error;
+    }
   };
 
   return (
@@ -82,6 +94,12 @@ const LoginPage = () => {
               })}
               error={errors.password?.message}
             />
+
+            {authError && (
+              <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">
+                {authError}
+              </div>
+            )}
 
             <div className="flex items-center justify-end gap-4 text-sm">
               <button

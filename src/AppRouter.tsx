@@ -7,7 +7,7 @@ import {
   RootPage,
   SettingsPage,
 } from "./pages";
-import { DashboardLayout } from "./shared/components/layouts";
+import { DashboardLayout, ProtectedRoute } from "./shared/components/layouts";
 import { PATHS } from "./shared/data";
 
 const AppRouter = () => {
@@ -15,7 +15,14 @@ const AppRouter = () => {
     <BrowserRouter>
       <Routes>
         <Route path={PATHS.LOGIN} element={<LoginPage />} />
-        <Route path={PATHS.DASHBOARD} element={<DashboardLayout />}>
+        <Route
+          path={PATHS.DASHBOARD}
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<RootPage />} />
           <Route path={PATHS.QUOTATIONS} element={<QuotationsListPage />} />
           <Route

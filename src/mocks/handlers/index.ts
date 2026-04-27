@@ -1,3 +1,4 @@
 import { quotationHandlers } from "./quotations";
+import { authHandlers } from "./auth";
 
-export const handlers = [...quotationHandlers];
+export const handlers = [...authHandlers, ...quotationHandlers];
