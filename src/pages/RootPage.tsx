@@ -4,9 +4,10 @@ import {
   HiOutlineDocumentPlus,
   HiUsers,
 } from "react-icons/hi2";
-import { LABELS_ROOT_PAGE } from "../shared/data";
+import { LABELS_ROOT_PAGE, PATHS } from "../shared/data";
 import { useQuotations } from "../shared/hooks";
 import type { QuotationStatus } from "../shared/types/quotation";
+import { Link, useNavigate } from "react-router";
 
 const currencyFormatter = new Intl.NumberFormat("es-CL", {
   style: "currency",
@@ -36,6 +37,7 @@ const statusClassMap: Record<QuotationStatus, string> = {
 
 const RootPage = () => {
   const { data: quotations = [], isError, isLoading, error } = useQuotations();
+  const navigate = useNavigate();
 
   const totalQuoted = quotations.reduce(
     (sum, quotation) => sum + quotation.total,
@@ -61,6 +63,8 @@ const RootPage = () => {
 
   const hasData = recentQuotations.length > 0;
 
+  const handleCreateQuotation = () => navigate(PATHS.NEW_QUOTATION);
+
   return (
     <>
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -76,6 +80,7 @@ const RootPage = () => {
         <button
           type="button"
           className="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(5,150,105,0.35)] transition hover:bg-emerald-800"
+          onClick={handleCreateQuotation}
         >
           <HiOutlineDocumentPlus className="text-base" />
           {LABELS_ROOT_PAGE.newQuotationButton}
@@ -126,12 +131,12 @@ const RootPage = () => {
             <h3 className="text-3xl font-bold tracking-[-0.03em] text-slate-900">
               {LABELS_ROOT_PAGE.recentQuotations.title}
             </h3>
-            <button
-              type="button"
+            <Link
+              to={PATHS.QUOTATIONS}
               className="text-sm font-semibold text-emerald-700 transition hover:text-emerald-800"
             >
               {LABELS_ROOT_PAGE.recentQuotations.viewAll}
-            </button>
+            </Link>
           </div>
 
           <div className="mt-5 overflow-x-auto">
