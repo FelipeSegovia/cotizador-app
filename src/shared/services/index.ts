@@ -1,3 +1,4 @@
 import { getQuotations } from "./get-quotations";
+import { createQuotation, updateQuotation } from "./save-quotation";
 
-export { getQuotations };
+export { createQuotation, getQuotations, updateQuotation };
