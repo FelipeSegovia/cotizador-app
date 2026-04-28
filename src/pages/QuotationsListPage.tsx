@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router";
 import {
+  HiInformationCircle,
   HiOutlineDocumentPlus,
   HiOutlineEye,
   HiOutlineDocumentText,
 } from "react-icons/hi2";
 import { useQuotations } from "../shared/hooks";
 import { LABELS_QUOTATIONS_LIST_PAGE, PATHS } from "../shared/data";
+import { useQuotationDraftStore } from "../shared/store";
 import type { QuotationStatus } from "../shared/types/quotation";
 
 const STATUS_LABELS: Record<QuotationStatus, string> = {
@@ -35,6 +37,33 @@ const formatDate = (iso: string) =>
 const QuotationsListPage = () => {
   const navigate = useNavigate();
   const { data: quotations, isLoading, isError } = useQuotations();
+  const { setDraft, setPreviewMode, setSavedQuotationId } =
+    useQuotationDraftStore();
+
+  const handleEditDraftQuotation = (quotationId: string) => {
+    const quotation = quotations?.find((item) => item.id === quotationId);
+
+    if (!quotation || quotation.status !== "draft") {
+      return;
+    }
+
+    setDraft({
+      clientName: quotation.clientName,
+      clientRut: quotation.clientRut ?? "",
+      clientEmail: quotation.clientEmail ?? "",
+      projectTitle: quotation.projectTitle,
+      projectDeadline: quotation.projectDeadline ?? "",
+      projectNotes: quotation.projectNotes ?? "",
+      items: quotation.items.map((item) => ({
+        description: item.description,
+        unitPrice: item.unitPrice,
+        quantity: item.quantity,
+      })),
+    });
+    setSavedQuotationId(quotation.id);
+    setPreviewMode(false);
+    navigate(PATHS.NEW_QUOTATION);
+  };
 
   return (
     <div className="space-y-6">
@@ -56,6 +85,11 @@ const QuotationsListPage = () => {
           <HiOutlineDocumentPlus className="text-base" />
           {LABELS_QUOTATIONS_LIST_PAGE.newQuotationButton}
         </button>
+      </div>
+
+      <div className="flex items-start gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+        <HiInformationCircle className="mt-0.5 shrink-0 text-base" />
+        <p>{LABELS_QUOTATIONS_LIST_PAGE.draftEditInfo}</p>
       </div>
 
       {/* Table */}
@@ -141,13 +175,16 @@ const QuotationsListPage = () => {
                       {formatDate(q.createdAt)}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button
-                        type="button"
-                        className="flex items-center gap-1 text-xs font-semibold text-emerald-700 opacity-0 transition hover:text-emerald-800 group-hover:opacity-100"
-                      >
-                        <HiOutlineEye className="text-sm" />
-                        {LABELS_QUOTATIONS_LIST_PAGE.table.action}
-                      </button>
+                      {q.status === "draft" ? (
+                        <button
+                          type="button"
+                          onClick={() => handleEditDraftQuotation(q.id)}
+                          className="flex items-center gap-1 text-xs font-semibold text-emerald-700 opacity-0 transition hover:text-emerald-800 group-hover:opacity-100"
+                        >
+                          <HiOutlineEye className="text-sm" />
+                          {LABELS_QUOTATIONS_LIST_PAGE.table.actionEditDraft}
+                        </button>
+                      ) : null}
                     </td>
                   </tr>
                 ))}
