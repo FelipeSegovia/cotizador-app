@@ -6,6 +6,7 @@ import LABELS_QUOTATIONS_LIST_PAGE from "./labels-quotations-list-page";
 import LABELS_ROOT_PAGE from "./labels-root-page";
 import LABELS_SETTINGS_PAGE from "./labels-settings-page";
 import PATHS from "./paths";
+import endpoints from "./endpoint";
 
 export {
   LABELS_COMPANY_EXPENSES_PAGE,
@@ -16,4 +17,5 @@ export {
   LABELS_ROOT_PAGE,
   LABELS_SETTINGS_PAGE,
   PATHS,
+  endpoints,
 };

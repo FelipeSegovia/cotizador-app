@@ -39,6 +39,18 @@ const SidebarMenuItem = ({
     ? isCollapsedOpen
     : isChildActive || isExpandedOpen;
 
+  const renderCollapsedTooltip = (label: string) => {
+    if (!isCollapsed) {
+      return null;
+    }
+
+    return (
+      <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-3 -translate-y-1/2 whitespace-nowrap rounded-md bg-slate-800 px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-md transition-opacity duration-150 group-hover:opacity-100">
+        {label}
+      </span>
+    );
+  };
+
   useEffect(() => {
     if (!isCollapsed || !isOpen) {
       return;
@@ -75,7 +87,7 @@ const SidebarMenuItem = ({
             title={item.label}
             aria-label={item.label}
             onClick={() => setIsCollapsedOpen((prev) => !prev)}
-            className={`group flex h-11 w-11 items-center justify-center rounded-xl transition ${
+            className={`group relative flex h-11 w-11 items-center justify-center rounded-xl transition ${
               isChildActive
                 ? "bg-emerald-50 text-emerald-800"
                 : "text-slate-600 hover:bg-white hover:text-slate-900"
@@ -90,6 +102,7 @@ const SidebarMenuItem = ({
             >
               {item.icon}
             </span>
+            {renderCollapsedTooltip(item.label)}
           </button>
 
           {isOpen && (
@@ -182,7 +195,7 @@ const SidebarMenuItem = ({
         title={isCollapsed ? item.label : undefined}
         aria-label={isCollapsed ? item.label : undefined}
         className={({ isActive }) =>
-          `group flex items-center rounded-xl text-sm font-semibold transition ${
+          `group relative flex items-center rounded-xl text-sm font-semibold transition ${
             isCollapsed
               ? "mx-auto h-11 w-11 justify-center px-0"
               : "w-full gap-3 px-3 py-2.5"
@@ -205,6 +218,7 @@ const SidebarMenuItem = ({
               {item.icon}
             </span>
             {!isCollapsed ? item.label : null}
+            {renderCollapsedTooltip(item.label)}
           </>
         )}
       </NavLink>
@@ -217,7 +231,7 @@ const SidebarMenuItem = ({
       onClick={onClick}
       title={isCollapsed ? item.label : undefined}
       aria-label={isCollapsed ? item.label : undefined}
-      className={`group flex items-center rounded-xl text-sm font-semibold text-slate-600 transition hover:bg-white hover:text-slate-900 ${
+      className={`group relative flex items-center rounded-xl text-sm font-semibold text-slate-600 transition hover:bg-white hover:text-slate-900 ${
         isCollapsed
           ? "mx-auto h-11 w-11 justify-center px-0"
           : "w-full gap-3 px-3 py-2.5"

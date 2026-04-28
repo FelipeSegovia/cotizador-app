@@ -7,7 +7,11 @@ const LABELS_QUOTATION_PAGE = {
   actions: {
     discardDraft: "Descartar Borrador",
     saveAndPreview: "Guardar y Previsualizar",
+    savingAndPreview: "Guardando y previsualizando...",
     sendToClient: "Enviar al Cliente",
+  },
+  feedback: {
+    saveError: "No se pudo guardar la cotizacion. Intenta nuevamente.",
   },
   clientSection: {
     title: "Informacion del Cliente",

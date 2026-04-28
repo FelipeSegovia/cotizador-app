@@ -1,7 +1,7 @@
 const LABELS_ROOT_PAGE = {
   title: "Dashboard",
   welcome: "Bienvenido de nuevo.",
-  newQuotationButton: "Nueva Cotizacion",
+  newQuotationButton: "Nueva Cotización",
   metrics: {
     totalQuoted: "Total de cotizaciones (30 días)",
     pendingQuotes: "Cotizaciones Pendientes",

@@ -7,6 +7,7 @@ import {
 } from "react-icons/hi2";
 import { LABELS_QUOTATION_PREVIEW_PAGE, PATHS } from "../shared/data";
 import { useQuotationDraftStore } from "../shared/store";
+import type { QuotationStatus } from "../shared/types/quotation";
 
 const IVA_RATE = 0.19;
 
@@ -39,7 +40,13 @@ const formatDate = (date: Date) =>
 
 const QuotationPreviewPage = () => {
   const navigate = useNavigate();
-  const { draft, setPreviewMode, resetDraft } = useQuotationDraftStore();
+  const {
+    draft,
+    isReadOnlyPreview,
+    previewStatus,
+    setPreviewMode,
+    resetDraft,
+  } = useQuotationDraftStore();
 
   if (draft === null) return null;
 
@@ -53,12 +60,28 @@ const QuotationPreviewPage = () => {
   const emissionDate = new Date();
   const validDate = draft.projectDeadline
     ? new Date(draft.projectDeadline + "T00:00:00")
-    : new Date(Date.now() + 15 * 24 * 60 * 60 * 1000);
+    : new Date(emissionDate.getTime() + 15 * 24 * 60 * 60 * 1000);
 
   const handleBackToList = () => {
     resetDraft();
     navigate(PATHS.QUOTATIONS);
   };
+
+  const statusBadgeLabelMap: Record<QuotationStatus, string> = {
+    draft: LABELS_QUOTATION_PREVIEW_PAGE.topBar.draftBadge,
+    sent: LABELS_QUOTATION_PREVIEW_PAGE.topBar.sentBadge,
+    approved: LABELS_QUOTATION_PREVIEW_PAGE.topBar.approvedBadge,
+    rejected: LABELS_QUOTATION_PREVIEW_PAGE.topBar.draftBadge,
+  };
+
+  const statusBadgeClassMap: Record<QuotationStatus, string> = {
+    draft: "bg-amber-100 text-amber-700",
+    sent: "bg-blue-100 text-blue-700",
+    approved: "bg-emerald-100 text-emerald-700",
+    rejected: "bg-slate-100 text-slate-700",
+  };
+
+  const currentStatus = previewStatus ?? "draft";
 
   return (
     <div className="space-y-6">
@@ -74,20 +97,29 @@ const QuotationPreviewPage = () => {
             {LABELS_QUOTATION_PREVIEW_PAGE.topBar.backToList}
           </button>
           <span className="h-4 w-px bg-slate-300" />
-          <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-amber-700">
-            {LABELS_QUOTATION_PREVIEW_PAGE.topBar.draftBadge}
+          <span
+            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide ${statusBadgeClassMap[currentStatus]}`}
+          >
+            {statusBadgeLabelMap[currentStatus]}
           </span>
+          {isReadOnlyPreview ? (
+            <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-slate-600">
+              {LABELS_QUOTATION_PREVIEW_PAGE.topBar.readOnlyInfo}
+            </span>
+          ) : null}
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setPreviewMode(false)}
-            className="flex items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-100"
-          >
-            <HiOutlinePencilSquare className="text-base" />
-            {LABELS_QUOTATION_PREVIEW_PAGE.topBar.backToEdit}
-          </button>
+          {!isReadOnlyPreview ? (
+            <button
+              type="button"
+              onClick={() => setPreviewMode(false)}
+              className="flex items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-100"
+            >
+              <HiOutlinePencilSquare className="text-base" />
+              {LABELS_QUOTATION_PREVIEW_PAGE.topBar.backToEdit}
+            </button>
+          ) : null}
           <button
             type="button"
             className="flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
@@ -95,13 +127,15 @@ const QuotationPreviewPage = () => {
             <HiOutlineArrowDownTray className="text-base" />
             {LABELS_QUOTATION_PREVIEW_PAGE.topBar.downloadPdf}
           </button>
-          <button
-            type="button"
-            className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
-          >
-            <HiOutlineEnvelope className="text-base" />
-            {LABELS_QUOTATION_PREVIEW_PAGE.topBar.sendQuotation}
-          </button>
+          {!isReadOnlyPreview ? (
+            <button
+              type="button"
+              className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
+            >
+              <HiOutlineEnvelope className="text-base" />
+              {LABELS_QUOTATION_PREVIEW_PAGE.topBar.sendQuotation}
+            </button>
+          ) : null}
         </div>
       </div>
 

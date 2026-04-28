@@ -1,6 +1,8 @@
 const LABELS_QUOTATIONS_LIST_PAGE = {
   title: "Cotizaciones",
   subtitle: "Gestiona y da seguimiento a tus cotizaciones",
+  draftEditInfo:
+    "Las cotizaciones en estado Borrador pueden editarse; Enviada y Aprobada solo permiten previsualizacion.",
   newQuotationButton: "Nueva Cotización",
   loading: "Cargando cotizaciones...",
   loadError: "Error al cargar las cotizaciones. Intenta de nuevo.",
@@ -16,6 +18,8 @@ const LABELS_QUOTATIONS_LIST_PAGE = {
     total: "Total",
     date: "Fecha",
     action: "Ver",
+    actionEditDraft: "Editar",
+    actionViewPreview: "Ver",
   },
   statusLabels: {
     draft: "Borrador",

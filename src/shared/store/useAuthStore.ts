@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { AuthState, AuthActions, User } from "../types/auth";
-import { authService } from "../services/auth";
+import { login, logout } from "../services";
 
 const STORAGE_KEY = "auth_token";
 const STORAGE_EXPIRY_KEY = "auth_expiry";
@@ -68,10 +68,7 @@ const useAuthStore = create<AuthStore>((set, get) => ({
   login: async (email: string, password: string) => {
     set({ isLoading: true, error: null });
     try {
-      const { user, token, expiresIn } = await authService.login(
-        email,
-        password,
-      );
+      const { user, token, expiresIn } = await login(email, password);
 
       const expiresAt =
         parseJwtExpiry(token) ??
@@ -104,7 +101,7 @@ const useAuthStore = create<AuthStore>((set, get) => ({
     const currentToken = get().token;
 
     if (currentToken) {
-      void authService.logout(currentToken);
+      void logout(currentToken);
     }
 
     set({

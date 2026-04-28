@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import {
   HiOutlineClipboardDocument,
@@ -13,8 +14,12 @@ import { MdOutlineEmail } from "react-icons/md";
 import { FormField, FormTextareaField } from "../shared/components/forms";
 import { SectionCard } from "../shared/components/ui";
 import { LABELS_QUOTATION_PAGE } from "../shared/data";
+import { createQuotation, updateQuotation } from "../shared/services";
 import { useQuotationDraftStore } from "../shared/store";
-import type { QuotationFormData } from "../shared/types/quotation";
+import type {
+  CreateQuotationDto,
+  QuotationFormData,
+} from "../shared/types/quotation";
 
 const IVA_RATE = 0.19;
 
@@ -22,7 +27,18 @@ const formatCLP = (value: number) =>
   `$${Math.round(value).toLocaleString("es-CL")}`;
 
 const QuotationPage = () => {
-  const { draft, setDraft, setPreviewMode } = useQuotationDraftStore();
+  const {
+    draft,
+    savedQuotationId,
+    setDraft,
+    setPreviewMode,
+    setPreviewStatus,
+    setReadOnlyPreview,
+    setSavedQuotationId,
+  } = useQuotationDraftStore();
+  const queryClient = useQueryClient();
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const {
     register,
@@ -59,9 +75,59 @@ const QuotationPage = () => {
   const iva = subtotal * IVA_RATE;
   const total = subtotal + iva;
 
-  const onSubmit = (data: QuotationFormData) => {
-    setDraft(data);
-    setPreviewMode(true);
+  const buildQuotationPayload = (
+    data: QuotationFormData,
+  ): CreateQuotationDto => {
+    const items = data.items.map((item, index) => {
+      const unitPrice = Number(item.unitPrice) || 0;
+      const quantity = Number(item.quantity) || 0;
+
+      return {
+        id: `${Date.now()}-${index}`,
+        description: item.description,
+        unitPrice,
+        quantity,
+        subtotal: unitPrice * quantity,
+      };
+    });
+
+    return {
+      clientName: data.clientName,
+      clientRut: data.clientRut,
+      clientEmail: data.clientEmail,
+      projectTitle: data.projectTitle,
+      projectDeadline: data.projectDeadline,
+      projectNotes: data.projectNotes,
+      items,
+      status: "draft",
+    };
+  };
+
+  const onSubmit = async (data: QuotationFormData) => {
+    setSaveError(null);
+    setIsSaving(true);
+
+    try {
+      const payload = buildQuotationPayload(data);
+      const savedQuotation = savedQuotationId
+        ? await updateQuotation(savedQuotationId, payload)
+        : await createQuotation(payload);
+
+      setDraft(data);
+      setSavedQuotationId(savedQuotation.id);
+      setReadOnlyPreview(false);
+      setPreviewStatus("draft");
+      setPreviewMode(true);
+      await queryClient.invalidateQueries({ queryKey: ["quotations"] });
+    } catch (error) {
+      setSaveError(
+        error instanceof Error
+          ? error.message
+          : LABELS_QUOTATION_PAGE.feedback.saveError,
+      );
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -89,14 +155,21 @@ const QuotationPage = () => {
           </button>
           <button
             type="button"
+            disabled={isSaving}
             onClick={handleSubmit(onSubmit)}
-            className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
+            className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-70"
           >
             <HiOutlineEye className="text-base" />
-            {LABELS_QUOTATION_PAGE.actions.saveAndPreview}
+            {isSaving
+              ? LABELS_QUOTATION_PAGE.actions.savingAndPreview
+              : LABELS_QUOTATION_PAGE.actions.saveAndPreview}
           </button>
         </div>
       </div>
+
+      {saveError ? (
+        <p className="text-sm font-medium text-rose-600">{saveError}</p>
+      ) : null}
 
       {/* Content Grid */}
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
@@ -387,11 +460,14 @@ const QuotationPage = () => {
             <div className="mt-6 space-y-3">
               <button
                 type="button"
+                disabled={isSaving}
                 onClick={handleSubmit(onSubmit)}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 text-sm font-semibold text-white transition hover:bg-emerald-400"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-70"
               >
                 <HiOutlineEye className="text-base" />
-                {LABELS_QUOTATION_PAGE.actions.saveAndPreview}
+                {isSaving
+                  ? LABELS_QUOTATION_PAGE.actions.savingAndPreview
+                  : LABELS_QUOTATION_PAGE.actions.saveAndPreview}
               </button>
               <button
                 type="button"

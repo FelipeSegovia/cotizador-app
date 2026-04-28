@@ -1,16 +1,9 @@
-import { useEffect } from "react";
 import { useQuotationDraftStore } from "../shared/store";
 import QuotationPage from "./QuotationPage";
 import QuotationPreviewPage from "./QuotationPreviewPage";
 
 const QuotationCreatorPage = () => {
-  const { isPreviewMode, resetDraft } = useQuotationDraftStore();
-
-  useEffect(() => {
-    return () => {
-      resetDraft();
-    };
-  }, []);
+  const { isPreviewMode } = useQuotationDraftStore();
 
   return isPreviewMode ? <QuotationPreviewPage /> : <QuotationPage />;
 };
