@@ -2,9 +2,12 @@ const LABELS_QUOTATION_PREVIEW_PAGE = {
   topBar: {
     backToList: "Volver al Listado",
     draftBadge: "Borrador",
+    sentBadge: "Enviada",
+    approvedBadge: "Aprobada",
     backToEdit: "Volver a Editar",
     downloadPdf: "Descargar PDF",
     sendQuotation: "Enviar Cotizacion",
+    readOnlyInfo: "Vista en modo solo lectura",
   },
   document: {
     title: "Cotizacion",

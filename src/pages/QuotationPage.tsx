@@ -32,6 +32,8 @@ const QuotationPage = () => {
     savedQuotationId,
     setDraft,
     setPreviewMode,
+    setPreviewStatus,
+    setReadOnlyPreview,
     setSavedQuotationId,
   } = useQuotationDraftStore();
   const queryClient = useQueryClient();
@@ -113,6 +115,8 @@ const QuotationPage = () => {
 
       setDraft(data);
       setSavedQuotationId(savedQuotation.id);
+      setReadOnlyPreview(false);
+      setPreviewStatus("draft");
       setPreviewMode(true);
       await queryClient.invalidateQueries({ queryKey: ["quotations"] });
     } catch (error) {

@@ -37,8 +37,13 @@ const formatDate = (iso: string) =>
 const QuotationsListPage = () => {
   const navigate = useNavigate();
   const { data: quotations, isLoading, isError } = useQuotations();
-  const { setDraft, setPreviewMode, setSavedQuotationId } =
-    useQuotationDraftStore();
+  const {
+    setDraft,
+    setPreviewMode,
+    setPreviewStatus,
+    setReadOnlyPreview,
+    setSavedQuotationId,
+  } = useQuotationDraftStore();
 
   const handleEditDraftQuotation = (quotationId: string) => {
     const quotation = quotations?.find((item) => item.id === quotationId);
@@ -61,7 +66,39 @@ const QuotationsListPage = () => {
       })),
     });
     setSavedQuotationId(quotation.id);
+    setPreviewStatus("draft");
+    setReadOnlyPreview(false);
     setPreviewMode(false);
+    navigate(PATHS.NEW_QUOTATION);
+  };
+
+  const handleViewReadonlyPreview = (quotationId: string) => {
+    const quotation = quotations?.find((item) => item.id === quotationId);
+
+    if (
+      !quotation ||
+      (quotation.status !== "sent" && quotation.status !== "approved")
+    ) {
+      return;
+    }
+
+    setDraft({
+      clientName: quotation.clientName,
+      clientRut: quotation.clientRut ?? "",
+      clientEmail: quotation.clientEmail ?? "",
+      projectTitle: quotation.projectTitle,
+      projectDeadline: quotation.projectDeadline ?? "",
+      projectNotes: quotation.projectNotes ?? "",
+      items: quotation.items.map((item) => ({
+        description: item.description,
+        unitPrice: item.unitPrice,
+        quantity: item.quantity,
+      })),
+    });
+    setSavedQuotationId(quotation.id);
+    setPreviewStatus(quotation.status);
+    setReadOnlyPreview(true);
+    setPreviewMode(true);
     navigate(PATHS.NEW_QUOTATION);
   };
 
@@ -183,6 +220,17 @@ const QuotationsListPage = () => {
                         >
                           <HiOutlineEye className="text-sm" />
                           {LABELS_QUOTATIONS_LIST_PAGE.table.actionEditDraft}
+                        </button>
+                      ) : null}
+
+                      {q.status === "sent" || q.status === "approved" ? (
+                        <button
+                          type="button"
+                          onClick={() => handleViewReadonlyPreview(q.id)}
+                          className="flex items-center gap-1 text-xs font-semibold text-blue-700 opacity-0 transition hover:text-blue-800 group-hover:opacity-100"
+                        >
+                          <HiOutlineEye className="text-sm" />
+                          {LABELS_QUOTATIONS_LIST_PAGE.table.actionViewPreview}
                         </button>
                       ) : null}
                     </td>
