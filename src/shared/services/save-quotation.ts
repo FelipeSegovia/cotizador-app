@@ -1,30 +1,23 @@
+import { endpoints } from "../data";
 import type { CreateQuotationDto, Quotation } from "../types/quotation";
-
-const resolveErrorMessage = async (
-  response: Response,
-  fallbackMessage: string,
-) => {
-  try {
-    const data = (await response.json()) as { message?: string };
-    return data.message ?? fallbackMessage;
-  } catch {
-    return fallbackMessage;
-  }
-};
+import { fetchErrorMessage } from "../utils";
 
 export const createQuotation = async (
   payload: CreateQuotationDto,
 ): Promise<Quotation> => {
-  const response = await fetch(import.meta.env.VITE_BASE_URL_MOCK, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetch(
+    `${import.meta.env.VITE_BASE_URL_API}${endpoints.QUOTATIONS}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
     },
-    body: JSON.stringify(payload),
-  });
+  );
 
   if (!response.ok) {
-    const message = await resolveErrorMessage(
+    const message = await fetchErrorMessage(
       response,
       "No se pudo guardar la cotizacion",
     );
@@ -39,7 +32,7 @@ export const updateQuotation = async (
   payload: CreateQuotationDto,
 ): Promise<Quotation> => {
   const response = await fetch(
-    `${import.meta.env.VITE_BASE_URL_MOCK}/${quotationId}`,
+    `${import.meta.env.VITE_BASE_URL_API}${endpoints.QUOTATIONS}/${quotationId}`,
     {
       method: "PUT",
       headers: {
@@ -50,7 +43,7 @@ export const updateQuotation = async (
   );
 
   if (!response.ok) {
-    const message = await resolveErrorMessage(
+    const message = await fetchErrorMessage(
       response,
       "No se pudo actualizar la cotizacion",
     );
