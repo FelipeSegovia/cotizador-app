@@ -1,5 +1,5 @@
-import { endpoints } from "../data";
 import type { Quotation } from "../types/quotation";
+import { quotationFetch } from "./quotation-fetch";
 
 interface GetQuotationsParams {
   signal?: AbortSignal;
@@ -9,10 +9,7 @@ export const getQuotations = async (
   params: GetQuotationsParams = {},
 ): Promise<Quotation[]> => {
   const { signal } = params;
-  const res = await fetch(
-    `${import.meta.env.VITE_BASE_URL_API}${endpoints.QUOTATIONS}`,
-    { signal },
-  );
+  const res = await quotationFetch("", { signal });
 
   if (!res.ok) {
     throw new Error("Error al obtener las cotizaciones");

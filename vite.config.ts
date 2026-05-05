@@ -6,7 +6,13 @@ import tailwindcss from "@tailwindcss/vite";
 // https://vite.dev/config/
 export default defineConfig({
   server: {
-    allowedHosts: [".tunnelmole.net"],
+    allowedHosts: [".tunnelmole.net", "localhost"],
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+      },
+    },
   },
   plugins: [
     react(),
