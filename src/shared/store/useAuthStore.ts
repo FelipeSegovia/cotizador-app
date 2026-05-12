@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type { AuthState, AuthActions, User } from "../types/auth";
-import { login, logout } from "../services";
+import login from "../services/login";
+import logout from "../services/logout";
 
 const STORAGE_KEY = "auth_token";
 const STORAGE_EXPIRY_KEY = "auth_expiry";
@@ -55,6 +56,12 @@ const getAuthFromStorage = (): {
   }
 
   return { token: null, expiresAt: null, isValid: false };
+};
+
+/** Token JWT aún válido (localStorage), para headers en fetch antes de hidratar Zustand. */
+export const readValidAccessToken = (): string | null => {
+  const { token, isValid } = getAuthFromStorage();
+  return isValid && token ? token : null;
 };
 
 const useAuthStore = create<AuthStore>((set, get) => ({

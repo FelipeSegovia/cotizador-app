@@ -1,20 +1,17 @@
-import { endpoints } from "../data";
 import type { CreateQuotationDto, Quotation } from "../types/quotation";
 import { fetchErrorMessage } from "../utils";
+import { quotationFetch } from "./quotation-fetch";
 
 export const createQuotation = async (
   payload: CreateQuotationDto,
 ): Promise<Quotation> => {
-  const response = await fetch(
-    `${import.meta.env.VITE_BASE_URL_API}${endpoints.QUOTATIONS}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
+  const response = await quotationFetch("", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify(payload),
+  });
 
   if (!response.ok) {
     const message = await fetchErrorMessage(
@@ -31,16 +28,13 @@ export const updateQuotation = async (
   quotationId: string,
   payload: CreateQuotationDto,
 ): Promise<Quotation> => {
-  const response = await fetch(
-    `${import.meta.env.VITE_BASE_URL_API}${endpoints.QUOTATIONS}/${quotationId}`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
+  const response = await quotationFetch(`/${quotationId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify(payload),
+  });
 
   if (!response.ok) {
     const message = await fetchErrorMessage(
