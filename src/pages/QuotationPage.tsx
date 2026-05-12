@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import {
   HiOutlineClipboardDocument,
   HiOutlineDocumentText,
@@ -15,6 +15,7 @@ import { FormField, FormTextareaField } from "../shared/components/forms";
 import { SectionCard } from "../shared/components/ui";
 import { LABELS_QUOTATION_PAGE } from "../shared/data";
 import { createQuotation, updateQuotation } from "../shared/services";
+import { formatRutAsYouType, stripRutForApi } from "../shared/utils";
 import { useQuotationDraftStore } from "../shared/store";
 import type {
   CreateQuotationDto,
@@ -23,8 +24,25 @@ import type {
 
 const IVA_RATE = 0.19;
 
+const DEFAULT_QUOTATION_FORM_VALUES: QuotationFormData = {
+  clientName: "",
+  clientRut: "",
+  clientEmail: "",
+  projectTitle: "",
+  projectDeadline: "",
+  projectNotes: "",
+  items: [{ description: "", unitPrice: 0, quantity: 1 }],
+};
+
 const formatCLP = (value: number) =>
   `$${Math.round(value).toLocaleString("es-CL")}`;
+
+const toDateInputString = (d: Date) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
 
 const QuotationPage = () => {
   const {
@@ -47,9 +65,7 @@ const QuotationPage = () => {
     reset,
     formState: { errors },
   } = useForm<QuotationFormData>({
-    defaultValues: {
-      items: [{ description: "", unitPrice: 0, quantity: 1 }],
-    },
+    defaultValues: DEFAULT_QUOTATION_FORM_VALUES,
   });
 
   const initialDraft = useRef(draft);
@@ -60,12 +76,19 @@ const QuotationPage = () => {
     }
   }, [reset]);
 
+  useEffect(() => {
+    if (draft === null && savedQuotationId === null) {
+      reset(DEFAULT_QUOTATION_FORM_VALUES);
+    }
+  }, [draft, savedQuotationId, reset]);
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: "items",
   });
 
   const watchedItems = useWatch({ control, name: "items" }) ?? [];
+  const minProjectDeadline = toDateInputString(new Date());
 
   const subtotal = watchedItems.reduce(
     (sum, item) =>
@@ -93,7 +116,7 @@ const QuotationPage = () => {
 
     return {
       clientName: data.clientName,
-      clientRut: data.clientRut,
+      clientRut: stripRutForApi(data.clientRut),
       clientEmail: data.clientEmail,
       projectTitle: data.projectTitle,
       projectDeadline: data.projectDeadline,
@@ -201,21 +224,39 @@ const QuotationPage = () => {
                   })}
                   error={errors.clientName?.message}
                 />
-                <FormField
-                  id="clientRut"
-                  label={
-                    LABELS_QUOTATION_PAGE.clientSection.fields.clientRut.label
-                  }
-                  placeholder={
-                    LABELS_QUOTATION_PAGE.clientSection.fields.clientRut
-                      .placeholder
-                  }
-                  registration={register("clientRut", {
+                <Controller
+                  control={control}
+                  name="clientRut"
+                  rules={{
                     required:
                       LABELS_QUOTATION_PAGE.clientSection.fields.clientRut
                         .required,
-                  })}
-                  error={errors.clientRut?.message}
+                  }}
+                  render={({ field, fieldState }) => (
+                    <FormField
+                      id="clientRut"
+                      label={
+                        LABELS_QUOTATION_PAGE.clientSection.fields.clientRut
+                          .label
+                      }
+                      placeholder={
+                        LABELS_QUOTATION_PAGE.clientSection.fields.clientRut
+                          .placeholder
+                      }
+                      value={field.value ?? ""}
+                      registration={{
+                        name: field.name,
+                        onBlur: field.onBlur,
+                        ref: field.ref,
+                        onChange: (e) => {
+                          field.onChange(
+                            formatRutAsYouType(e.target.value),
+                          );
+                        },
+                      }}
+                      error={fieldState.error?.message}
+                    />
+                  )}
                 />
               </div>
               <FormField
@@ -275,7 +316,20 @@ const QuotationPage = () => {
                       .label
                   }
                   type="date"
-                  registration={register("projectDeadline")}
+                  min={minProjectDeadline}
+                  registration={register("projectDeadline", {
+                    validate: (value) => {
+                      if (!value || String(value).trim() === "") {
+                        return true;
+                      }
+                      return (
+                        value >= minProjectDeadline ||
+                        LABELS_QUOTATION_PAGE.projectSection.fields
+                          .projectDeadline.invalidPast
+                      );
+                    },
+                  })}
+                  error={errors.projectDeadline?.message}
                 />
               </div>
               <FormTextareaField

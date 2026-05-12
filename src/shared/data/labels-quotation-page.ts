@@ -44,6 +44,8 @@ const LABELS_QUOTATION_PAGE = {
       },
       projectDeadline: {
         label: "Fecha Estimada de Entrega",
+        invalidPast:
+          "La fecha de entrega no puede ser anterior al dia de hoy.",
       },
       projectNotes: {
         label: "Descripcion / Notas Internas",

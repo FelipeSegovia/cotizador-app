@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Outlet, useNavigate } from "react-router";
 import {
   HiArrowRightOnRectangle,
@@ -21,37 +21,48 @@ import {
 } from "../navigation";
 import { PATHS } from "../../data";
 import useAuthStore from "../../store/useAuthStore";
-
-const mainMenu: NavigationMenuItem[] = [
-  {
-    label: "Dashboard",
-    icon: <HiChartBar className="text-lg" />,
-    to: PATHS.DASHBOARD,
-    end: true,
-  },
-  {
-    label: "Cotizaciones",
-    icon: <HiDocumentText className="text-lg" />,
-    children: [
-      { label: "Listado", to: PATHS.QUOTATIONS, end: true },
-      { label: "Crear Cotización", to: PATHS.NEW_QUOTATION },
-    ],
-  },
-  {
-    label: "Gastos",
-    icon: <HiClipboardDocumentList className="text-lg" />,
-    to: PATHS.COMPANY_EXPENSES,
-  },
-  {
-    label: "Configuración",
-    icon: <HiCog6Tooth className="text-lg" />,
-    to: PATHS.SETTINGS,
-  },
-];
+import { useQuotationDraftStore } from "../../store";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
+  const resetDraft = useQuotationDraftStore((state) => state.resetDraft);
+
+  const mainMenu: NavigationMenuItem[] = useMemo(
+    () => [
+      {
+        label: "Dashboard",
+        icon: <HiChartBar className="text-lg" />,
+        to: PATHS.DASHBOARD,
+        end: true,
+      },
+      {
+        label: "Cotizaciones",
+        icon: <HiDocumentText className="text-lg" />,
+        children: [
+          { label: "Listado", to: PATHS.QUOTATIONS, end: true },
+          {
+            label: "Crear Cotización",
+            to: PATHS.NEW_QUOTATION,
+            onClick: () => {
+              resetDraft();
+            },
+          },
+        ],
+      },
+      {
+        label: "Gastos",
+        icon: <HiClipboardDocumentList className="text-lg" />,
+        to: PATHS.COMPANY_EXPENSES,
+      },
+      {
+        label: "Configuración",
+        icon: <HiCog6Tooth className="text-lg" />,
+        to: PATHS.SETTINGS,
+      },
+    ],
+    [resetDraft],
+  );
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDesktopSidebarCollapsed, setIsDesktopSidebarCollapsed] =
     useState(false);

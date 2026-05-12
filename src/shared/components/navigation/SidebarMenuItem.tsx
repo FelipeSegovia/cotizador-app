@@ -7,6 +7,7 @@ export type SubMenuItem = {
   label: string;
   to: string;
   end?: boolean;
+  onClick?: () => void;
 };
 
 export type NavigationMenuItem = {
@@ -116,7 +117,10 @@ const SidebarMenuItem = ({
                     key={child.to}
                     to={child.to}
                     end={child.end}
-                    onClick={handleChildItemClick}
+                    onClick={() => {
+                      child.onClick?.();
+                      handleChildItemClick();
+                    }}
                     className={({ isActive }) =>
                       `flex w-full items-center rounded-xl px-3 py-2 text-sm font-medium transition ${
                         isActive
@@ -168,7 +172,10 @@ const SidebarMenuItem = ({
                 key={child.to}
                 to={child.to}
                 end={child.end}
-                onClick={handleChildItemClick}
+                onClick={() => {
+                  child.onClick?.();
+                  handleChildItemClick();
+                }}
                 className={({ isActive }) =>
                   `flex w-full items-center rounded-xl px-3 py-2 text-sm font-medium transition ${
                     isActive

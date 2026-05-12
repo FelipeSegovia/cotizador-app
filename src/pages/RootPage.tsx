@@ -6,6 +6,7 @@ import {
 } from "react-icons/hi2";
 import { LABELS_ROOT_PAGE, PATHS } from "../shared/data";
 import { useQuotations } from "../shared/hooks";
+import { useQuotationDraftStore } from "../shared/store";
 import type { QuotationStatus } from "../shared/types/quotation";
 import { Link, useNavigate } from "react-router";
 
@@ -38,6 +39,7 @@ const statusClassMap: Record<QuotationStatus, string> = {
 const RootPage = () => {
   const { data: quotations = [], isError, isLoading, error } = useQuotations();
   const navigate = useNavigate();
+  const resetDraft = useQuotationDraftStore((state) => state.resetDraft);
 
   const totalQuoted = quotations.reduce(
     (sum, quotation) => sum + quotation.total,
@@ -63,7 +65,10 @@ const RootPage = () => {
 
   const hasData = recentQuotations.length > 0;
 
-  const handleCreateQuotation = () => navigate(PATHS.NEW_QUOTATION);
+  const handleCreateQuotation = () => {
+    resetDraft();
+    navigate(PATHS.NEW_QUOTATION);
+  };
 
   return (
     <>

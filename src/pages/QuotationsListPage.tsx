@@ -43,7 +43,13 @@ const QuotationsListPage = () => {
     setPreviewStatus,
     setReadOnlyPreview,
     setSavedQuotationId,
+    resetDraft,
   } = useQuotationDraftStore();
+
+  const goToNewQuotation = () => {
+    resetDraft();
+    navigate(PATHS.NEW_QUOTATION);
+  };
 
   const handleEditDraftQuotation = (quotationId: string) => {
     const quotation = quotations?.find((item) => item.id === quotationId);
@@ -116,7 +122,7 @@ const QuotationsListPage = () => {
         </div>
         <button
           type="button"
-          onClick={() => navigate(PATHS.NEW_QUOTATION)}
+          onClick={goToNewQuotation}
           className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
         >
           <HiOutlineDocumentPlus className="text-base" />
@@ -151,7 +157,7 @@ const QuotationsListPage = () => {
             </p>
             <button
               type="button"
-              onClick={() => navigate(PATHS.NEW_QUOTATION)}
+              onClick={goToNewQuotation}
               className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
             >
               <HiOutlineDocumentPlus className="text-base" />
