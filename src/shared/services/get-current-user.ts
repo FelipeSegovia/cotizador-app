@@ -1,5 +1,6 @@
 import { endpoints } from "../data";
 import type { User } from "../types/auth";
+import { parseAuthMeResponse } from "../utils";
 
 type GetCurrentUserParams = {
   signal?: AbortSignal;
@@ -25,8 +26,8 @@ const getCurrentUser = async (
     throw new Error("No autorizado");
   }
 
-  const data = (await response.json()) as { user: User };
-  return data.user;
+  const json: unknown = await response.json();
+  return parseAuthMeResponse(json);
 };
 
 export default getCurrentUser;

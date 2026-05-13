@@ -51,6 +51,10 @@ const PersonalProfileForm = () => {
     onSuccess: (user) => {
       queryClient.setQueryData(["currentUser"], user);
       setUser(user);
+      reset({
+        name: user.name,
+        mobilePhone: user.mobilePhone ?? "",
+      });
       setSaveMessage(LABELS_SETTINGS_PAGE.profileCard.saveSuccess);
     },
     onError: () => {
