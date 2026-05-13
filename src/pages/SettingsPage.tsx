@@ -1,12 +1,12 @@
 import { useMemo } from "react";
-import {
-  HiDocumentText,
-  HiOutlineClock,
-  HiShieldCheck,
-} from "react-icons/hi2";
+import { HiDocumentText, HiOutlineClock, HiShieldCheck } from "react-icons/hi2";
 import { LABELS_SETTINGS_PAGE } from "../shared/data";
 import { useCompany } from "../shared/hooks";
-import { CompanySettingsForm, PersonalProfileForm } from "../shared/components/forms";
+import {
+  CompanySettingsForm,
+  PersonalProfileForm,
+} from "../shared/components/forms";
+import { InfoTile } from "../shared/components/ui";
 
 const formatLongDate = (iso: string) =>
   new Date(iso).toLocaleDateString("es-CL", {
@@ -48,47 +48,21 @@ const SettingsPage = () => {
       </div>
 
       <section className="mt-8 grid gap-4 md:grid-cols-3">
-        <article className="flex gap-3 rounded-2xl border border-slate-200 bg-slate-50/90 p-5 shadow-sm">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-800">
-            <HiShieldCheck className="text-xl" />
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-slate-900">
-              {LABELS_SETTINGS_PAGE.infoTiles.security.title}
-            </h3>
-            <p className="mt-1 text-xs leading-relaxed text-slate-600">
-              {LABELS_SETTINGS_PAGE.infoTiles.security.body}
-            </p>
-          </div>
-        </article>
-
-        <article className="flex gap-3 rounded-2xl border border-slate-200 bg-slate-50/90 p-5 shadow-sm">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-800">
-            <HiOutlineClock className="text-xl" />
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-slate-900">
-              {LABELS_SETTINGS_PAGE.infoTiles.lastUpdate.title}
-            </h3>
-            <p className="mt-1 text-xs leading-relaxed text-slate-600">
-              {lastUpdateCopy}
-            </p>
-          </div>
-        </article>
-
-        <article className="flex gap-3 rounded-2xl border border-slate-200 bg-slate-50/90 p-5 shadow-sm">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-800">
-            <HiDocumentText className="text-xl" />
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-slate-900">
-              {LABELS_SETTINGS_PAGE.infoTiles.pdf.title}
-            </h3>
-            <p className="mt-1 text-xs leading-relaxed text-slate-600">
-              {LABELS_SETTINGS_PAGE.infoTiles.pdf.body}
-            </p>
-          </div>
-        </article>
+        <InfoTile
+          icon={HiShieldCheck}
+          title={LABELS_SETTINGS_PAGE.infoTiles.security.title}
+          description={LABELS_SETTINGS_PAGE.infoTiles.security.body}
+        />
+        <InfoTile
+          icon={HiOutlineClock}
+          title={LABELS_SETTINGS_PAGE.infoTiles.lastUpdate.title}
+          description={lastUpdateCopy}
+        />
+        <InfoTile
+          icon={HiDocumentText}
+          title={LABELS_SETTINGS_PAGE.infoTiles.pdf.title}
+          description={LABELS_SETTINGS_PAGE.infoTiles.pdf.body}
+        />
       </section>
     </>
   );

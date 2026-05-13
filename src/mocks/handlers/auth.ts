@@ -149,9 +149,12 @@ export const authHandlers = [
     if (tokenData) {
       if (Date.now() > tokenData.expiresAt) {
         validTokens.delete(token);
-        return HttpResponse.json({ message: "Token expirado" }, { status: 401 });
+        return HttpResponse.json(
+          { message: "Token expirado" },
+          { status: 401 },
+        );
       }
-      return HttpResponse.json({ user: tokenData.user }, { status: 200 });
+      return HttpResponse.json(tokenData.user, { status: 200 });
     }
 
     // Token válido pero no está en memoria (p. ej. recarga de página con JWT en localStorage)
@@ -171,11 +174,11 @@ export const authHandlers = [
       expiresAt: payload.exp * 1000,
     });
 
-    return HttpResponse.json({ user }, { status: 200 });
+    return HttpResponse.json(user, { status: 200 });
   }),
 
-  // PUT /api/auth/me
-  http.put("/api/auth/me", async ({ request }) => {
+  // PATCH /api/auth/me
+  http.patch("/api/auth/me", async ({ request }) => {
     const authHeader = request.headers.get("Authorization");
     const token = authHeader?.replace("Bearer ", "");
 
@@ -201,8 +204,7 @@ export const authHandlers = [
       name?: unknown;
       mobilePhone?: unknown;
     };
-    const name =
-      typeof body.name === "string" ? body.name.trim() : "";
+    const name = typeof body.name === "string" ? body.name.trim() : "";
     const mobilePhone =
       typeof body.mobilePhone === "string" ? body.mobilePhone.trim() : "";
 
@@ -237,7 +239,7 @@ export const authHandlers = [
       expiresAt: tokenData?.expiresAt ?? payload.exp * 1000,
     });
 
-    return HttpResponse.json({ user }, { status: 200 });
+    return HttpResponse.json(user, { status: 200 });
   }),
 
   // POST /api/auth/logout

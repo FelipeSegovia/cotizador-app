@@ -8,8 +8,16 @@ const LABELS_QUOTATION_PREVIEW_PAGE = {
     expiredBadge: "Expirado",
     backToEdit: "Volver a Editar",
     downloadPdf: "Descargar PDF",
+    downloadPdfLoading: "Generando PDF…",
     sendQuotation: "Enviar Cotizacion",
     readOnlyInfo: "Vista en modo solo lectura",
+  },
+  pdfFeedback: {
+    success:
+      "El PDF de la cotizacion se genero y envio correctamente al servidor.",
+    errorNoSavedId:
+      "Guarda la cotizacion antes de descargar el PDF para tener un identificador en el sistema.",
+    errorGeneric: "No se pudo completar la solicitud del PDF. Intenta de nuevo.",
   },
   document: {
     title: "Cotizacion",
@@ -38,6 +46,15 @@ const LABELS_QUOTATION_PREVIEW_PAGE = {
   footer: {
     signature: "Firma Aceptacion Cliente",
     generatedBy: "Documento generado electronicamente por",
+    generatedByWithoutCompany:
+      "Documento generado electronicamente (configura tu empresa en Ajustes para personalizar este texto).",
+  },
+  company: {
+    loading: "Cargando datos de la empresa…",
+    loadError:
+      "No se pudieron obtener los datos de la empresa. Revisa tu conexion e intenta de nuevo.",
+    notConfigured:
+      "Aun no has configurado los datos de tu empresa. Ve a Ajustes para que aparezcan aqui y en el PDF.",
   },
 };
 

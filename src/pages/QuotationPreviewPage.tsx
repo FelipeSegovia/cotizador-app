@@ -1,22 +1,29 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import {
   HiOutlineArrowLeft,
   HiOutlineEnvelope,
   HiOutlinePencilSquare,
   HiOutlineArrowDownTray,
+  HiOutlineCheckCircle,
+  HiOutlineExclamationCircle,
 } from "react-icons/hi2";
 import { LABELS_QUOTATION_PREVIEW_PAGE, PATHS } from "../shared/data";
+import { useCompany } from "../shared/hooks";
+import { downloadQuotationPdf } from "../shared/services";
 import { useQuotationDraftStore } from "../shared/store";
 import type { QuotationStatus } from "../shared/types/quotation";
 
 const IVA_RATE = 0.19;
 
-const COMPANY_INFO = {
-  name: "NeuralCode Chile",
-  rut: "76.543.210-K",
-  address: "Avenida Nueva Providencia 1234, Of 502",
-  city: "Providencia, Santiago, Chile",
-  contact: "contacto@neuralcode.cl | +56 2 2345 6789",
+const companyInitialsFromName = (name: string) => {
+  const trimmed = name.trim();
+  if (!trimmed) return "—";
+  const parts = trimmed.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) {
+    return `${parts[0]![0] ?? ""}${parts[1]![0] ?? ""}`.toUpperCase();
+  }
+  return trimmed.slice(0, 2).toUpperCase();
 };
 
 const TERMS = [
@@ -40,15 +47,31 @@ const formatDate = (date: Date) =>
 
 const QuotationPreviewPage = () => {
   const navigate = useNavigate();
+  const companyQuery = useCompany();
   const {
     draft,
     isReadOnlyPreview,
     previewStatus,
+    savedQuotationId,
     setPreviewMode,
     resetDraft,
   } = useQuotationDraftStore();
 
+  const [isPdfRequesting, setIsPdfRequesting] = useState(false);
+  const [pdfAlert, setPdfAlert] = useState<
+    { variant: "success" | "error"; message: string } | null
+  >(null);
+
+  useEffect(() => {
+    if (pdfAlert?.variant !== "success") return;
+    const timer = window.setTimeout(() => setPdfAlert(null), 6000);
+    return () => window.clearTimeout(timer);
+  }, [pdfAlert]);
+
   if (draft === null) return null;
+
+  const company = companyQuery.data;
+  const companyIssuerName = company?.name?.trim() ?? "";
 
   const subtotal = draft.items.reduce(
     (sum, item) => sum + item.unitPrice * item.quantity,
@@ -90,6 +113,35 @@ const QuotationPreviewPage = () => {
 
   const currentStatus = previewStatus ?? "draft";
 
+  const handleDownloadPdf = async () => {
+    setPdfAlert(null);
+
+    if (!savedQuotationId) {
+      setPdfAlert({
+        variant: "error",
+        message: LABELS_QUOTATION_PREVIEW_PAGE.pdfFeedback.errorNoSavedId,
+      });
+      return;
+    }
+
+    setIsPdfRequesting(true);
+    try {
+      await downloadQuotationPdf(savedQuotationId);
+      setPdfAlert({
+        variant: "success",
+        message: LABELS_QUOTATION_PREVIEW_PAGE.pdfFeedback.success,
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : LABELS_QUOTATION_PREVIEW_PAGE.pdfFeedback.errorGeneric;
+      setPdfAlert({ variant: "error", message });
+    } finally {
+      setIsPdfRequesting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header bar */}
@@ -129,10 +181,14 @@ const QuotationPreviewPage = () => {
           ) : null}
           <button
             type="button"
-            className="flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            disabled={isPdfRequesting}
+            onClick={handleDownloadPdf}
+            className="flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-70"
           >
             <HiOutlineArrowDownTray className="text-base" />
-            {LABELS_QUOTATION_PREVIEW_PAGE.topBar.downloadPdf}
+            {isPdfRequesting
+              ? LABELS_QUOTATION_PREVIEW_PAGE.topBar.downloadPdfLoading
+              : LABELS_QUOTATION_PREVIEW_PAGE.topBar.downloadPdf}
           </button>
           {!isReadOnlyPreview ? (
             <button
@@ -146,6 +202,24 @@ const QuotationPreviewPage = () => {
         </div>
       </div>
 
+      {pdfAlert ? (
+        <div
+          role="status"
+          className={`flex items-start gap-2 rounded-xl border px-4 py-3 text-sm ${
+            pdfAlert.variant === "success"
+              ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+              : "border-rose-200 bg-rose-50 text-rose-900"
+          }`}
+        >
+          {pdfAlert.variant === "success" ? (
+            <HiOutlineCheckCircle className="mt-0.5 shrink-0 text-base" />
+          ) : (
+            <HiOutlineExclamationCircle className="mt-0.5 shrink-0 text-base" />
+          )}
+          <p>{pdfAlert.message}</p>
+        </div>
+      ) : null}
+
       {/* Document */}
       <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         {/* Emerald top bar */}
@@ -156,18 +230,52 @@ const QuotationPreviewPage = () => {
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-start gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-800 text-sm font-black text-white">
-                QF
+                {companyQuery.isPending
+                  ? "…"
+                  : companyIssuerName
+                    ? companyInitialsFromName(companyIssuerName)
+                    : "—"}
               </div>
               <div>
-                <p className="text-lg font-bold text-slate-900">
-                  {COMPANY_INFO.name}
-                </p>
-                <p className="mt-1 text-xs text-slate-500">
-                  RUT: {COMPANY_INFO.rut}
-                </p>
-                <p className="text-xs text-slate-500">{COMPANY_INFO.address}</p>
-                <p className="text-xs text-slate-500">{COMPANY_INFO.city}</p>
-                <p className="text-xs text-slate-500">{COMPANY_INFO.contact}</p>
+                {companyQuery.isPending ? (
+                  <div className="space-y-2" aria-busy="true">
+                    <p className="text-xs text-slate-500">
+                      {LABELS_QUOTATION_PREVIEW_PAGE.company.loading}
+                    </p>
+                    <div className="space-y-2 animate-pulse">
+                      <div className="h-5 w-52 rounded bg-slate-200" />
+                      <div className="h-3 w-40 rounded bg-slate-200" />
+                      <div className="h-3 w-full max-w-xs rounded bg-slate-200" />
+                      <div className="h-3 w-36 rounded bg-slate-200" />
+                    </div>
+                  </div>
+                ) : companyQuery.isError ? (
+                  <p className="text-sm text-red-600">
+                    {LABELS_QUOTATION_PREVIEW_PAGE.company.loadError}
+                  </p>
+                ) : !company ? (
+                  <p className="text-sm text-amber-800">
+                    {LABELS_QUOTATION_PREVIEW_PAGE.company.notConfigured}
+                  </p>
+                ) : (
+                  <>
+                    <p className="text-lg font-bold text-slate-900">
+                      {company.name}
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      RUT: {company.rut}
+                    </p>
+                    {company.address?.trim() ? (
+                      <p className="text-xs text-slate-500">{company.address}</p>
+                    ) : null}
+                    {company.city?.trim() ? (
+                      <p className="text-xs text-slate-500">{company.city}</p>
+                    ) : null}
+                    {company.contact?.trim() ? (
+                      <p className="text-xs text-slate-500">{company.contact}</p>
+                    ) : null}
+                  </>
+                )}
               </div>
             </div>
 
@@ -314,8 +422,9 @@ const QuotationPreviewPage = () => {
               </p>
             </div>
             <p className="text-xs italic text-slate-400">
-              {LABELS_QUOTATION_PREVIEW_PAGE.footer.generatedBy}{" "}
-              {COMPANY_INFO.name}
+              {companyIssuerName
+                ? `${LABELS_QUOTATION_PREVIEW_PAGE.footer.generatedBy} ${companyIssuerName}`
+                : LABELS_QUOTATION_PREVIEW_PAGE.footer.generatedByWithoutCompany}
             </p>
           </div>
         </div>
