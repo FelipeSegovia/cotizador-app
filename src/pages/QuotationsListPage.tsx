@@ -15,6 +15,7 @@ const STATUS_LABELS: Record<QuotationStatus, string> = {
   sent: LABELS_QUOTATIONS_LIST_PAGE.statusLabels.sent,
   approved: LABELS_QUOTATIONS_LIST_PAGE.statusLabels.approved,
   rejected: LABELS_QUOTATIONS_LIST_PAGE.statusLabels.rejected,
+  expired: LABELS_QUOTATIONS_LIST_PAGE.statusLabels.expired,
 };
 
 const STATUS_CLASSES: Record<QuotationStatus, string> = {
@@ -22,6 +23,7 @@ const STATUS_CLASSES: Record<QuotationStatus, string> = {
   sent: "bg-blue-50 text-blue-700",
   approved: "bg-emerald-50 text-emerald-700",
   rejected: "bg-red-50 text-red-600",
+  expired: "bg-amber-50 text-amber-800",
 };
 
 const formatCLP = (value: number) =>
@@ -65,6 +67,7 @@ const QuotationsListPage = () => {
       projectTitle: quotation.projectTitle,
       projectDeadline: quotation.projectDeadline ?? "",
       projectNotes: quotation.projectNotes ?? "",
+      validUntil: quotation.validUntil ?? "",
       items: quotation.items.map((item) => ({
         description: item.description,
         unitPrice: item.unitPrice,
@@ -83,7 +86,9 @@ const QuotationsListPage = () => {
 
     if (
       !quotation ||
-      (quotation.status !== "sent" && quotation.status !== "approved")
+      (quotation.status !== "sent" &&
+        quotation.status !== "approved" &&
+        quotation.status !== "expired")
     ) {
       return;
     }
@@ -95,6 +100,7 @@ const QuotationsListPage = () => {
       projectTitle: quotation.projectTitle,
       projectDeadline: quotation.projectDeadline ?? "",
       projectNotes: quotation.projectNotes ?? "",
+      validUntil: quotation.validUntil ?? "",
       items: quotation.items.map((item) => ({
         description: item.description,
         unitPrice: item.unitPrice,
@@ -229,7 +235,9 @@ const QuotationsListPage = () => {
                         </button>
                       ) : null}
 
-                      {q.status === "sent" || q.status === "approved" ? (
+                      {q.status === "sent" ||
+                      q.status === "approved" ||
+                      q.status === "expired" ? (
                         <button
                           type="button"
                           onClick={() => handleViewReadonlyPreview(q.id)}

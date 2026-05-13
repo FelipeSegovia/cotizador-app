@@ -32,6 +32,7 @@ const LABELS_ROOT_PAGE = {
     draft: "Borrador",
     rejected: "Rechazada",
     sent: "Enviada",
+    expired: "Expirado",
   },
 };
 

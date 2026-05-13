@@ -6,6 +6,7 @@ export const mockQuotations: Quotation[] = [
     clientName: "Empresa ABC Ltda.",
     projectTitle: "Desarrollo de tienda online",
     status: "sent",
+    validUntil: "2026-06-30T23:59:59.000Z",
     items: [
       {
         id: "1-1",
@@ -38,6 +39,7 @@ export const mockQuotations: Quotation[] = [
     clientName: "Consultora XYZ S.A.",
     projectTitle: "Sistema de gestión interna",
     status: "approved",
+    validUntil: "2026-12-31T23:59:59.000Z",
     items: [
       {
         id: "2-1",
@@ -77,6 +79,7 @@ export const mockQuotations: Quotation[] = [
     clientName: "Startup Delta",
     projectTitle: "Landing page + blog",
     status: "draft",
+    validUntil: "2026-05-30T23:59:59.000Z",
     items: [
       {
         id: "3-1",
@@ -96,5 +99,31 @@ export const mockQuotations: Quotation[] = [
     total: 1100000,
     createdAt: "2026-04-20T16:00:00.000Z",
     updatedAt: "2026-04-20T16:00:00.000Z",
+  },
+  {
+    id: "4",
+    clientName: "Logística Sur SpA",
+    projectTitle: "Módulo de trazabilidad",
+    status: "expired",
+    validUntil: "2026-01-10T23:59:59.000Z",
+    items: [
+      {
+        id: "4-1",
+        description: "Workshop de discovery",
+        quantity: 1,
+        unitPrice: 450000,
+        subtotal: 450000,
+      },
+      {
+        id: "4-2",
+        description: "Propuesta técnica y estimación",
+        quantity: 1,
+        unitPrice: 300000,
+        subtotal: 300000,
+      },
+    ],
+    total: 750000,
+    createdAt: "2026-01-02T10:00:00.000Z",
+    updatedAt: "2026-01-08T18:00:00.000Z",
   },
 ];

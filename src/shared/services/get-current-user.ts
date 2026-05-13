@@ -1,11 +1,20 @@
 import { endpoints } from "../data";
 import type { User } from "../types/auth";
 
-const getCurrentUser = async (token: string): Promise<User> => {
+type GetCurrentUserParams = {
+  signal?: AbortSignal;
+};
+
+const getCurrentUser = async (
+  token: string,
+  params: GetCurrentUserParams = {},
+): Promise<User> => {
+  const { signal } = params;
   const response = await fetch(
     `${import.meta.env.VITE_BASE_URL_API}${endpoints.GET_CURRENT_USER}`,
     {
       method: "GET",
+      signal,
       headers: {
         Authorization: `Bearer ${token}`,
       },

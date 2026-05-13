@@ -58,8 +58,13 @@ const QuotationPreviewPage = () => {
   const total = subtotal + iva;
 
   const emissionDate = new Date();
-  const validDate = draft.projectDeadline
-    ? new Date(draft.projectDeadline + "T00:00:00")
+  const validDateSource = draft.validUntil?.trim() || draft.projectDeadline;
+  const validDate = validDateSource
+    ? new Date(
+        validDateSource.includes("T")
+          ? validDateSource
+          : `${validDateSource}T00:00:00`,
+      )
     : new Date(emissionDate.getTime() + 15 * 24 * 60 * 60 * 1000);
 
   const handleBackToList = () => {
@@ -71,7 +76,8 @@ const QuotationPreviewPage = () => {
     draft: LABELS_QUOTATION_PREVIEW_PAGE.topBar.draftBadge,
     sent: LABELS_QUOTATION_PREVIEW_PAGE.topBar.sentBadge,
     approved: LABELS_QUOTATION_PREVIEW_PAGE.topBar.approvedBadge,
-    rejected: LABELS_QUOTATION_PREVIEW_PAGE.topBar.draftBadge,
+    rejected: LABELS_QUOTATION_PREVIEW_PAGE.topBar.rejectedBadge,
+    expired: LABELS_QUOTATION_PREVIEW_PAGE.topBar.expiredBadge,
   };
 
   const statusBadgeClassMap: Record<QuotationStatus, string> = {
@@ -79,6 +85,7 @@ const QuotationPreviewPage = () => {
     sent: "bg-blue-100 text-blue-700",
     approved: "bg-emerald-100 text-emerald-700",
     rejected: "bg-slate-100 text-slate-700",
+    expired: "bg-amber-100 text-amber-900",
   };
 
   const currentStatus = previewStatus ?? "draft";

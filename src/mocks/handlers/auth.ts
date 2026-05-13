@@ -1,11 +1,20 @@
 import { http, HttpResponse } from "msw";
-import { mockUsers } from "../data/users";
+import { mockUsers, type MockUser } from "../data/users";
 import type { User, AuthResponse } from "../../shared/types/auth";
+
+const toPublicUser = (row: MockUser): User => ({
+  id: row.id,
+  email: row.email,
+  name: row.name,
+  mobilePhone: row.mobilePhone ?? "",
+});
 
 type JwtPayload = {
   sub: string;
   email: string;
   name: string;
+  /** Incluido en tokens nuevos; ausente en sesiones antiguas solo en memoria. */
+  mobilePhone?: string;
   iat: number;
   exp: number;
 };
@@ -47,6 +56,7 @@ const generateMockJwt = (user: User, expInSeconds: number): string => {
     sub: user.id,
     email: user.email,
     name: user.name,
+    mobilePhone: user.mobilePhone,
     iat: nowInSeconds,
     exp: nowInSeconds + expInSeconds,
   };
@@ -92,20 +102,18 @@ export const authHandlers = [
     }
 
     // Generate mock JWT token
-    const token = generateMockJwt(
-      { id: user.id, email: user.email, name: user.name },
-      TOKEN_EXPIRY_SECONDS,
-    );
+    const publicUser = toPublicUser(user);
+    const token = generateMockJwt(publicUser, TOKEN_EXPIRY_SECONDS);
     const expiresAt = Date.now() + TOKEN_EXPIRY_SECONDS * 1000;
 
     // Store token mapping
     validTokens.set(token, {
-      user: { id: user.id, email: user.email, name: user.name },
+      user: publicUser,
       expiresAt,
     });
 
     const response: AuthResponse = {
-      user: { id: user.id, email: user.email, name: user.name },
+      user: publicUser,
       token,
       expiresIn: TOKEN_EXPIRY_SECONDS,
     };
@@ -125,10 +133,57 @@ export const authHandlers = [
       );
     }
 
+    const payload = parseJwtPayload(token);
+    if (!payload) {
+      validTokens.delete(token);
+      return HttpResponse.json({ message: "Token inválido" }, { status: 401 });
+    }
+
+    if (Date.now() > payload.exp * 1000) {
+      validTokens.delete(token);
+      return HttpResponse.json({ message: "Token expirado" }, { status: 401 });
+    }
+
     const tokenData = validTokens.get(token);
 
-    if (!tokenData) {
-      return HttpResponse.json({ message: "Token inválido" }, { status: 401 });
+    if (tokenData) {
+      if (Date.now() > tokenData.expiresAt) {
+        validTokens.delete(token);
+        return HttpResponse.json({ message: "Token expirado" }, { status: 401 });
+      }
+      return HttpResponse.json({ user: tokenData.user }, { status: 200 });
+    }
+
+    // Token válido pero no está en memoria (p. ej. recarga de página con JWT en localStorage)
+    const mobilePhone =
+      payload.mobilePhone ??
+      mockUsers.find((u) => u.id === payload.sub)?.mobilePhone ??
+      "";
+    const user: User = {
+      id: payload.sub,
+      email: payload.email,
+      name: payload.name,
+      mobilePhone,
+    };
+
+    validTokens.set(token, {
+      user,
+      expiresAt: payload.exp * 1000,
+    });
+
+    return HttpResponse.json({ user }, { status: 200 });
+  }),
+
+  // PUT /api/auth/me
+  http.put("/api/auth/me", async ({ request }) => {
+    const authHeader = request.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "");
+
+    if (!token) {
+      return HttpResponse.json(
+        { message: "Token no proporcionado" },
+        { status: 401 },
+      );
     }
 
     const payload = parseJwtPayload(token);
@@ -137,12 +192,52 @@ export const authHandlers = [
       return HttpResponse.json({ message: "Token inválido" }, { status: 401 });
     }
 
-    if (Date.now() > payload.exp * 1000 || Date.now() > tokenData.expiresAt) {
+    if (Date.now() > payload.exp * 1000) {
       validTokens.delete(token);
       return HttpResponse.json({ message: "Token expirado" }, { status: 401 });
     }
 
-    return HttpResponse.json({ user: tokenData.user }, { status: 200 });
+    const body = (await request.json()) as {
+      name?: unknown;
+      mobilePhone?: unknown;
+    };
+    const name =
+      typeof body.name === "string" ? body.name.trim() : "";
+    const mobilePhone =
+      typeof body.mobilePhone === "string" ? body.mobilePhone.trim() : "";
+
+    if (!name) {
+      return HttpResponse.json(
+        { message: "El nombre es obligatorio" },
+        { status: 400 },
+      );
+    }
+
+    const tokenData = validTokens.get(token);
+    const base: User =
+      tokenData?.user ??
+      ({
+        id: payload.sub,
+        email: payload.email,
+        name: payload.name,
+        mobilePhone:
+          payload.mobilePhone ??
+          mockUsers.find((u) => u.id === payload.sub)?.mobilePhone ??
+          "",
+      } as User);
+
+    const user: User = {
+      ...base,
+      name,
+      mobilePhone,
+    };
+
+    validTokens.set(token, {
+      user,
+      expiresAt: tokenData?.expiresAt ?? payload.exp * 1000,
+    });
+
+    return HttpResponse.json({ user }, { status: 200 });
   }),
 
   // POST /api/auth/logout

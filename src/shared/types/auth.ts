@@ -2,7 +2,13 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  mobilePhone?: string;
 }
+
+export type UpdateCurrentUserDto = {
+  name: string;
+  mobilePhone: string;
+};
 
 export interface AuthResponse {
   user: User;
