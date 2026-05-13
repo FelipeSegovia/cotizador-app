@@ -6,17 +6,20 @@ import {
   HiOutlineArrowDownTray,
 } from "react-icons/hi2";
 import { LABELS_QUOTATION_PREVIEW_PAGE, PATHS } from "../shared/data";
+import { useCompany } from "../shared/hooks";
 import { useQuotationDraftStore } from "../shared/store";
 import type { QuotationStatus } from "../shared/types/quotation";
 
 const IVA_RATE = 0.19;
 
-const COMPANY_INFO = {
-  name: "NeuralCode Chile",
-  rut: "76.543.210-K",
-  address: "Avenida Nueva Providencia 1234, Of 502",
-  city: "Providencia, Santiago, Chile",
-  contact: "contacto@neuralcode.cl | +56 2 2345 6789",
+const companyInitialsFromName = (name: string) => {
+  const trimmed = name.trim();
+  if (!trimmed) return "—";
+  const parts = trimmed.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) {
+    return `${parts[0]![0] ?? ""}${parts[1]![0] ?? ""}`.toUpperCase();
+  }
+  return trimmed.slice(0, 2).toUpperCase();
 };
 
 const TERMS = [
@@ -40,6 +43,7 @@ const formatDate = (date: Date) =>
 
 const QuotationPreviewPage = () => {
   const navigate = useNavigate();
+  const companyQuery = useCompany();
   const {
     draft,
     isReadOnlyPreview,
@@ -49,6 +53,9 @@ const QuotationPreviewPage = () => {
   } = useQuotationDraftStore();
 
   if (draft === null) return null;
+
+  const company = companyQuery.data;
+  const companyIssuerName = company?.name?.trim() ?? "";
 
   const subtotal = draft.items.reduce(
     (sum, item) => sum + item.unitPrice * item.quantity,
@@ -156,18 +163,52 @@ const QuotationPreviewPage = () => {
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-start gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-800 text-sm font-black text-white">
-                QF
+                {companyQuery.isPending
+                  ? "…"
+                  : companyIssuerName
+                    ? companyInitialsFromName(companyIssuerName)
+                    : "—"}
               </div>
               <div>
-                <p className="text-lg font-bold text-slate-900">
-                  {COMPANY_INFO.name}
-                </p>
-                <p className="mt-1 text-xs text-slate-500">
-                  RUT: {COMPANY_INFO.rut}
-                </p>
-                <p className="text-xs text-slate-500">{COMPANY_INFO.address}</p>
-                <p className="text-xs text-slate-500">{COMPANY_INFO.city}</p>
-                <p className="text-xs text-slate-500">{COMPANY_INFO.contact}</p>
+                {companyQuery.isPending ? (
+                  <div className="space-y-2" aria-busy="true">
+                    <p className="text-xs text-slate-500">
+                      {LABELS_QUOTATION_PREVIEW_PAGE.company.loading}
+                    </p>
+                    <div className="space-y-2 animate-pulse">
+                      <div className="h-5 w-52 rounded bg-slate-200" />
+                      <div className="h-3 w-40 rounded bg-slate-200" />
+                      <div className="h-3 w-full max-w-xs rounded bg-slate-200" />
+                      <div className="h-3 w-36 rounded bg-slate-200" />
+                    </div>
+                  </div>
+                ) : companyQuery.isError ? (
+                  <p className="text-sm text-red-600">
+                    {LABELS_QUOTATION_PREVIEW_PAGE.company.loadError}
+                  </p>
+                ) : !company ? (
+                  <p className="text-sm text-amber-800">
+                    {LABELS_QUOTATION_PREVIEW_PAGE.company.notConfigured}
+                  </p>
+                ) : (
+                  <>
+                    <p className="text-lg font-bold text-slate-900">
+                      {company.name}
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      RUT: {company.rut}
+                    </p>
+                    {company.address?.trim() ? (
+                      <p className="text-xs text-slate-500">{company.address}</p>
+                    ) : null}
+                    {company.city?.trim() ? (
+                      <p className="text-xs text-slate-500">{company.city}</p>
+                    ) : null}
+                    {company.contact?.trim() ? (
+                      <p className="text-xs text-slate-500">{company.contact}</p>
+                    ) : null}
+                  </>
+                )}
               </div>
             </div>
 
@@ -314,8 +355,9 @@ const QuotationPreviewPage = () => {
               </p>
             </div>
             <p className="text-xs italic text-slate-400">
-              {LABELS_QUOTATION_PREVIEW_PAGE.footer.generatedBy}{" "}
-              {COMPANY_INFO.name}
+              {companyIssuerName
+                ? `${LABELS_QUOTATION_PREVIEW_PAGE.footer.generatedBy} ${companyIssuerName}`
+                : LABELS_QUOTATION_PREVIEW_PAGE.footer.generatedByWithoutCompany}
             </p>
           </div>
         </div>
