@@ -5,6 +5,7 @@ import logout from "../services/logout";
 
 const STORAGE_KEY = "auth_token";
 const STORAGE_EXPIRY_KEY = "auth_expiry";
+const STORAGE_USER_KEY = "auth_user";
 
 type AuthStore = AuthState & AuthActions;
 
@@ -64,13 +65,116 @@ export const readValidAccessToken = (): string | null => {
   return isValid && token ? token : null;
 };
 
+const parseJwtProfileFromToken = (token: string): User | null => {
+  try {
+    const parts = token.split(".");
+    if (parts.length !== 3) {
+      return null;
+    }
+
+    const normalized = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
+    const payload = JSON.parse(atob(padded)) as {
+      sub?: string;
+      email?: string;
+      name?: string;
+      mobilePhone?: string;
+    };
+
+    if (!payload.sub || !payload.email || !payload.name) {
+      return null;
+    }
+
+    return {
+      id: payload.sub,
+      email: payload.email,
+      name: payload.name,
+      mobilePhone: payload.mobilePhone ?? "",
+    };
+  } catch {
+    return null;
+  }
+};
+
+const readPersistedUser = (): User | null => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+  const auth = getAuthFromStorage();
+  if (!auth.isValid || !auth.token) {
+    return null;
+  }
+  const raw = localStorage.getItem(STORAGE_USER_KEY);
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as Partial<User>;
+      if (!parsed.id || !parsed.email || !parsed.name) {
+        return parseJwtProfileFromToken(auth.token);
+      }
+      return {
+        id: parsed.id,
+        email: parsed.email,
+        name: parsed.name,
+        mobilePhone: parsed.mobilePhone ?? "",
+      };
+    } catch {
+      return parseJwtProfileFromToken(auth.token);
+    }
+  }
+  return parseJwtProfileFromToken(auth.token);
+};
+
+const buildInitialSession = () => {
+  if (typeof window === "undefined") {
+    return {
+      user: null as User | null,
+      token: null as string | null,
+      expiresAt: null as number | null,
+      isAuthenticated: false,
+    };
+  }
+
+  const auth = getAuthFromStorage();
+  if (!auth.isValid || !auth.token || !auth.expiresAt) {
+    return {
+      user: null,
+      token: null,
+      expiresAt: null,
+      isAuthenticated: false,
+    };
+  }
+
+  return {
+    user: readPersistedUser(),
+    token: auth.token,
+    expiresAt: auth.expiresAt,
+    isAuthenticated: true,
+  };
+};
+
+const initialSession = buildInitialSession();
+
+const persistUser = (user: User) => {
+  if (typeof window === "undefined") {
+    return;
+  }
+  localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(user));
+};
+
+const clearPersistedUser = () => {
+  if (typeof window === "undefined") {
+    return;
+  }
+  localStorage.removeItem(STORAGE_USER_KEY);
+};
+
 const useAuthStore = create<AuthStore>((set, get) => ({
-  user: null,
-  token: null,
-  isAuthenticated: false,
+  user: initialSession.user,
+  token: initialSession.token,
+  isAuthenticated: initialSession.isAuthenticated,
   isLoading: false,
   error: null,
-  expiresAt: null,
+  expiresAt: initialSession.expiresAt,
 
   login: async (email: string, password: string) => {
     set({ isLoading: true, error: null });
@@ -96,6 +200,7 @@ const useAuthStore = create<AuthStore>((set, get) => ({
       // Persistir en localStorage
       localStorage.setItem(STORAGE_KEY, token);
       localStorage.setItem(STORAGE_EXPIRY_KEY, String(expiresAt));
+      persistUser(user);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Error desconocido";
@@ -105,10 +210,10 @@ const useAuthStore = create<AuthStore>((set, get) => ({
   },
 
   logout: () => {
-    const currentToken = get().token;
+    const tokenForRequest = get().token ?? readValidAccessToken();
 
-    if (currentToken) {
-      void logout(currentToken);
+    if (tokenForRequest) {
+      void logout(tokenForRequest);
     }
 
     set({
@@ -120,6 +225,7 @@ const useAuthStore = create<AuthStore>((set, get) => ({
     });
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(STORAGE_EXPIRY_KEY);
+    clearPersistedUser();
   },
 
   setToken: (token: string, expiresIn?: number) => {
@@ -137,6 +243,7 @@ const useAuthStore = create<AuthStore>((set, get) => ({
   },
 
   setUser: (user: User) => {
+    persistUser(user);
     set({ user });
   },
 
@@ -156,10 +263,12 @@ const useAuthStore = create<AuthStore>((set, get) => ({
       authFromStorage.expiresAt &&
       authFromStorage.isValid
     ) {
+      const persistedUser = readPersistedUser();
       set({
         token: authFromStorage.token,
         expiresAt: authFromStorage.expiresAt,
         isAuthenticated: true,
+        ...(persistedUser ? { user: persistedUser } : {}),
       });
     } else {
       // Token expirado o inválido, limpiar

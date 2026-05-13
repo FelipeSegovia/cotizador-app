@@ -1,5 +1,13 @@
 import FormField from "./FormField";
 import FormSubmitButton from "./FormSubmitButton";
 import FormTextareaField from "./FormTextareaField";
+import CompanySettingsForm from "./CompanySettingsForm";
+import PersonalProfileForm from "./PersonalProfileForm";
 
-export { FormField, FormSubmitButton, FormTextareaField };
+export {
+  CompanySettingsForm,
+  FormField,
+  FormSubmitButton,
+  FormTextareaField,
+  PersonalProfileForm,
+};

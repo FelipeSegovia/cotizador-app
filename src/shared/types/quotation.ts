@@ -1,4 +1,9 @@
-export type QuotationStatus = "draft" | "sent" | "approved" | "rejected";
+export type QuotationStatus =
+  | "draft"
+  | "sent"
+  | "approved"
+  | "rejected"
+  | "expired";
 
 export interface QuotationItem {
   id: string;
@@ -16,6 +21,8 @@ export interface Quotation {
   projectTitle: string;
   projectDeadline?: string;
   projectNotes?: string;
+  /** Fecha ISO hasta la cual la oferta es válida (validez comercial). */
+  validUntil?: string;
   items: QuotationItem[];
   total: number;
   status: QuotationStatus;
@@ -36,6 +43,7 @@ export type QuotationFormData = {
   projectTitle: string;
   projectDeadline: string;
   projectNotes: string;
+  validUntil?: string;
   items: QuotationItemFormRow[];
 };
 

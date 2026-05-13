@@ -25,4 +25,6 @@ dist-ssr
 
 .github
 
+.cursor
+
 .env

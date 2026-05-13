@@ -4,6 +4,8 @@ const LABELS_QUOTATION_PREVIEW_PAGE = {
     draftBadge: "Borrador",
     sentBadge: "Enviada",
     approvedBadge: "Aprobada",
+    rejectedBadge: "Rechazada",
+    expiredBadge: "Expirado",
     backToEdit: "Volver a Editar",
     downloadPdf: "Descargar PDF",
     sendQuotation: "Enviar Cotizacion",

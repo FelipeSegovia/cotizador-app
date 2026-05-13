@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import {
@@ -31,6 +31,7 @@ const DEFAULT_QUOTATION_FORM_VALUES: QuotationFormData = {
   projectTitle: "",
   projectDeadline: "",
   projectNotes: "",
+  validUntil: "",
   items: [{ description: "", unitPrice: 0, quantity: 1 }],
 };
 
@@ -121,6 +122,7 @@ const QuotationPage = () => {
       projectTitle: data.projectTitle,
       projectDeadline: data.projectDeadline,
       projectNotes: data.projectNotes,
+      validUntil: data.validUntil?.trim() || undefined,
       items,
       status: "draft",
     };
@@ -248,7 +250,7 @@ const QuotationPage = () => {
                         name: field.name,
                         onBlur: field.onBlur,
                         ref: field.ref,
-                        onChange: (e) => {
+                        onChange: (e: ChangeEvent<HTMLInputElement>) => {
                           field.onChange(
                             formatRutAsYouType(e.target.value),
                           );

@@ -27,6 +27,7 @@ const statusLabelMap: Record<QuotationStatus, string> = {
   draft: LABELS_ROOT_PAGE.statusLabels.draft,
   rejected: LABELS_ROOT_PAGE.statusLabels.rejected,
   sent: LABELS_ROOT_PAGE.statusLabels.sent,
+  expired: LABELS_ROOT_PAGE.statusLabels.expired,
 };
 
 const statusClassMap: Record<QuotationStatus, string> = {
@@ -34,6 +35,7 @@ const statusClassMap: Record<QuotationStatus, string> = {
   draft: "bg-slate-200 text-slate-700",
   rejected: "bg-rose-100 text-rose-700",
   sent: "bg-blue-100 text-blue-700",
+  expired: "bg-amber-100 text-amber-800",
 };
 
 const RootPage = () => {

@@ -1,12 +1,20 @@
 import { type InputHTMLAttributes } from "react";
 import { type IconType } from "react-icons";
-import { type UseFormRegisterReturn } from "react-hook-form";
+import {
+  type UseFormRegisterReturn,
+  type ControllerRenderProps,
+} from "react-hook-form";
+
+type ControllerFieldRegistration = Pick<
+  ControllerRenderProps,
+  "name" | "onBlur" | "ref" | "onChange"
+>;
 
 type FormFieldProps = {
   id: string;
   label: string;
   icon?: IconType;
-  registration: UseFormRegisterReturn;
+  registration: UseFormRegisterReturn | ControllerFieldRegistration;
   error?: string;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, "id" | "name">;
 
