@@ -14,6 +14,31 @@ export const quotationHandlers = [
     return HttpResponse.json(db);
   }),
 
+  // GET /api/quotations/:id/pdf
+  http.get("/api/quotations/:id/pdf", ({ params }) => {
+    const exists = db.some((q) => q.id === params.id);
+
+    if (!exists) {
+      return HttpResponse.json(
+        { message: "Cotización no encontrada" },
+        { status: 404 },
+      );
+    }
+
+    const minimalPdf = new Uint8Array([
+      0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x0a, 0x25, 0xe2, 0xe3, 0xcf,
+      0xd3, 0x0a,
+    ]);
+
+    return new HttpResponse(minimalPdf, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": `attachment; filename="cotizacion-${params.id}.pdf"`,
+      },
+    });
+  }),
+
   // GET /api/quotations/:id
   http.get("/api/quotations/:id", ({ params }) => {
     const quotation = db.find((q) => q.id === params.id);

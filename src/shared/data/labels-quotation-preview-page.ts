@@ -8,8 +8,16 @@ const LABELS_QUOTATION_PREVIEW_PAGE = {
     expiredBadge: "Expirado",
     backToEdit: "Volver a Editar",
     downloadPdf: "Descargar PDF",
+    downloadPdfLoading: "Generando PDF…",
     sendQuotation: "Enviar Cotizacion",
     readOnlyInfo: "Vista en modo solo lectura",
+  },
+  pdfFeedback: {
+    success:
+      "El PDF de la cotizacion se genero y envio correctamente al servidor.",
+    errorNoSavedId:
+      "Guarda la cotizacion antes de descargar el PDF para tener un identificador en el sistema.",
+    errorGeneric: "No se pudo completar la solicitud del PDF. Intenta de nuevo.",
   },
   document: {
     title: "Cotizacion",

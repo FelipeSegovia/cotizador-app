@@ -1,12 +1,16 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import {
   HiOutlineArrowLeft,
   HiOutlineEnvelope,
   HiOutlinePencilSquare,
   HiOutlineArrowDownTray,
+  HiOutlineCheckCircle,
+  HiOutlineExclamationCircle,
 } from "react-icons/hi2";
 import { LABELS_QUOTATION_PREVIEW_PAGE, PATHS } from "../shared/data";
 import { useCompany } from "../shared/hooks";
+import { downloadQuotationPdf } from "../shared/services";
 import { useQuotationDraftStore } from "../shared/store";
 import type { QuotationStatus } from "../shared/types/quotation";
 
@@ -48,9 +52,21 @@ const QuotationPreviewPage = () => {
     draft,
     isReadOnlyPreview,
     previewStatus,
+    savedQuotationId,
     setPreviewMode,
     resetDraft,
   } = useQuotationDraftStore();
+
+  const [isPdfRequesting, setIsPdfRequesting] = useState(false);
+  const [pdfAlert, setPdfAlert] = useState<
+    { variant: "success" | "error"; message: string } | null
+  >(null);
+
+  useEffect(() => {
+    if (pdfAlert?.variant !== "success") return;
+    const timer = window.setTimeout(() => setPdfAlert(null), 6000);
+    return () => window.clearTimeout(timer);
+  }, [pdfAlert]);
 
   if (draft === null) return null;
 
@@ -97,6 +113,35 @@ const QuotationPreviewPage = () => {
 
   const currentStatus = previewStatus ?? "draft";
 
+  const handleDownloadPdf = async () => {
+    setPdfAlert(null);
+
+    if (!savedQuotationId) {
+      setPdfAlert({
+        variant: "error",
+        message: LABELS_QUOTATION_PREVIEW_PAGE.pdfFeedback.errorNoSavedId,
+      });
+      return;
+    }
+
+    setIsPdfRequesting(true);
+    try {
+      await downloadQuotationPdf(savedQuotationId);
+      setPdfAlert({
+        variant: "success",
+        message: LABELS_QUOTATION_PREVIEW_PAGE.pdfFeedback.success,
+      });
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : LABELS_QUOTATION_PREVIEW_PAGE.pdfFeedback.errorGeneric;
+      setPdfAlert({ variant: "error", message });
+    } finally {
+      setIsPdfRequesting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header bar */}
@@ -136,10 +181,14 @@ const QuotationPreviewPage = () => {
           ) : null}
           <button
             type="button"
-            className="flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            disabled={isPdfRequesting}
+            onClick={handleDownloadPdf}
+            className="flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-70"
           >
             <HiOutlineArrowDownTray className="text-base" />
-            {LABELS_QUOTATION_PREVIEW_PAGE.topBar.downloadPdf}
+            {isPdfRequesting
+              ? LABELS_QUOTATION_PREVIEW_PAGE.topBar.downloadPdfLoading
+              : LABELS_QUOTATION_PREVIEW_PAGE.topBar.downloadPdf}
           </button>
           {!isReadOnlyPreview ? (
             <button
@@ -152,6 +201,24 @@ const QuotationPreviewPage = () => {
           ) : null}
         </div>
       </div>
+
+      {pdfAlert ? (
+        <div
+          role="status"
+          className={`flex items-start gap-2 rounded-xl border px-4 py-3 text-sm ${
+            pdfAlert.variant === "success"
+              ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+              : "border-rose-200 bg-rose-50 text-rose-900"
+          }`}
+        >
+          {pdfAlert.variant === "success" ? (
+            <HiOutlineCheckCircle className="mt-0.5 shrink-0 text-base" />
+          ) : (
+            <HiOutlineExclamationCircle className="mt-0.5 shrink-0 text-base" />
+          )}
+          <p>{pdfAlert.message}</p>
+        </div>
+      ) : null}
 
       {/* Document */}
       <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
