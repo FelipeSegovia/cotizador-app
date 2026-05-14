@@ -1,13 +1,13 @@
 import { endpoints } from "../data";
 import type { AuthResponse } from "../types/auth";
-import { fetchErrorMessage } from "../utils";
+import { fetchErrorMessage, getApiBaseUrl } from "../utils";
 
 const login = async (
   email: string,
   password: string,
 ): Promise<AuthResponse> => {
   const response = await fetch(
-    `${import.meta.env.VITE_BASE_URL_API}${endpoints.LOGIN}`,
+    `${getApiBaseUrl()}${endpoints.LOGIN}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },

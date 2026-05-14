@@ -5,17 +5,18 @@ import type {
   UpdateQuotationDto,
 } from "../../shared/types/quotation";
 import { mockQuotations } from "../data/quotations";
+import { mockApiPath } from "../mock-api-path";
 
 const db: Quotation[] = [...mockQuotations];
 
 export const quotationHandlers = [
   // GET /api/quotations
-  http.get("/api/quotations", () => {
+  http.get(mockApiPath("/api/quotations"), () => {
     return HttpResponse.json(db);
   }),
 
   // GET /api/quotations/:id/pdf
-  http.get("/api/quotations/:id/pdf", ({ params }) => {
+  http.get(mockApiPath("/api/quotations/:id/pdf"), ({ params }) => {
     const exists = db.some((q) => q.id === params.id);
 
     if (!exists) {
@@ -40,7 +41,7 @@ export const quotationHandlers = [
   }),
 
   // GET /api/quotations/:id
-  http.get("/api/quotations/:id", ({ params }) => {
+  http.get(mockApiPath("/api/quotations/:id"), ({ params }) => {
     const quotation = db.find((q) => q.id === params.id);
 
     if (!quotation) {
@@ -54,7 +55,7 @@ export const quotationHandlers = [
   }),
 
   // POST /api/quotations
-  http.post("/api/quotations", async ({ request }) => {
+  http.post(mockApiPath("/api/quotations"), async ({ request }) => {
     const body = (await request.json()) as CreateQuotationDto;
     const total = body.items.reduce((sum, item) => sum + item.subtotal, 0);
 
@@ -72,7 +73,7 @@ export const quotationHandlers = [
   }),
 
   // PUT /api/quotations/:id
-  http.put("/api/quotations/:id", async ({ params, request }) => {
+  http.put(mockApiPath("/api/quotations/:id"), async ({ params, request }) => {
     const index = db.findIndex((q) => q.id === params.id);
 
     if (index === -1) {
@@ -97,7 +98,7 @@ export const quotationHandlers = [
   }),
 
   // DELETE /api/quotations/:id
-  http.delete("/api/quotations/:id", ({ params }) => {
+  http.delete(mockApiPath("/api/quotations/:id"), ({ params }) => {
     const index = db.findIndex((q) => q.id === params.id);
 
     if (index === -1) {

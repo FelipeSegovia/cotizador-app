@@ -1,4 +1,5 @@
 import { http, HttpResponse } from "msw";
+import { mockApiPath } from "../mock-api-path";
 import { mockUsers, type MockUser } from "../data/users";
 import type { User, AuthResponse } from "../../shared/types/auth";
 
@@ -76,7 +77,7 @@ const TOKEN_EXPIRY_SECONDS = 15 * 60;
 
 export const authHandlers = [
   // POST /api/auth/login
-  http.post("/api/auth/login", async ({ request }) => {
+  http.post(mockApiPath("/api/auth/login"), async ({ request }) => {
     const body = (await request.json()) as {
       email?: string;
       password?: string;
@@ -122,7 +123,7 @@ export const authHandlers = [
   }),
 
   // GET /api/auth/me
-  http.get("/api/auth/me", ({ request }) => {
+  http.get(mockApiPath("/api/auth/me"), ({ request }) => {
     const authHeader = request.headers.get("Authorization");
     const token = authHeader?.replace("Bearer ", "");
 
@@ -178,7 +179,7 @@ export const authHandlers = [
   }),
 
   // PATCH /api/auth/me
-  http.patch("/api/auth/me", async ({ request }) => {
+  http.patch(mockApiPath("/api/auth/me"), async ({ request }) => {
     const authHeader = request.headers.get("Authorization");
     const token = authHeader?.replace("Bearer ", "");
 
@@ -243,7 +244,7 @@ export const authHandlers = [
   }),
 
   // POST /api/auth/logout
-  http.post("/api/auth/logout", ({ request }) => {
+  http.post(mockApiPath("/api/auth/logout"), ({ request }) => {
     const authHeader = request.headers.get("Authorization");
     const token = authHeader?.replace("Bearer ", "");
 
