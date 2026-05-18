@@ -13,3 +13,4 @@ export {
   QUOTATION_STATUS_MODAL_PILL,
 } from "./quotation-status-display";
 export { cleanRutInput, formatRutAsYouType, stripRutForApi } from "./rut";
+export { formatCLP, formatDate } from "./format";
