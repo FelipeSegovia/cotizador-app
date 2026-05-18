@@ -11,6 +11,16 @@ const LABELS_QUOTATION_PREVIEW_PAGE = {
     downloadPdfLoading: "Generando PDF…",
     sendQuotation: "Enviar Cotizacion",
     readOnlyInfo: "Vista en modo solo lectura",
+    approveQuotation: "Marcar como Aprobada",
+    rejectQuotation: "Marcar como Rechazada",
+    updatingStatus: "Actualizando estado…",
+  },
+  statusUpdate: {
+    successApproved: "La cotización fue marcada como Aprobada.",
+    successRejected: "La cotización fue marcada como Rechazada.",
+    errorGeneric: "No se pudo actualizar el estado de la cotización.",
+    expiredInfo:
+      "La cotización ya expiró (su fecha de validez pasó) y no puede cambiar de estado.",
   },
   pdfFeedback: {
     success:

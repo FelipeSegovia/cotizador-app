@@ -20,6 +20,9 @@ const LABELS_QUOTATIONS_LIST_PAGE = {
     action: "Ver",
     actionEditDraft: "Editar",
     actionViewPreview: "Ver",
+    actionApprove: "Aprobada",
+    actionReject: "Rechazada",
+    actionUpdatingStatus: "Actualizando...",
   },
   statusLabels: {
     draft: "Borrador",
@@ -27,6 +30,9 @@ const LABELS_QUOTATIONS_LIST_PAGE = {
     approved: "Aprobada",
     rejected: "Rechazada",
     expired: "Expirado",
+  },
+  statusUpdate: {
+    errorGeneric: "No se pudo actualizar el estado de la cotización.",
   },
 };
 

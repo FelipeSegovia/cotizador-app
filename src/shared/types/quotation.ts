@@ -52,3 +52,14 @@ export type CreateQuotationDto = Omit<
   "id" | "total" | "createdAt" | "updatedAt"
 >;
 export type UpdateQuotationDto = Partial<CreateQuotationDto>;
+
+/**
+ * Estados a los que una cotización `sent` puede transicionar de forma manual.
+ * La transición a `expired` se realiza automáticamente en el backend cuando
+ * `validUntil` ya pasó.
+ */
+export type ManualQuotationStatusTransition = "approved" | "rejected";
+
+export interface UpdateQuotationStatusDto {
+  status: ManualQuotationStatusTransition;
+}

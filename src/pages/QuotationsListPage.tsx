@@ -1,14 +1,26 @@
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import {
   HiInformationCircle,
+  HiOutlineCheckCircle,
   HiOutlineDocumentPlus,
   HiOutlineEye,
   HiOutlineDocumentText,
+  HiOutlineExclamationCircle,
+  HiOutlineXCircle,
 } from "react-icons/hi2";
-import { useQuotations } from "../shared/hooks";
+import { ConfirmQuotationStatusChangeModal } from "../shared/components/ui";
+import { useQuotations, useUpdateQuotationStatus } from "../shared/hooks";
 import { LABELS_QUOTATIONS_LIST_PAGE, PATHS } from "../shared/data";
 import { useQuotationDraftStore } from "../shared/store";
-import type { QuotationStatus } from "../shared/types/quotation";
+import type {
+  ManualQuotationStatusTransition,
+  QuotationStatus,
+} from "../shared/types/quotation";
+import {
+  getEffectiveQuotationStatus,
+  QUOTATION_STATUS_BADGE_CLASSES,
+} from "../shared/utils";
 
 const STATUS_LABELS: Record<QuotationStatus, string> = {
   draft: LABELS_QUOTATIONS_LIST_PAGE.statusLabels.draft,
@@ -16,14 +28,6 @@ const STATUS_LABELS: Record<QuotationStatus, string> = {
   approved: LABELS_QUOTATIONS_LIST_PAGE.statusLabels.approved,
   rejected: LABELS_QUOTATIONS_LIST_PAGE.statusLabels.rejected,
   expired: LABELS_QUOTATIONS_LIST_PAGE.statusLabels.expired,
-};
-
-const STATUS_CLASSES: Record<QuotationStatus, string> = {
-  draft: "bg-slate-100 text-slate-600",
-  sent: "bg-blue-50 text-blue-700",
-  approved: "bg-emerald-50 text-emerald-700",
-  rejected: "bg-red-50 text-red-600",
-  expired: "bg-amber-50 text-amber-800",
 };
 
 const formatCLP = (value: number) =>
@@ -39,6 +43,14 @@ const formatDate = (iso: string) =>
 const QuotationsListPage = () => {
   const navigate = useNavigate();
   const { data: quotations, isLoading, isError } = useQuotations();
+  const updateStatusMutation = useUpdateQuotationStatus();
+  const [statusError, setStatusError] = useState<string | null>(null);
+  const [pendingStatusId, setPendingStatusId] = useState<string | null>(null);
+  const [pendingStatusChange, setPendingStatusChange] = useState<{
+    quotationId: string;
+    fromStatus: QuotationStatus;
+    nextStatus: ManualQuotationStatusTransition;
+  } | null>(null);
   const {
     setDraft,
     setPreviewMode,
@@ -81,6 +93,40 @@ const QuotationsListPage = () => {
     navigate(PATHS.NEW_QUOTATION);
   };
 
+  const requestStatusChange = (
+    quotationId: string,
+    fromStatus: QuotationStatus,
+    nextStatus: ManualQuotationStatusTransition,
+  ) => {
+    setPendingStatusChange({ quotationId, fromStatus, nextStatus });
+  };
+
+  const confirmStatusChange = () => {
+    if (pendingStatusChange === null) return;
+
+    const { quotationId, nextStatus } = pendingStatusChange;
+    setStatusError(null);
+    setPendingStatusId(quotationId);
+    updateStatusMutation.mutate(
+      { quotationId, status: nextStatus },
+      {
+        onSuccess: () => {
+          setPendingStatusChange(null);
+        },
+        onError: (error) => {
+          setStatusError(
+            error instanceof Error
+              ? error.message
+              : LABELS_QUOTATIONS_LIST_PAGE.statusUpdate.errorGeneric,
+          );
+        },
+        onSettled: () => {
+          setPendingStatusId(null);
+        },
+      },
+    );
+  };
+
   const handleViewReadonlyPreview = (quotationId: string) => {
     const quotation = quotations?.find((item) => item.id === quotationId);
 
@@ -88,6 +134,7 @@ const QuotationsListPage = () => {
       !quotation ||
       (quotation.status !== "sent" &&
         quotation.status !== "approved" &&
+        quotation.status !== "rejected" &&
         quotation.status !== "expired")
     ) {
       return;
@@ -116,6 +163,17 @@ const QuotationsListPage = () => {
 
   return (
     <div className="space-y-6">
+      <ConfirmQuotationStatusChangeModal
+        isOpen={pendingStatusChange !== null}
+        fromStatus={pendingStatusChange?.fromStatus ?? "sent"}
+        toStatus={pendingStatusChange?.nextStatus ?? "sent"}
+        isConfirming={updateStatusMutation.isPending}
+        onConfirm={confirmStatusChange}
+        onCancel={() => {
+          if (!updateStatusMutation.isPending) setPendingStatusChange(null);
+        }}
+      />
+
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -140,6 +198,16 @@ const QuotationsListPage = () => {
         <HiInformationCircle className="mt-0.5 shrink-0 text-base" />
         <p>{LABELS_QUOTATIONS_LIST_PAGE.draftEditInfo}</p>
       </div>
+
+      {statusError ? (
+        <div
+          role="alert"
+          className="flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800"
+        >
+          <HiOutlineExclamationCircle className="mt-0.5 shrink-0 text-base" />
+          <p>{statusError}</p>
+        </div>
+      ) : null}
 
       {/* Table */}
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -199,57 +267,118 @@ const QuotationsListPage = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {quotations.map((q, index) => (
-                  <tr key={q.id} className="group transition hover:bg-slate-50">
-                    <td className="px-6 py-4 text-sm font-medium text-slate-400">
-                      {String(index + 1).padStart(3, "0")}
-                    </td>
-                    <td className="px-4 py-4 text-sm font-semibold text-slate-800">
-                      {q.clientName}
-                    </td>
-                    <td className="px-4 py-4 text-sm text-slate-600">
-                      {q.projectTitle}
-                    </td>
-                    <td className="px-4 py-4">
-                      <span
-                        className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_CLASSES[q.status]}`}
-                      >
-                        {STATUS_LABELS[q.status]}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 text-right text-sm font-bold text-slate-800">
-                      {formatCLP(q.total)}
-                    </td>
-                    <td className="px-4 py-4 text-sm text-slate-500">
-                      {formatDate(q.createdAt)}
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      {q.status === "draft" ? (
-                        <button
-                          type="button"
-                          onClick={() => handleEditDraftQuotation(q.id)}
-                          className="flex items-center gap-1 text-xs font-semibold text-emerald-700 opacity-0 transition hover:text-emerald-800 group-hover:opacity-100"
-                        >
-                          <HiOutlineEye className="text-sm" />
-                          {LABELS_QUOTATIONS_LIST_PAGE.table.actionEditDraft}
-                        </button>
-                      ) : null}
+                {quotations.map((q, index) => {
+                  const effectiveStatus = getEffectiveQuotationStatus(q);
+                  const canChangeStatus = effectiveStatus === "sent";
+                  const isUpdatingRow =
+                    pendingStatusId === q.id && updateStatusMutation.isPending;
 
-                      {q.status === "sent" ||
-                      q.status === "approved" ||
-                      q.status === "expired" ? (
-                        <button
-                          type="button"
-                          onClick={() => handleViewReadonlyPreview(q.id)}
-                          className="flex items-center gap-1 text-xs font-semibold text-blue-700 opacity-0 transition hover:text-blue-800 group-hover:opacity-100"
+                  return (
+                    <tr
+                      key={q.id}
+                      className="group transition hover:bg-slate-50"
+                    >
+                      <td className="px-6 py-4 text-sm font-medium text-slate-400">
+                        {String(index + 1).padStart(3, "0")}
+                      </td>
+                      <td className="px-4 py-4 text-sm font-semibold text-slate-800">
+                        {q.clientName}
+                      </td>
+                      <td className="px-4 py-4 text-sm text-slate-600">
+                        {q.projectTitle}
+                      </td>
+                      <td className="px-4 py-4">
+                        <span
+                          className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${QUOTATION_STATUS_BADGE_CLASSES[effectiveStatus]}`}
                         >
-                          <HiOutlineEye className="text-sm" />
-                          {LABELS_QUOTATIONS_LIST_PAGE.table.actionViewPreview}
-                        </button>
-                      ) : null}
-                    </td>
-                  </tr>
-                ))}
+                          {STATUS_LABELS[effectiveStatus]}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4 text-right text-sm font-bold text-slate-800">
+                        {formatCLP(q.total)}
+                      </td>
+                      <td className="px-4 py-4 text-sm text-slate-500">
+                        {formatDate(q.createdAt)}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-3">
+                          {effectiveStatus === "draft" ? (
+                            <button
+                              type="button"
+                              onClick={() => handleEditDraftQuotation(q.id)}
+                              className="flex items-center gap-1 text-xs font-semibold text-emerald-700 opacity-0 transition hover:text-emerald-800 group-hover:opacity-100"
+                            >
+                              <HiOutlineEye className="text-sm" />
+                              {
+                                LABELS_QUOTATIONS_LIST_PAGE.table
+                                  .actionEditDraft
+                              }
+                            </button>
+                          ) : null}
+
+                          {effectiveStatus === "sent" ||
+                          effectiveStatus === "approved" ||
+                          effectiveStatus === "rejected" ||
+                          effectiveStatus === "expired" ? (
+                            <button
+                              type="button"
+                              onClick={() => handleViewReadonlyPreview(q.id)}
+                              className="flex items-center gap-1 text-xs font-semibold text-blue-700 opacity-0 transition hover:text-blue-800 group-hover:opacity-100"
+                            >
+                              <HiOutlineEye className="text-sm" />
+                              {
+                                LABELS_QUOTATIONS_LIST_PAGE.table
+                                  .actionViewPreview
+                              }
+                            </button>
+                          ) : null}
+
+                          {canChangeStatus ? (
+                            <>
+                              <button
+                                type="button"
+                                disabled={isUpdatingRow}
+                                onClick={() =>
+                                  requestStatusChange(
+                                    q.id,
+                                    effectiveStatus,
+                                    "approved",
+                                  )
+                                }
+                                className="flex items-center gap-1 text-xs font-semibold text-emerald-700 opacity-0 transition hover:text-emerald-800 group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-60"
+                              >
+                                <HiOutlineCheckCircle className="text-sm" />
+                                {isUpdatingRow
+                                  ? LABELS_QUOTATIONS_LIST_PAGE.table
+                                      .actionUpdatingStatus
+                                  : LABELS_QUOTATIONS_LIST_PAGE.table
+                                      .actionApprove}
+                              </button>
+                              <button
+                                type="button"
+                                disabled={isUpdatingRow}
+                                onClick={() =>
+                                  requestStatusChange(
+                                    q.id,
+                                    effectiveStatus,
+                                    "rejected",
+                                  )
+                                }
+                                className="flex items-center gap-1 text-xs font-semibold text-rose-700 opacity-0 transition hover:text-rose-800 group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-60"
+                              >
+                                <HiOutlineXCircle className="text-sm" />
+                                {
+                                  LABELS_QUOTATIONS_LIST_PAGE.table
+                                    .actionReject
+                                }
+                              </button>
+                            </>
+                          ) : null}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
