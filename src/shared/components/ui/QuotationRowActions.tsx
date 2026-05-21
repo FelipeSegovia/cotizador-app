@@ -1,6 +1,7 @@
 import {
   HiOutlineCheckCircle,
   HiOutlineEye,
+  HiOutlinePencil,
   HiOutlineXCircle,
 } from "react-icons/hi2";
 import LABELS_QUOTATIONS_LIST_PAGE from "../../data/labels-quotations-list-page";
@@ -124,7 +125,7 @@ const QuotationRowActions = ({
           onClick={() => onEditDraft(quotationId)}
           className={compactIconButtonClass("emerald")}
         >
-          <HiOutlineEye className="h-4 w-4" />
+          <HiOutlinePencil className="h-4 w-4" />
         </button>
       ) : null}
 
