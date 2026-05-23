@@ -1,5 +1,6 @@
 import { endpoints } from "../data";
 import { readValidAccessToken } from "../store/useAuthStore";
+import { getApiBaseUrl } from "../utils";
 
 /** fetch a `/api/quotations` + pathSuffix, con Bearer si hay token válido. */
 export async function quotationFetch(
@@ -12,6 +13,6 @@ export async function quotationFetch(
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  const url = `${import.meta.env.VITE_BASE_URL_API}${endpoints.QUOTATIONS}${pathSuffix}`;
+  const url = `${getApiBaseUrl()}${endpoints.QUOTATIONS}${pathSuffix}`;
   return fetch(url, { ...init, headers });
 }

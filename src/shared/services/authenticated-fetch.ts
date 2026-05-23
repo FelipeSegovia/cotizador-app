@@ -1,4 +1,5 @@
 import { readValidAccessToken } from "../store/useAuthStore";
+import { getApiBaseUrl } from "../utils";
 
 export async function authenticatedFetch(
   path: string,
@@ -10,6 +11,6 @@ export async function authenticatedFetch(
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  const url = `${import.meta.env.VITE_BASE_URL_API}${path}`;
+  const url = `${getApiBaseUrl()}${path}`;
   return fetch(url, { ...init, headers });
 }

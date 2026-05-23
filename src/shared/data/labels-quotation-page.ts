@@ -9,9 +9,12 @@ const LABELS_QUOTATION_PAGE = {
     saveAndPreview: "Guardar y Previsualizar",
     savingAndPreview: "Guardando y previsualizando...",
     sendToClient: "Enviar al Cliente",
+    sendingToClient: "Enviando al cliente…",
   },
   feedback: {
     saveError: "No se pudo guardar la cotizacion. Intenta nuevamente.",
+    sendSuccess: "Cotización enviada al cliente exitosamente.",
+    sendError: "No se pudo enviar la cotización. Intenta nuevamente.",
   },
   clientSection: {
     title: "Informacion del Cliente",

@@ -1,5 +1,6 @@
 import { http, HttpResponse } from "msw";
 import type { Company, CompanyWriteDto } from "../../shared/types/company";
+import { mockApiPath } from "../mock-api-path";
 
 type JwtPayload = {
   sub: string;
@@ -39,7 +40,7 @@ const getBearerToken = (request: Request): string | null => {
 const companiesByUserId = new Map<string, Company>();
 
 export const companyHandlers = [
-  http.get("/api/company", ({ request }) => {
+  http.get(mockApiPath("/api/company"), ({ request }) => {
     const token = getBearerToken(request);
     if (!token) {
       return HttpResponse.json(
@@ -64,7 +65,7 @@ export const companyHandlers = [
     return HttpResponse.json(company, { status: 200 });
   }),
 
-  http.put("/api/company", async ({ request }) => {
+  http.put(mockApiPath("/api/company"), async ({ request }) => {
     const token = getBearerToken(request);
     if (!token) {
       return HttpResponse.json(

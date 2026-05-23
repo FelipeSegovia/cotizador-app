@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 import {
   HiOutlineArrowLeft,
   HiOutlineEnvelope,
@@ -7,12 +8,22 @@ import {
   HiOutlineArrowDownTray,
   HiOutlineCheckCircle,
   HiOutlineExclamationCircle,
+  HiOutlineXCircle,
 } from "react-icons/hi2";
+import { ConfirmQuotationStatusChangeModal } from "../shared/components/ui";
 import { LABELS_QUOTATION_PREVIEW_PAGE, PATHS } from "../shared/data";
-import { useCompany } from "../shared/hooks";
+import {
+  useCompany,
+  useSendQuotation,
+  useUpdateQuotationStatus,
+} from "../shared/hooks";
 import { downloadQuotationPdf } from "../shared/services";
 import { useQuotationDraftStore } from "../shared/store";
-import type { QuotationStatus } from "../shared/types/quotation";
+import type {
+  ManualQuotationStatusTransition,
+  QuotationStatus,
+} from "../shared/types/quotation";
+import { isQuotationExpired } from "../shared/utils";
 
 const IVA_RATE = 0.19;
 
@@ -48,12 +59,16 @@ const formatDate = (date: Date) =>
 const QuotationPreviewPage = () => {
   const navigate = useNavigate();
   const companyQuery = useCompany();
+  const updateStatusMutation = useUpdateQuotationStatus();
+  const sendMutation = useSendQuotation();
   const {
     draft,
     isReadOnlyPreview,
     previewStatus,
     savedQuotationId,
     setPreviewMode,
+    setPreviewStatus,
+    setReadOnlyPreview,
     resetDraft,
   } = useQuotationDraftStore();
 
@@ -61,12 +76,23 @@ const QuotationPreviewPage = () => {
   const [pdfAlert, setPdfAlert] = useState<
     { variant: "success" | "error"; message: string } | null
   >(null);
+  const [statusAlert, setStatusAlert] = useState<
+    { variant: "success" | "error" | "info"; message: string } | null
+  >(null);
+  const [pendingStatusChange, setPendingStatusChange] =
+    useState<ManualQuotationStatusTransition | null>(null);
 
   useEffect(() => {
     if (pdfAlert?.variant !== "success") return;
     const timer = window.setTimeout(() => setPdfAlert(null), 6000);
     return () => window.clearTimeout(timer);
   }, [pdfAlert]);
+
+  useEffect(() => {
+    if (statusAlert?.variant !== "success") return;
+    const timer = window.setTimeout(() => setStatusAlert(null), 6000);
+    return () => window.clearTimeout(timer);
+  }, [statusAlert]);
 
   if (draft === null) return null;
 
@@ -111,7 +137,80 @@ const QuotationPreviewPage = () => {
     expired: "bg-amber-100 text-amber-900",
   };
 
-  const currentStatus = previewStatus ?? "draft";
+  const baseStatus = previewStatus ?? "draft";
+  const isExpiredBySchedule = isQuotationExpired({
+    status: baseStatus,
+    validUntil: draft.validUntil,
+  });
+  const currentStatus: QuotationStatus = isExpiredBySchedule
+    ? "expired"
+    : baseStatus;
+  const canChangeStatus =
+    isReadOnlyPreview && currentStatus === "sent" && !!savedQuotationId;
+
+  const requestStatusChange = (
+    nextStatus: ManualQuotationStatusTransition,
+  ) => {
+    if (!savedQuotationId) return;
+    setPendingStatusChange(nextStatus);
+  };
+
+  const confirmStatusChange = () => {
+    if (!savedQuotationId || pendingStatusChange === null) return;
+
+    const nextStatus = pendingStatusChange;
+    setStatusAlert(null);
+    updateStatusMutation.mutate(
+      { quotationId: savedQuotationId, status: nextStatus },
+      {
+        onSuccess: (updated) => {
+          setPendingStatusChange(null);
+          setPreviewStatus(updated.status);
+          setStatusAlert({
+            variant: "success",
+            message:
+              nextStatus === "approved"
+                ? LABELS_QUOTATION_PREVIEW_PAGE.statusUpdate.successApproved
+                : LABELS_QUOTATION_PREVIEW_PAGE.statusUpdate.successRejected,
+          });
+        },
+        onError: (error) => {
+          setStatusAlert({
+            variant: "error",
+            message:
+              error instanceof Error
+                ? error.message
+                : LABELS_QUOTATION_PREVIEW_PAGE.statusUpdate.errorGeneric,
+          });
+        },
+      },
+    );
+  };
+
+  const handleSendQuotation = () => {
+    if (!savedQuotationId) {
+      toast.error(LABELS_QUOTATION_PREVIEW_PAGE.sendFeedback.errorGeneric);
+      return;
+    }
+
+    sendMutation.mutate(
+      { quotationId: savedQuotationId },
+      {
+        onSuccess: () => {
+          setPreviewStatus("sent");
+          setReadOnlyPreview(true);
+          toast.success(LABELS_QUOTATION_PREVIEW_PAGE.sendFeedback.success);
+        },
+        onError: (error) => {
+          toast.error(
+            error instanceof Error
+              ? error.message
+              : LABELS_QUOTATION_PREVIEW_PAGE.sendFeedback.errorGeneric,
+          );
+        },
+      },
+    );
+  };
 
   const handleDownloadPdf = async () => {
     setPdfAlert(null);
@@ -168,7 +267,7 @@ const QuotationPreviewPage = () => {
           ) : null}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {!isReadOnlyPreview ? (
             <button
               type="button"
@@ -193,14 +292,74 @@ const QuotationPreviewPage = () => {
           {!isReadOnlyPreview ? (
             <button
               type="button"
-              className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
+              disabled={sendMutation.isPending}
+              onClick={handleSendQuotation}
+              className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-70"
             >
               <HiOutlineEnvelope className="text-base" />
-              {LABELS_QUOTATION_PREVIEW_PAGE.topBar.sendQuotation}
+              {sendMutation.isPending
+                ? LABELS_QUOTATION_PREVIEW_PAGE.topBar.sendingQuotation
+                : LABELS_QUOTATION_PREVIEW_PAGE.topBar.sendQuotation}
             </button>
+          ) : null}
+          {canChangeStatus ? (
+            <>
+              <button
+                type="button"
+                disabled={updateStatusMutation.isPending}
+                onClick={() => requestStatusChange("approved")}
+                className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                <HiOutlineCheckCircle className="text-base" />
+                {updateStatusMutation.isPending
+                  ? LABELS_QUOTATION_PREVIEW_PAGE.topBar.updatingStatus
+                  : LABELS_QUOTATION_PREVIEW_PAGE.topBar.approveQuotation}
+              </button>
+              <button
+                type="button"
+                disabled={updateStatusMutation.isPending}
+                onClick={() => requestStatusChange("rejected")}
+                className="flex items-center gap-2 rounded-xl border border-rose-300 bg-white px-4 py-2.5 text-sm font-semibold text-rose-700 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                <HiOutlineXCircle className="text-base" />
+                {updateStatusMutation.isPending
+                  ? LABELS_QUOTATION_PREVIEW_PAGE.topBar.updatingStatus
+                  : LABELS_QUOTATION_PREVIEW_PAGE.topBar.rejectQuotation}
+              </button>
+            </>
           ) : null}
         </div>
       </div>
+
+      {isReadOnlyPreview && isExpiredBySchedule && baseStatus === "sent" ? (
+        <div
+          role="status"
+          className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+        >
+          <HiOutlineExclamationCircle className="mt-0.5 shrink-0 text-base" />
+          <p>{LABELS_QUOTATION_PREVIEW_PAGE.statusUpdate.expiredInfo}</p>
+        </div>
+      ) : null}
+
+      {statusAlert ? (
+        <div
+          role="status"
+          className={`flex items-start gap-2 rounded-xl border px-4 py-3 text-sm ${
+            statusAlert.variant === "success"
+              ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+              : statusAlert.variant === "error"
+                ? "border-rose-200 bg-rose-50 text-rose-900"
+                : "border-amber-200 bg-amber-50 text-amber-900"
+          }`}
+        >
+          {statusAlert.variant === "success" ? (
+            <HiOutlineCheckCircle className="mt-0.5 shrink-0 text-base" />
+          ) : (
+            <HiOutlineExclamationCircle className="mt-0.5 shrink-0 text-base" />
+          )}
+          <p>{statusAlert.message}</p>
+        </div>
+      ) : null}
 
       {pdfAlert ? (
         <div
@@ -219,6 +378,17 @@ const QuotationPreviewPage = () => {
           <p>{pdfAlert.message}</p>
         </div>
       ) : null}
+
+      <ConfirmQuotationStatusChangeModal
+        isOpen={pendingStatusChange !== null}
+        fromStatus={currentStatus}
+        toStatus={pendingStatusChange ?? currentStatus}
+        isConfirming={updateStatusMutation.isPending}
+        onConfirm={confirmStatusChange}
+        onCancel={() => {
+          if (!updateStatusMutation.isPending) setPendingStatusChange(null);
+        }}
+      />
 
       {/* Document */}
       <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">

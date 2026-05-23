@@ -1,7 +1,8 @@
 import { endpoints } from "../data";
+import { getApiBaseUrl } from "../utils";
 
 const logout = async (token: string): Promise<void> => {
-  await fetch(`${import.meta.env.VITE_BASE_URL_API}${endpoints.LOGOUT}`, {
+  await fetch(`${getApiBaseUrl()}${endpoints.LOGOUT}`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
