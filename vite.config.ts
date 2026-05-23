@@ -6,10 +6,10 @@ import tailwindcss from "@tailwindcss/vite";
 // https://vite.dev/config/
 export default defineConfig({
   server: {
-    allowedHosts: [".tunnelmole.net", "localhost"],
+    allowedHosts: [".tunnelmole.net", "localhost", "67.205.153.42"],
     proxy: {
       "/api": {
-        target: "http://localhost:3000",
+        target: "http://67.205.153.42:3000",
         changeOrigin: true,
       },
     },
