@@ -1,5 +1,6 @@
 import { getQuotations } from "./get-quotations";
 import { createQuotation, updateQuotation } from "./save-quotation";
+import { sendQuotation } from "./send-quotation";
 import { updateQuotationStatus } from "./update-quotation-status";
 import login from "./login";
 import logout from "./logout";
@@ -15,6 +16,7 @@ export {
   getCompany,
   getQuotations,
   updateQuotation,
+  sendQuotation,
   updateQuotationStatus,
   login,
   logout,

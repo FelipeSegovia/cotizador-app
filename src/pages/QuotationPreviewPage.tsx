@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 import {
   HiOutlineArrowLeft,
   HiOutlineEnvelope,
@@ -11,7 +12,11 @@ import {
 } from "react-icons/hi2";
 import { ConfirmQuotationStatusChangeModal } from "../shared/components/ui";
 import { LABELS_QUOTATION_PREVIEW_PAGE, PATHS } from "../shared/data";
-import { useCompany, useUpdateQuotationStatus } from "../shared/hooks";
+import {
+  useCompany,
+  useSendQuotation,
+  useUpdateQuotationStatus,
+} from "../shared/hooks";
 import { downloadQuotationPdf } from "../shared/services";
 import { useQuotationDraftStore } from "../shared/store";
 import type {
@@ -55,6 +60,7 @@ const QuotationPreviewPage = () => {
   const navigate = useNavigate();
   const companyQuery = useCompany();
   const updateStatusMutation = useUpdateQuotationStatus();
+  const sendMutation = useSendQuotation();
   const {
     draft,
     isReadOnlyPreview,
@@ -62,6 +68,7 @@ const QuotationPreviewPage = () => {
     savedQuotationId,
     setPreviewMode,
     setPreviewStatus,
+    setReadOnlyPreview,
     resetDraft,
   } = useQuotationDraftStore();
 
@@ -180,6 +187,31 @@ const QuotationPreviewPage = () => {
     );
   };
 
+  const handleSendQuotation = () => {
+    if (!savedQuotationId) {
+      toast.error(LABELS_QUOTATION_PREVIEW_PAGE.sendFeedback.errorGeneric);
+      return;
+    }
+
+    sendMutation.mutate(
+      { quotationId: savedQuotationId },
+      {
+        onSuccess: () => {
+          setPreviewStatus("sent");
+          setReadOnlyPreview(true);
+          toast.success(LABELS_QUOTATION_PREVIEW_PAGE.sendFeedback.success);
+        },
+        onError: (error) => {
+          toast.error(
+            error instanceof Error
+              ? error.message
+              : LABELS_QUOTATION_PREVIEW_PAGE.sendFeedback.errorGeneric,
+          );
+        },
+      },
+    );
+  };
+
   const handleDownloadPdf = async () => {
     setPdfAlert(null);
 
@@ -260,10 +292,14 @@ const QuotationPreviewPage = () => {
           {!isReadOnlyPreview ? (
             <button
               type="button"
-              className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
+              disabled={sendMutation.isPending}
+              onClick={handleSendQuotation}
+              className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-70"
             >
               <HiOutlineEnvelope className="text-base" />
-              {LABELS_QUOTATION_PREVIEW_PAGE.topBar.sendQuotation}
+              {sendMutation.isPending
+                ? LABELS_QUOTATION_PREVIEW_PAGE.topBar.sendingQuotation
+                : LABELS_QUOTATION_PREVIEW_PAGE.topBar.sendQuotation}
             </button>
           ) : null}
           {canChangeStatus ? (

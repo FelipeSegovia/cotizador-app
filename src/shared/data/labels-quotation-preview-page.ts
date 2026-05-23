@@ -10,10 +10,15 @@ const LABELS_QUOTATION_PREVIEW_PAGE = {
     downloadPdf: "Descargar PDF",
     downloadPdfLoading: "Generando PDF…",
     sendQuotation: "Enviar Cotizacion",
+    sendingQuotation: "Enviando…",
     readOnlyInfo: "Vista en modo solo lectura",
     approveQuotation: "Marcar como Aprobada",
     rejectQuotation: "Marcar como Rechazada",
     updatingStatus: "Actualizando estado…",
+  },
+  sendFeedback: {
+    success: "Cotización enviada al cliente exitosamente.",
+    errorGeneric: "No se pudo enviar la cotización.",
   },
   statusUpdate: {
     successApproved: "La cotización fue marcada como Aprobada.",

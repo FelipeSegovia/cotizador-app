@@ -76,6 +76,39 @@ export const quotationHandlers = [
     return HttpResponse.json(quotation);
   }),
 
+  // POST /api/quotations/:id/send
+  http.post(mockApiPath("/api/quotations/:id/send"), ({ params }) => {
+    applyAutoExpiration();
+
+    const index = db.findIndex((q) => q.id === params.id);
+
+    if (index === -1) {
+      return HttpResponse.json(
+        { message: "Cotización no encontrada" },
+        { status: 404 },
+      );
+    }
+
+    const current = db[index];
+
+    if (current.status !== "draft") {
+      return HttpResponse.json(
+        {
+          message: "Solo las cotizaciones en estado borrador pueden enviarse.",
+        },
+        { status: 409 },
+      );
+    }
+
+    db[index] = {
+      ...current,
+      status: "sent",
+      updatedAt: new Date().toISOString(),
+    };
+
+    return HttpResponse.json(db[index]);
+  }),
+
   // PATCH /api/quotations/:id/status
   http.patch(
     mockApiPath("/api/quotations/:id/status"),

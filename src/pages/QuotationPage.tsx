@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
+import { toast } from "sonner";
 import {
   HiOutlineClipboardDocument,
   HiOutlineDocumentText,
@@ -14,11 +15,13 @@ import { MdOutlineEmail } from "react-icons/md";
 import { FormField, FormTextareaField } from "../shared/components/forms";
 import { SectionCard } from "../shared/components/ui";
 import { LABELS_QUOTATION_PAGE } from "../shared/data";
+import { useSendQuotation } from "../shared/hooks";
 import { createQuotation, updateQuotation } from "../shared/services";
 import { formatRutAsYouType, stripRutForApi } from "../shared/utils";
 import { useQuotationDraftStore } from "../shared/store";
 import type {
   CreateQuotationDto,
+  Quotation,
   QuotationFormData,
 } from "../shared/types/quotation";
 
@@ -56,6 +59,7 @@ const QuotationPage = () => {
     setSavedQuotationId,
   } = useQuotationDraftStore();
   const queryClient = useQueryClient();
+  const sendMutation = useSendQuotation();
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -128,15 +132,19 @@ const QuotationPage = () => {
     };
   };
 
+  const saveDraft = async (data: QuotationFormData): Promise<Quotation> => {
+    const payload = buildQuotationPayload(data);
+    return savedQuotationId
+      ? updateQuotation(savedQuotationId, payload)
+      : createQuotation(payload);
+  };
+
   const onSubmit = async (data: QuotationFormData) => {
     setSaveError(null);
     setIsSaving(true);
 
     try {
-      const payload = buildQuotationPayload(data);
-      const savedQuotation = savedQuotationId
-        ? await updateQuotation(savedQuotationId, payload)
-        : await createQuotation(payload);
+      const savedQuotation = await saveDraft(data);
 
       setDraft(data);
       setSavedQuotationId(savedQuotation.id);
@@ -154,6 +162,34 @@ const QuotationPage = () => {
       setIsSaving(false);
     }
   };
+
+  const handleSendToClient = handleSubmit(async (data) => {
+    setSaveError(null);
+    setIsSaving(true);
+
+    try {
+      const savedQuotation = await saveDraft(data);
+      const quotationId = savedQuotation.id;
+
+      setDraft(data);
+      setSavedQuotationId(quotationId);
+
+      await sendMutation.mutateAsync({ quotationId });
+
+      setReadOnlyPreview(true);
+      setPreviewStatus("sent");
+      setPreviewMode(true);
+      toast.success(LABELS_QUOTATION_PAGE.feedback.sendSuccess);
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : LABELS_QUOTATION_PAGE.feedback.sendError,
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  });
 
   return (
     <div className="space-y-6">
@@ -527,10 +563,14 @@ const QuotationPage = () => {
               </button>
               <button
                 type="button"
-                className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-500 bg-transparent py-3 text-sm font-semibold text-slate-200 transition hover:bg-slate-700"
+                disabled={isSaving || sendMutation.isPending}
+                onClick={handleSendToClient}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-500 bg-transparent py-3 text-sm font-semibold text-slate-200 transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-70"
               >
                 <MdOutlineEmail className="text-base" />
-                {LABELS_QUOTATION_PAGE.actions.sendToClient}
+                {isSaving || sendMutation.isPending
+                  ? LABELS_QUOTATION_PAGE.actions.sendingToClient
+                  : LABELS_QUOTATION_PAGE.actions.sendToClient}
               </button>
             </div>
           </div>
