@@ -1,0 +1,12 @@
+# Build (ajusta si usas otro gestor de paquetes en Netlify)
+[build]
+  command = "pnpm run build"
+  publish = "dist"
+
+# El navegador solo habla con https://tu-app.netlify.app (HTTPS).
+# Netlify reenvía /api/* al backend por HTTP en el servidor (sin mixed content).
+[[redirects]]
+  from = "/api/*"
+  to = "http://67.205.153.42:3000"
+  status = 200
+  force = true
