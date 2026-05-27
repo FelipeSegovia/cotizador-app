@@ -1,0 +1,93 @@
+const LABELS_ADMIN_USERS_PAGE = {
+  title: "Gestión de Usuarios",
+  subtitle: "Administra los accesos y permisos de tu equipo de trabajo.",
+  searchPlaceholder: "Buscar usuarios...",
+  newUserButton: "Nuevo Usuario",
+  loading: "Cargando usuarios...",
+  loadError: "No se pudo cargar el listado de usuarios.",
+  empty: "No hay usuarios registrados.",
+  stats: {
+    total: "Total Usuarios",
+    admins: "Administradores",
+    commons: "Usuarios",
+    activeSessions: "Sesiones Activas",
+    activeSessionsHint: "En tiempo real",
+    adminsHint: "Acceso total al sistema",
+    commonsHint: "Acceso estándar a la plataforma",
+  },
+  table: {
+    title: "Listado de Personal",
+    name: "Nombre",
+    email: "Correo Electrónico",
+    role: "Rol",
+    status: "Estado",
+    actions: "Acciones",
+    active: "Activo",
+    inactive: "Inactivo",
+    showing: "Mostrando {count} de {total} usuarios registrados",
+    edit: "Editar usuario",
+    resendPassword: "Reenviar contraseña provisional",
+  },
+  roles: {
+    admin: "Administrador",
+    common: "Usuario",
+  },
+  createModal: {
+    title: "Registrar Nuevo Usuario",
+    subtitle:
+      "Ingresa los detalles para crear una nueva cuenta en QuoteFlow",
+    fields: {
+      name: { label: "Nombre completo", placeholder: "Ej: Juan Pablo Silva" },
+      email: {
+        label: "Correo electrónico corporativo",
+        placeholder: "ejemplo@quoteflow.cl",
+      },
+      phone: {
+        label: "Teléfono de contacto",
+        placeholder: "+56 9 1234 5678",
+      },
+      role: { label: "Rol de sistema" },
+      password: {
+        label: "Contraseña provisional",
+        placeholder: "Mínimo 8 caracteres",
+        hint: "El usuario deberá cambiar esta contraseña en su primer inicio de sesión por motivos de seguridad",
+      },
+    },
+    cancel: "Cancelar",
+    submit: "Crear Usuario",
+    submitting: "Creando...",
+    success: "Usuario creado. Se envió un correo con la contraseña provisional.",
+    emailSimulated: "Correo simulado (revisa la consola del navegador)",
+  },
+  editModal: {
+    title: "Editar Usuario",
+    subtitle: "Actualiza los datos del miembro del equipo",
+    submit: "Guardar cambios",
+    submitting: "Guardando...",
+    success: "Usuario actualizado correctamente",
+  },
+  toggleSuccess: "Estado del usuario actualizado",
+  resendSuccess: "Contraseña provisional reenviada por correo",
+  firstLoginModal: {
+    title: "Actualiza tu contraseña",
+    subtitle:
+      "Por seguridad debes establecer una nueva contraseña antes de continuar.",
+    newPassword: "Nueva contraseña",
+    confirmPassword: "Confirmar contraseña",
+    submit: "Guardar contraseña",
+    submitting: "Guardando...",
+    mismatch: "Las contraseñas no coinciden",
+    minLength: "La contraseña debe tener al menos 8 caracteres",
+    success: "Contraseña actualizada correctamente",
+  },
+  validation: {
+    nameRequired: "El nombre es obligatorio",
+    emailRequired: "El correo es obligatorio",
+    emailInvalid: "Ingresa un correo válido",
+    passwordRequired: "La contraseña es obligatoria",
+    passwordMin: "Mínimo 8 caracteres",
+    roleRequired: "Selecciona un rol",
+  },
+};
+
+export default LABELS_ADMIN_USERS_PAGE;

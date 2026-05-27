@@ -14,3 +14,4 @@ export {
 } from "./quotation-status-display";
 export { cleanRutInput, formatRutAsYouType, stripRutForApi } from "./rut";
 export { formatCLP, formatDate } from "./format";
+export { handleUnauthorizedResponse } from "./handle-unauthorized";

@@ -5,6 +5,7 @@ const PATHS = {
   NEW_QUOTATION: "/dashboard/cotizaciones/nueva",
   COMPANY_EXPENSES: "/dashboard/gastos",
   SETTINGS: "/dashboard/configuracion",
+  USERS: "/dashboard/usuarios",
 };
 
 export default PATHS;

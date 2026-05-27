@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { AuthState, AuthActions, User } from "../types/auth";
+import type { AuthState, AuthActions, User, UserRole } from "../types/auth";
 import login from "../services/login";
 import logout from "../services/logout";
 
@@ -79,17 +79,28 @@ const parseJwtProfileFromToken = (token: string): User | null => {
       email?: string;
       name?: string;
       mobilePhone?: string;
+      role?: UserRole;
+      isActive?: boolean;
+      mustChangePassword?: boolean;
+      createdAt?: string;
+      updatedAt?: string;
     };
 
     if (!payload.sub || !payload.email || !payload.name) {
       return null;
     }
 
+    const nowIso = new Date().toISOString();
     return {
       id: payload.sub,
       email: payload.email,
       name: payload.name,
       mobilePhone: payload.mobilePhone ?? "",
+      role: payload.role ?? "common",
+      isActive: payload.isActive ?? true,
+      mustChangePassword: payload.mustChangePassword ?? false,
+      createdAt: payload.createdAt ?? nowIso,
+      updatedAt: payload.updatedAt ?? nowIso,
     };
   } catch {
     return null;
@@ -111,11 +122,19 @@ const readPersistedUser = (): User | null => {
       if (!parsed.id || !parsed.email || !parsed.name) {
         return parseJwtProfileFromToken(auth.token);
       }
+      const fromToken = parseJwtProfileFromToken(auth.token);
+      const nowIso = new Date().toISOString();
       return {
         id: parsed.id,
         email: parsed.email,
         name: parsed.name,
         mobilePhone: parsed.mobilePhone ?? "",
+        role: parsed.role ?? fromToken?.role ?? "common",
+        isActive: parsed.isActive ?? fromToken?.isActive ?? true,
+        mustChangePassword:
+          parsed.mustChangePassword ?? fromToken?.mustChangePassword ?? false,
+        createdAt: parsed.createdAt ?? fromToken?.createdAt ?? nowIso,
+        updatedAt: parsed.updatedAt ?? fromToken?.updatedAt ?? nowIso,
       };
     } catch {
       return parseJwtProfileFromToken(auth.token);

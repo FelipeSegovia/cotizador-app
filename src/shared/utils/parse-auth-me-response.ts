@@ -1,7 +1,7 @@
-import type { User } from "../types/auth";
+import type { User, UserRole } from "../types/auth";
 
 /**
- * GET/PATCH `/api/auth/me`: cuerpo JSON plano `{ id, email, name, mobilePhone? }`.
+ * GET/PATCH `/api/auth/me`: cuerpo JSON plano `{ id, email, name, ... }`.
  * Acepta también `{ user: { ... } }` por compatibilidad con respuestas antiguas.
  */
 export const parseAuthMeResponse = (json: unknown): User => {
@@ -26,5 +26,34 @@ export const parseAuthMeResponse = (json: unknown): User => {
   const mobilePhone =
     typeof candidate.mobilePhone === "string" ? candidate.mobilePhone : "";
 
-  return { id, email, name, mobilePhone };
+  const role: UserRole =
+    candidate.role === "admin" || candidate.role === "common"
+      ? candidate.role
+      : "common";
+
+  const isActive =
+    typeof candidate.isActive === "boolean" ? candidate.isActive : true;
+
+  const mustChangePassword =
+    typeof candidate.mustChangePassword === "boolean"
+      ? candidate.mustChangePassword
+      : false;
+
+  const nowIso = new Date().toISOString();
+  const createdAt =
+    typeof candidate.createdAt === "string" ? candidate.createdAt : nowIso;
+  const updatedAt =
+    typeof candidate.updatedAt === "string" ? candidate.updatedAt : nowIso;
+
+  return {
+    id,
+    email,
+    name,
+    mobilePhone,
+    role,
+    isActive,
+    mustChangePassword,
+    createdAt,
+    updatedAt,
+  };
 };

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import {
+  AdminUsersPage,
   CompanyExpensesPage,
   LoginPage,
   QuotationCreatorPage,
@@ -7,7 +8,11 @@ import {
   RootPage,
   SettingsPage,
 } from "./pages";
-import { DashboardLayout, ProtectedRoute } from "./shared/components/layouts";
+import {
+  DashboardLayout,
+  ProtectedRoute,
+  RoleProtectedRoute,
+} from "./shared/components/layouts";
 import { PATHS } from "./shared/data";
 
 const AppRouter = () => {
@@ -34,6 +39,14 @@ const AppRouter = () => {
             element={<CompanyExpensesPage />}
           />
           <Route path={PATHS.SETTINGS} element={<SettingsPage />} />
+          <Route
+            path={PATHS.USERS}
+            element={
+              <RoleProtectedRoute requiredRole="admin">
+                <AdminUsersPage />
+              </RoleProtectedRoute>
+            }
+          />
         </Route>
         <Route path="*" element={<Navigate to={PATHS.LOGIN} />} />
       </Routes>

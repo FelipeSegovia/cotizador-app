@@ -14,6 +14,23 @@ Esta es una app que permite crear cotizaciones para clientes, con una interfaz s
 - `pnpm dev` - para iniciar la app en modo desarrollo.
 - `pnpm build` - para construir la app para producción.
 
+## Credenciales mock (desarrollo con MSW)
+
+Con `VITE_MSW_ENABLED=true`, puedes probar el módulo de usuarios y el flujo de primer login:
+
+| Rol | Correo | Contraseña | Notas |
+|-----|--------|------------|-------|
+| Admin | `admin@quoteflow.cl` | `Admin1234!` | Acceso al panel **Usuarios** |
+| Usuario | `felipe.segovia.rod@gmail.com` | `Fe.89104665` | Acceso estándar (sin Usuarios) |
+| Usuario (primer login) | `rodrigo.vargas@quoteflow.cl` | `TempPass123!` | Debe cambiar contraseña al ingresar |
+| Usuario (deshabilitado) | `maria.castro@quoteflow.cl` | `TempPass456!` | Login bloqueado (`403`) |
+
+Al crear o reenviar contraseña provisional, el **correo se simula** (toast en pantalla + log en consola del navegador). El backend real deberá implementar el envío SMTP/API.
+
+## Integración con el backend
+
+Para implementar el API real del módulo de usuarios (contratos, roles, flujos y checklist), ver **[README-BACKEND-INTEGRATION.md](./README-BACKEND-INTEGRATION.md)**.
+
 ## Despliegue en Netlify
 
 El sitio se sirve por **HTTPS**. Si `VITE_BASE_URL_API` apunta a `http://...`, el navegador bloquea las peticiones (mixed content).

@@ -5,13 +5,19 @@ import QuotationRowActions from "./QuotationRowActions";
 import QuotationStatusBadge from "./QuotationStatusBadge";
 import SectionCard from "./SectionCard";
 import WorkInProgressView from "./WorkInProgressView";
+import Modal from "./Modal";
+import RoleBadge from "./RoleBadge";
+import FirstLoginPasswordModal from "./FirstLoginPasswordModal";
 
 export {
   Alert,
   ConfirmQuotationStatusChangeModal,
+  FirstLoginPasswordModal,
   InfoTile,
+  Modal,
   QuotationRowActions,
   QuotationStatusBadge,
+  RoleBadge,
   SectionCard,
   WorkInProgressView,
 };

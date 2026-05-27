@@ -1,5 +1,5 @@
 import { readValidAccessToken } from "../store/useAuthStore";
-import { getApiBaseUrl } from "../utils";
+import { getApiBaseUrl, handleUnauthorizedResponse } from "../utils";
 
 export async function authenticatedFetch(
   path: string,
@@ -12,5 +12,11 @@ export async function authenticatedFetch(
   }
 
   const url = `${getApiBaseUrl()}${path}`;
-  return fetch(url, { ...init, headers });
+  const response = await fetch(url, { ...init, headers });
+
+  if (response.status === 401) {
+    handleUnauthorizedResponse();
+  }
+
+  return response;
 }

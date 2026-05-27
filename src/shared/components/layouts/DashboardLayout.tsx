@@ -12,8 +12,10 @@ import {
   HiDocumentText,
   HiMagnifyingGlass,
   HiUserCircle,
+  HiUsers,
   HiXMark,
 } from "react-icons/hi2";
+import { FirstLoginPasswordModal } from "../ui";
 import {
   SidebarBrand,
   SidebarMenuList,
@@ -26,10 +28,11 @@ import { useQuotationDraftStore } from "../../store";
 const DashboardLayout = () => {
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
+  const userRole = useAuthStore((state) => state.user?.role);
   const resetDraft = useQuotationDraftStore((state) => state.resetDraft);
 
-  const mainMenu: NavigationMenuItem[] = useMemo(
-    () => [
+  const mainMenu: NavigationMenuItem[] = useMemo(() => {
+    const items: NavigationMenuItem[] = [
       {
         label: "Dashboard",
         icon: <HiChartBar className="text-lg" />,
@@ -60,9 +63,18 @@ const DashboardLayout = () => {
         icon: <HiCog6Tooth className="text-lg" />,
         to: PATHS.SETTINGS,
       },
-    ],
-    [resetDraft],
-  );
+    ];
+
+    if (userRole === "admin") {
+      items.splice(3, 0, {
+        label: "Usuarios",
+        icon: <HiUsers className="text-lg" />,
+        to: PATHS.USERS,
+      });
+    }
+
+    return items;
+  }, [resetDraft, userRole]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDesktopSidebarCollapsed, setIsDesktopSidebarCollapsed] =
     useState(false);
@@ -80,6 +92,7 @@ const DashboardLayout = () => {
 
   return (
     <div className="min-h-screen bg-[#eff2f8] text-slate-900">
+      <FirstLoginPasswordModal />
       {isMobileMenuOpen ? (
         <button
           type="button"

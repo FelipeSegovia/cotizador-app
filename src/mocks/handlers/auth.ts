@@ -1,82 +1,19 @@
 import { http, HttpResponse } from "msw";
+import type { AuthResponse } from "../../shared/types/auth";
+import { mockUsers } from "../data/users";
 import { mockApiPath } from "../mock-api-path";
-import { mockUsers, type MockUser } from "../data/users";
-import type { User, AuthResponse } from "../../shared/types/auth";
-
-const toPublicUser = (row: MockUser): User => ({
-  id: row.id,
-  email: row.email,
-  name: row.name,
-  mobilePhone: row.mobilePhone ?? "",
-});
-
-type JwtPayload = {
-  sub: string;
-  email: string;
-  name: string;
-  /** Incluido en tokens nuevos; ausente en sesiones antiguas solo en memoria. */
-  mobilePhone?: string;
-  iat: number;
-  exp: number;
-};
-
-const encodeBase64Url = (value: string): string => {
-  return btoa(value).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-};
-
-const decodeBase64Url = (value: string): string => {
-  const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
-  const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
-  return atob(padded);
-};
-
-const parseJwtPayload = (token: string): JwtPayload | null => {
-  try {
-    const parts = token.split(".");
-    if (parts.length !== 3) {
-      return null;
-    }
-
-    const payload = decodeBase64Url(parts[1]);
-    return JSON.parse(payload) as JwtPayload;
-  } catch {
-    return null;
-  }
-};
-
-// Mock JWT generation (header.payload.signature)
-const generateMockJwt = (user: User, expInSeconds: number): string => {
-  const nowInSeconds = Math.floor(Date.now() / 1000);
-
-  const header = {
-    alg: "HS256",
-    typ: "JWT",
-  };
-
-  const payload: JwtPayload = {
-    sub: user.id,
-    email: user.email,
-    name: user.name,
-    mobilePhone: user.mobilePhone,
-    iat: nowInSeconds,
-    exp: nowInSeconds + expInSeconds,
-  };
-
-  const encodedHeader = encodeBase64Url(JSON.stringify(header));
-  const encodedPayload = encodeBase64Url(JSON.stringify(payload));
-  const mockSignature = encodeBase64Url("mock-signature");
-
-  return `${encodedHeader}.${encodedPayload}.${mockSignature}`;
-};
-
-// In-memory token storage for tracking valid tokens
-const validTokens: Map<string, { user: User; expiresAt: number }> = new Map();
-
-// 15 minutes in seconds
-const TOKEN_EXPIRY_SECONDS = 15 * 60;
+import {
+  generateMockJwt,
+  getBearerToken,
+  parseJwtPayload,
+  requireAuth,
+  resolveUserFromToken,
+  TOKEN_EXPIRY_SECONDS,
+  toPublicUser,
+  validTokens,
+} from "./auth-helpers";
 
 export const authHandlers = [
-  // POST /api/auth/login
   http.post(mockApiPath("/api/auth/login"), async ({ request }) => {
     const body = (await request.json()) as {
       email?: string;
@@ -92,8 +29,9 @@ export const authHandlers = [
       );
     }
 
-    // Find user
-    const user = mockUsers.find((u) => u.email === email);
+    const user = mockUsers.find(
+      (u) => u.email.toLowerCase() === email.trim().toLowerCase(),
+    );
 
     if (!user || user.password !== password) {
       return HttpResponse.json(
@@ -102,12 +40,17 @@ export const authHandlers = [
       );
     }
 
-    // Generate mock JWT token
+    if (!user.isActive) {
+      return HttpResponse.json(
+        { message: "Tu cuenta está deshabilitada. Contacta al administrador." },
+        { status: 403 },
+      );
+    }
+
     const publicUser = toPublicUser(user);
     const token = generateMockJwt(publicUser, TOKEN_EXPIRY_SECONDS);
     const expiresAt = Date.now() + TOKEN_EXPIRY_SECONDS * 1000;
 
-    // Store token mapping
     validTokens.set(token, {
       user: publicUser,
       expiresAt,
@@ -122,10 +65,8 @@ export const authHandlers = [
     return HttpResponse.json(response, { status: 200 });
   }),
 
-  // GET /api/auth/me
   http.get(mockApiPath("/api/auth/me"), ({ request }) => {
-    const authHeader = request.headers.get("Authorization");
-    const token = authHeader?.replace("Bearer ", "");
+    const token = getBearerToken(request);
 
     if (!token) {
       return HttpResponse.json(
@@ -134,71 +75,26 @@ export const authHandlers = [
       );
     }
 
-    const payload = parseJwtPayload(token);
-    if (!payload) {
-      validTokens.delete(token);
-      return HttpResponse.json({ message: "Token inválido" }, { status: 401 });
+    const user = resolveUserFromToken(token);
+    if (!user) {
+      return HttpResponse.json(
+        { message: "Token inválido o expirado" },
+        { status: 401 },
+      );
     }
 
-    if (Date.now() > payload.exp * 1000) {
-      validTokens.delete(token);
-      return HttpResponse.json({ message: "Token expirado" }, { status: 401 });
+    const dbUser = mockUsers.find((u) => u.id === user.id);
+    if (dbUser) {
+      return HttpResponse.json(toPublicUser(dbUser), { status: 200 });
     }
-
-    const tokenData = validTokens.get(token);
-
-    if (tokenData) {
-      if (Date.now() > tokenData.expiresAt) {
-        validTokens.delete(token);
-        return HttpResponse.json(
-          { message: "Token expirado" },
-          { status: 401 },
-        );
-      }
-      return HttpResponse.json(tokenData.user, { status: 200 });
-    }
-
-    // Token válido pero no está en memoria (p. ej. recarga de página con JWT en localStorage)
-    const mobilePhone =
-      payload.mobilePhone ??
-      mockUsers.find((u) => u.id === payload.sub)?.mobilePhone ??
-      "";
-    const user: User = {
-      id: payload.sub,
-      email: payload.email,
-      name: payload.name,
-      mobilePhone,
-    };
-
-    validTokens.set(token, {
-      user,
-      expiresAt: payload.exp * 1000,
-    });
 
     return HttpResponse.json(user, { status: 200 });
   }),
 
-  // PATCH /api/auth/me
   http.patch(mockApiPath("/api/auth/me"), async ({ request }) => {
-    const authHeader = request.headers.get("Authorization");
-    const token = authHeader?.replace("Bearer ", "");
-
-    if (!token) {
-      return HttpResponse.json(
-        { message: "Token no proporcionado" },
-        { status: 401 },
-      );
-    }
-
-    const payload = parseJwtPayload(token);
-    if (!payload) {
-      validTokens.delete(token);
-      return HttpResponse.json({ message: "Token inválido" }, { status: 401 });
-    }
-
-    if (Date.now() > payload.exp * 1000) {
-      validTokens.delete(token);
-      return HttpResponse.json({ message: "Token expirado" }, { status: 401 });
+    const auth = requireAuth(request);
+    if (auth instanceof Response) {
+      return auth;
     }
 
     const body = (await request.json()) as {
@@ -216,37 +112,94 @@ export const authHandlers = [
       );
     }
 
-    const tokenData = validTokens.get(token);
-    const base: User =
-      tokenData?.user ??
-      ({
-        id: payload.sub,
-        email: payload.email,
-        name: payload.name,
-        mobilePhone:
-          payload.mobilePhone ??
-          mockUsers.find((u) => u.id === payload.sub)?.mobilePhone ??
-          "",
-      } as User);
+    const dbUser = mockUsers.find((u) => u.id === auth.user.id);
+    if (!dbUser) {
+      return HttpResponse.json(
+        { message: "Usuario no encontrado" },
+        { status: 404 },
+      );
+    }
 
-    const user: User = {
-      ...base,
-      name,
-      mobilePhone,
-    };
+    dbUser.name = name;
+    dbUser.mobilePhone = mobilePhone;
+    dbUser.updatedAt = new Date().toISOString();
 
-    validTokens.set(token, {
+    const user = toPublicUser(dbUser);
+    validTokens.set(auth.token, {
       user,
-      expiresAt: tokenData?.expiresAt ?? payload.exp * 1000,
+      expiresAt:
+        validTokens.get(auth.token)?.expiresAt ??
+        (parseJwtPayload(auth.token)?.exp ?? 0) * 1000,
     });
 
     return HttpResponse.json(user, { status: 200 });
   }),
 
-  // POST /api/auth/logout
+  http.patch(mockApiPath("/api/auth/me/password"), async ({ request }) => {
+    const auth = requireAuth(request);
+    if (auth instanceof Response) {
+      return auth;
+    }
+
+    const body = (await request.json()) as {
+      currentPassword?: string;
+      newPassword?: string;
+    };
+
+    const newPassword =
+      typeof body.newPassword === "string" ? body.newPassword.trim() : "";
+    const currentPassword =
+      typeof body.currentPassword === "string"
+        ? body.currentPassword.trim()
+        : "";
+
+    if (!newPassword || newPassword.length < 8) {
+      return HttpResponse.json(
+        { message: "La nueva contraseña debe tener al menos 8 caracteres" },
+        { status: 400 },
+      );
+    }
+
+    const dbUser = mockUsers.find((u) => u.id === auth.user.id);
+    if (!dbUser) {
+      return HttpResponse.json(
+        { message: "Usuario no encontrado" },
+        { status: 404 },
+      );
+    }
+
+    if (!dbUser.mustChangePassword) {
+      if (!currentPassword) {
+        return HttpResponse.json(
+          { message: "La contraseña actual es obligatoria" },
+          { status: 400 },
+        );
+      }
+      if (dbUser.password !== currentPassword) {
+        return HttpResponse.json(
+          { message: "La contraseña actual es incorrecta" },
+          { status: 401 },
+        );
+      }
+    }
+
+    dbUser.password = newPassword;
+    dbUser.mustChangePassword = false;
+    dbUser.updatedAt = new Date().toISOString();
+
+    const user = toPublicUser(dbUser);
+    validTokens.set(auth.token, {
+      user,
+      expiresAt:
+        validTokens.get(auth.token)?.expiresAt ??
+        (parseJwtPayload(auth.token)?.exp ?? 0) * 1000,
+    });
+
+    return HttpResponse.json(user, { status: 200 });
+  }),
+
   http.post(mockApiPath("/api/auth/logout"), ({ request }) => {
-    const authHeader = request.headers.get("Authorization");
-    const token = authHeader?.replace("Bearer ", "");
+    const token = getBearerToken(request);
 
     if (token) {
       validTokens.delete(token);
