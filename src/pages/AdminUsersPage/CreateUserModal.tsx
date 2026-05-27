@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { FormField } from "../../shared/components/forms";
 import { Modal } from "../../shared/components/ui";
 import LABELS_ADMIN_USERS_PAGE from "../../shared/data/labels-admin-users-page";
+import { isMswEnabled } from "../../shared/utils";
 import { useCreateUser } from "../../shared/hooks/useUserMutations";
 import type { CreateUserDto } from "../../shared/types/auth";
 
@@ -57,7 +58,9 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
       {
         onSuccess: () => {
           toast.success(LABELS_ADMIN_USERS_PAGE.createModal.success);
-          toast.info(LABELS_ADMIN_USERS_PAGE.createModal.emailSimulated);
+          if (isMswEnabled()) {
+            toast.info(LABELS_ADMIN_USERS_PAGE.createModal.emailSimulated);
+          }
           handleClose();
         },
         onError: (error) => {

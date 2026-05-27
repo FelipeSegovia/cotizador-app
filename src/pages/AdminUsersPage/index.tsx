@@ -3,6 +3,7 @@ import { HiMagnifyingGlass, HiPlus } from "react-icons/hi2";
 import { toast } from "sonner";
 import { Alert } from "../../shared/components/ui";
 import LABELS_ADMIN_USERS_PAGE from "../../shared/data/labels-admin-users-page";
+import { isMswEnabled } from "../../shared/utils";
 import { useUsers } from "../../shared/hooks/useUsers";
 import {
   useResendProvisionalPassword,
@@ -59,7 +60,9 @@ const AdminUsersPage = () => {
     resendPassword.mutate(user.id, {
       onSuccess: () => {
         toast.success(LABELS_ADMIN_USERS_PAGE.resendSuccess);
-        toast.info(LABELS_ADMIN_USERS_PAGE.createModal.emailSimulated);
+        if (isMswEnabled()) {
+          toast.info(LABELS_ADMIN_USERS_PAGE.createModal.emailSimulated);
+        }
       },
       onError: (error) => {
         toast.error((error as Error).message);
