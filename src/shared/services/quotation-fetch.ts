@@ -1,6 +1,6 @@
 import { endpoints } from "../data";
 import { readValidAccessToken } from "../store/useAuthStore";
-import { getApiBaseUrl } from "../utils";
+import { getApiBaseUrl, handleUnauthorizedResponse } from "../utils";
 
 /** fetch a `/api/quotations` + pathSuffix, con Bearer si hay token válido. */
 export async function quotationFetch(
@@ -14,5 +14,11 @@ export async function quotationFetch(
   }
 
   const url = `${getApiBaseUrl()}${endpoints.QUOTATIONS}${pathSuffix}`;
-  return fetch(url, { ...init, headers });
+  const response = await fetch(url, { ...init, headers });
+
+  if (response.status === 401) {
+    handleUnauthorizedResponse();
+  }
+
+  return response;
 }

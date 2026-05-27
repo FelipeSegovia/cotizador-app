@@ -5,10 +5,12 @@ import LABELS_QUOTATION_PREVIEW_PAGE from "./labels-quotation-preview-page";
 import LABELS_QUOTATIONS_LIST_PAGE from "./labels-quotations-list-page";
 import LABELS_ROOT_PAGE from "./labels-root-page";
 import LABELS_SETTINGS_PAGE from "./labels-settings-page";
+import LABELS_ADMIN_USERS_PAGE from "./labels-admin-users-page";
 import PATHS from "./paths";
 import endpoints from "./endpoint";
 
 export {
+  LABELS_ADMIN_USERS_PAGE,
   LABELS_COMPANY_EXPENSES_PAGE,
   LABELS_LOGIN,
   LABELS_QUOTATION_PAGE,

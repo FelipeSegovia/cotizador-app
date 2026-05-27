@@ -1,13 +1,37 @@
+export type UserRole = "admin" | "common";
+
 export interface User {
   id: string;
   email: string;
   name: string;
   mobilePhone?: string;
+  role: UserRole;
+  isActive: boolean;
+  mustChangePassword: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type UpdateCurrentUserDto = {
   name: string;
   mobilePhone: string;
+};
+
+export type CreateUserDto = {
+  name: string;
+  email: string;
+  mobilePhone: string;
+  role: UserRole;
+  password: string;
+};
+
+export type UpdateUserDto = Partial<
+  Pick<User, "name" | "mobilePhone" | "role" | "isActive">
+>;
+
+export type ChangePasswordDto = {
+  currentPassword?: string;
+  newPassword: string;
 };
 
 export interface AuthResponse {
