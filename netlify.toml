@@ -6,7 +6,14 @@
 # El navegador solo habla con https://tu-app.netlify.app (HTTPS).
 # Netlify reenvía /api/* al backend por HTTP en el servidor (sin mixed content).
 [[redirects]]
+  from = "/api/*"
+  to = "http://67.205.153.42:3000/:splat"
+  status = 200
+  force = true
+
+# Fallback SPA: cualquier otra ruta sirve index.html para que React Router
+# maneje el enrutamiento del lado del cliente (evita 404 al recargar).
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = true
