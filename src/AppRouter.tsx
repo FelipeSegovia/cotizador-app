@@ -10,6 +10,7 @@ import {
 } from "./pages";
 import {
   DashboardLayout,
+  GuestRoute,
   ProtectedRoute,
   RoleProtectedRoute,
 } from "./shared/components/layouts";
@@ -19,7 +20,14 @@ const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path={PATHS.LOGIN} element={<LoginPage />} />
+        <Route
+          path={PATHS.LOGIN}
+          element={
+            <GuestRoute>
+              <LoginPage />
+            </GuestRoute>
+          }
+        />
         <Route
           path={PATHS.DASHBOARD}
           element={
