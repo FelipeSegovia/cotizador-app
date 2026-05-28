@@ -1,16 +1,16 @@
 import type { FeedbackCategory } from "../types/feedback";
 
 const LABELS_FEEDBACK_MODAL = {
-  button: "Sugerir Idea",
-  title: "Enviar Nueva Idea",
+  button: "Danos tu opinión",
+  title: "Enviar Nuevo Feedback",
   subtitle:
-    "Comparte tus sugerencias para mejorar QuoteFlow. Nuestro equipo revisa cada propuesta.",
+    "Comparte tus sugerencias para mejorar TuSistema. Nuestro equipo revisa cada propuesta.",
   fields: {
-    title: "Título de la idea",
-    titlePlaceholder: "Resumen corto de tu idea",
+    title: "Título",
+    titlePlaceholder: "Resumen corto de tu feedback",
     category: "Categoría",
     description: "Descripción",
-    descriptionPlaceholder: "Explica los detalles de tu sugerencia...",
+    descriptionPlaceholder: "Danos más detalles",
   },
   categoryOptions: {
     idea: "Idea",
@@ -23,7 +23,7 @@ const LABELS_FEEDBACK_MODAL = {
   } satisfies Record<FeedbackCategory, string>,
   actions: {
     cancel: "Cancelar",
-    submit: "Enviar Idea",
+    submit: "Enviar",
     submitting: "Enviando...",
   },
   validation: {
@@ -34,10 +34,10 @@ const LABELS_FEEDBACK_MODAL = {
     descriptionMinLength: "La descripción debe tener al menos 10 caracteres",
   },
   toast: {
-    success: "¡Gracias! Tu idea fue enviada correctamente.",
+    success: "¡Gracias! Tu feedback fue enviada correctamente.",
   },
   errors: {
-    submit: "No se pudo enviar tu idea. Intenta nuevamente.",
+    submit: "No se pudo enviar tu feedback. Intenta nuevamente.",
   },
 };
 

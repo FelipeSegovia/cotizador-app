@@ -1,5 +1,6 @@
 import LABELS_LOGIN from "./labels-login";
 import LABELS_COMPANY_EXPENSES_PAGE from "./labels-company-expenses-page";
+import LABELS_COMPANY_REQUIRED_MODAL from "./labels-company-required-modal";
 import LABELS_QUOTATION_PAGE from "./labels-quotation-page";
 import LABELS_QUOTATION_PREVIEW_PAGE from "./labels-quotation-preview-page";
 import LABELS_QUOTATIONS_LIST_PAGE from "./labels-quotations-list-page";
@@ -14,6 +15,7 @@ export {
   LABELS_ADMIN_USERS_PAGE,
   LABELS_FEEDBACK_MODAL,
   LABELS_COMPANY_EXPENSES_PAGE,
+  LABELS_COMPANY_REQUIRED_MODAL,
   LABELS_LOGIN,
   LABELS_QUOTATION_PAGE,
   LABELS_QUOTATION_PREVIEW_PAGE,

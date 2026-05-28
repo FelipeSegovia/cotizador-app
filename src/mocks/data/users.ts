@@ -74,4 +74,18 @@ export const mockUsers: MockUser[] = [
     createdAt: "2026-04-01T10:00:00.000Z",
     updatedAt: "2026-05-22T12:00:00.000Z",
   },
+  // Usuario sin empresa configurada. Sirve para probar el flujo del modal
+  // "Configura los datos de tu empresa" al intentar crear una cotización.
+  {
+    id: "6",
+    email: "nuevo.usuario@quoteflow.cl",
+    name: "Nuevo Usuario",
+    mobilePhone: "+56 9 4567 8901",
+    password: "NewUser123!",
+    role: "common",
+    isActive: true,
+    mustChangePassword: false,
+    createdAt: "2026-05-27T10:00:00.000Z",
+    updatedAt: "2026-05-27T10:00:00.000Z",
+  },
 ];

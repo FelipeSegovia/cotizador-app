@@ -1,10 +1,12 @@
 import { HiOutlineDocumentPlus } from "react-icons/hi2";
 import {
   Alert,
+  CompanyRequiredModal,
   ConfirmQuotationStatusChangeModal,
 } from "../../shared/components/ui";
 import LABELS_QUOTATIONS_LIST_PAGE from "../../shared/data/labels-quotations-list-page";
 import {
+  useCompanyRequiredGuard,
   useQuotationDraftNavigation,
   useQuotationStatusChange,
   useQuotations,
@@ -24,6 +26,8 @@ const QuotationsListPage = () => {
   const { data: quotations, isLoading, isError } = useQuotations();
   const { openDraftForEdit, openReadonlyPreview, startNewQuotation } =
     useQuotationDraftNavigation();
+  const { requireCompany, companyRequiredModalProps } =
+    useCompanyRequiredGuard();
   const {
     requestStatusChange,
     pendingStatusId,
@@ -33,6 +37,10 @@ const QuotationsListPage = () => {
   } = useQuotationStatusChange({
     defaultErrorMessage: LABELS_QUOTATIONS_LIST_PAGE.statusUpdate.errorGeneric,
   });
+
+  const handleStartNewQuotation = () => {
+    requireCompany(startNewQuotation);
+  };
 
   const handleEditDraft = (quotationId: string) => {
     if (!quotations) return;
@@ -58,6 +66,7 @@ const QuotationsListPage = () => {
   return (
     <div className="space-y-6">
       <ConfirmQuotationStatusChangeModal {...modalProps} />
+      <CompanyRequiredModal {...companyRequiredModalProps} />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -70,7 +79,7 @@ const QuotationsListPage = () => {
         </div>
         <button
           type="button"
-          onClick={startNewQuotation}
+          onClick={handleStartNewQuotation}
           className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
         >
           <HiOutlineDocumentPlus className="text-base" />
@@ -96,7 +105,7 @@ const QuotationsListPage = () => {
         )}
 
         {!isLoading && !isError && quotations?.length === 0 && (
-          <QuotationsListEmptyState onCreateClick={startNewQuotation} />
+          <QuotationsListEmptyState onCreateClick={handleStartNewQuotation} />
         )}
 
         {!isLoading && !isError && listViewProps && listViewProps.quotations.length > 0 && (

@@ -1,4 +1,5 @@
 import Alert from "./Alert";
+import CompanyRequiredModal from "./CompanyRequiredModal";
 import ConfirmQuotationStatusChangeModal from "./ConfirmQuotationStatusChangeModal";
 import InfoTile from "./InfoTile";
 import QuotationRowActions from "./QuotationRowActions";
@@ -15,6 +16,7 @@ export {
   FeedbackModal,
   SuggestIdeaButton,
   Alert,
+  CompanyRequiredModal,
   ConfirmQuotationStatusChangeModal,
   FirstLoginPasswordModal,
   InfoTile,
