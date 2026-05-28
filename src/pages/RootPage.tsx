@@ -43,10 +43,9 @@ const RootPage = () => {
   const navigate = useNavigate();
   const resetDraft = useQuotationDraftStore((state) => state.resetDraft);
 
-  const totalQuoted = quotations.reduce(
-    (sum, quotation) => sum + quotation.total,
-    0,
-  );
+  const totalQuoted = quotations
+    .filter((quotation) => quotation.status === "approved")
+    .reduce((sum, quotation) => sum + quotation.total, 0);
   const pendingQuotes = quotations.filter(
     (quotation) => quotation.status === "draft" || quotation.status === "sent",
   ).length;
@@ -232,7 +231,7 @@ const RootPage = () => {
               />
             </div>
           </article>
-
+          {/*
           <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <h4 className="text-lg font-bold text-slate-900">
               {LABELS_ROOT_PAGE.activity.title}
@@ -243,6 +242,7 @@ const RootPage = () => {
               <li>Borrador creado para Walmart Chile</li>
             </ul>
           </article>
+          */}
         </div>
       </section>
     </>
