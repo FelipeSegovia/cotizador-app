@@ -9,6 +9,7 @@ const endpoints = {
   USER_BY_ID: (id: string) => `/api/users/${id}`,
   USER_TOGGLE_STATUS: (id: string) => `/api/users/${id}/status`,
   USER_RESEND_PASSWORD: (id: string) => `/api/users/${id}/resend-password`,
+  FEEDBACK: "/api/feedback",
 };
 
 export default endpoints;

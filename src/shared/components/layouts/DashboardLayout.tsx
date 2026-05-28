@@ -15,7 +15,7 @@ import {
   HiUsers,
   HiXMark,
 } from "react-icons/hi2";
-import { FirstLoginPasswordModal } from "../ui";
+import { FirstLoginPasswordModal, SuggestIdeaButton } from "../ui";
 import {
   SidebarBrand,
   SidebarMenuList,
@@ -93,6 +93,7 @@ const DashboardLayout = () => {
   return (
     <div className="min-h-screen bg-[#eff2f8] text-slate-900">
       <FirstLoginPasswordModal />
+      <SuggestIdeaButton />
       {isMobileMenuOpen ? (
         <button
           type="button"
