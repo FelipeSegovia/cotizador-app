@@ -8,8 +8,12 @@ import WorkInProgressView from "./WorkInProgressView";
 import Modal from "./Modal";
 import RoleBadge from "./RoleBadge";
 import FirstLoginPasswordModal from "./FirstLoginPasswordModal";
+import SuggestIdeaButton from "./SuggestIdeaButton";
+import FeedbackModal from "./FeedbackModal";
 
 export {
+  FeedbackModal,
+  SuggestIdeaButton,
   Alert,
   ConfirmQuotationStatusChangeModal,
   FirstLoginPasswordModal,

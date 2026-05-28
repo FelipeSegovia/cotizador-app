@@ -15,8 +15,10 @@ import { updateUser } from "./update-user";
 import { toggleUserStatus } from "./toggle-user-status";
 import { resendProvisionalPassword } from "./resend-provisional-password";
 import { changeCurrentUserPassword } from "./change-current-user-password";
+import { createFeedback } from "./create-feedback";
 
 export {
+  createFeedback,
   changeCurrentUserPassword,
   createQuotation,
   createUser,

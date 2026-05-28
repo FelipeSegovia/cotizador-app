@@ -13,8 +13,10 @@ import {
   useToggleUserStatus,
   useUpdateUser,
 } from "./useUserMutations";
+import { useCreateFeedback } from "./useCreateFeedback";
 
 export {
+  useCreateFeedback,
   useQuotations,
   useCurrentUser,
   useCompany,
