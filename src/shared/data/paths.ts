@@ -6,6 +6,7 @@ const PATHS = {
   COMPANY_EXPENSES: "/dashboard/gastos",
   SETTINGS: "/dashboard/configuracion",
   USERS: "/dashboard/usuarios",
+  FEEDBACK: "/dashboard/feedback",
 };
 
 export default PATHS;

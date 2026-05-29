@@ -5,6 +5,7 @@ import {
   HiBars3,
   HiBell,
   HiChartBar,
+  HiChatBubbleLeftRight,
   HiChevronDoubleLeft,
   HiChevronDoubleRight,
   HiClipboardDocumentList,
@@ -66,11 +67,20 @@ const DashboardLayout = () => {
     ];
 
     if (userRole === "admin") {
-      items.splice(3, 0, {
-        label: "Usuarios",
-        icon: <HiUsers className="text-lg" />,
-        to: PATHS.USERS,
-      });
+      items.splice(
+        3,
+        0,
+        {
+          label: "Usuarios",
+          icon: <HiUsers className="text-lg" />,
+          to: PATHS.USERS,
+        },
+        {
+          label: "Feedback",
+          icon: <HiChatBubbleLeftRight className="text-lg" />,
+          to: PATHS.FEEDBACK,
+        },
+      );
     }
 
     return items;

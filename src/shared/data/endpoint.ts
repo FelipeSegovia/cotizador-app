@@ -10,6 +10,7 @@ const endpoints = {
   USER_TOGGLE_STATUS: (id: string) => `/api/users/${id}/status`,
   USER_RESEND_PASSWORD: (id: string) => `/api/users/${id}/resend-password`,
   FEEDBACK: "/api/feedback",
+  FEEDBACK_PRIORITY: (id: string) => `/api/feedback/${id}/priority`,
 };
 
 export default endpoints;

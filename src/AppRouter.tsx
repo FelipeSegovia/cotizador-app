@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import {
   AdminUsersPage,
+  FeedbackManagementPage,
   CompanyExpensesPage,
   LoginPage,
   QuotationCreatorPage,
@@ -47,6 +48,14 @@ const AppRouter = () => {
             element={<CompanyExpensesPage />}
           />
           <Route path={PATHS.SETTINGS} element={<SettingsPage />} />
+          <Route
+            path={PATHS.FEEDBACK}
+            element={
+              <RoleProtectedRoute requiredRole="admin">
+                <FeedbackManagementPage />
+              </RoleProtectedRoute>
+            }
+          />
           <Route
             path={PATHS.USERS}
             element={

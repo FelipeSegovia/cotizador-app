@@ -3,10 +3,12 @@ import type {
   CreateFeedbackDto,
   Feedback,
   FeedbackCategory,
+  FeedbackPriority,
+  UpdateFeedbackDto,
 } from "../../shared/types/feedback";
 import { mockFeedbacks } from "../data/feedbacks";
 import { mockApiPath } from "../mock-api-path";
-import { requireAuth } from "./auth-helpers";
+import { requireAdmin, requireAuth } from "./auth-helpers";
 
 const VALID_CATEGORIES: FeedbackCategory[] = [
   "idea",
@@ -18,20 +20,29 @@ const VALID_CATEGORIES: FeedbackCategory[] = [
   "other",
 ];
 
+const VALID_PRIORITIES: FeedbackPriority[] = ["high", "medium", "low"];
+
 const db: Feedback[] = [...mockFeedbacks];
 
 const isValidCategory = (value: string): value is FeedbackCategory =>
   VALID_CATEGORIES.includes(value as FeedbackCategory);
 
+const isValidPriority = (value: string): value is FeedbackPriority =>
+  VALID_PRIORITIES.includes(value as FeedbackPriority);
+
 export const feedbackHandlers = [
   http.get(mockApiPath("/api/feedback"), ({ request }) => {
-    const auth = requireAuth(request);
+    const auth = requireAdmin(request);
     if (auth instanceof Response) {
       return auth;
     }
 
-    const userFeedbacks = db.filter((f) => f.userId === auth.user.id);
-    return HttpResponse.json(userFeedbacks);
+    const sorted = [...db].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+
+    return HttpResponse.json(sorted);
   }),
 
   http.post(mockApiPath("/api/feedback"), async ({ request }) => {
@@ -71,9 +82,12 @@ export const feedbackHandlers = [
       id: String(Date.now()),
       userId: auth.user.id,
       userEmail: auth.user.email,
+      userName: auth.user.name,
       title,
       category,
       description,
+      priority: "medium",
+      status: "new",
       createdAt: now,
       updatedAt: now,
     };
@@ -89,4 +103,53 @@ export const feedbackHandlers = [
 
     return HttpResponse.json(newFeedback, { status: 201 });
   }),
+
+  http.patch(
+    mockApiPath("/api/feedback/:id/priority"),
+    async ({ request, params }) => {
+      const auth = requireAdmin(request);
+      if (auth instanceof Response) {
+        return auth;
+      }
+
+      const id = params.id as string;
+      const index = db.findIndex((f) => f.id === id);
+
+      if (index === -1) {
+        return HttpResponse.json(
+          { message: "Feedback no encontrado" },
+          { status: 404 },
+        );
+      }
+
+      const body = (await request.json()) as UpdateFeedbackDto;
+
+      if (
+        body.priority !== undefined &&
+        !isValidPriority(body.priority)
+      ) {
+        return HttpResponse.json(
+          { message: "Prioridad inválida" },
+          { status: 400 },
+        );
+      }
+
+      if (body.priority === undefined) {
+        return HttpResponse.json(
+          { message: "Debe enviar priority" },
+          { status: 400 },
+        );
+      }
+
+      const updated: Feedback = {
+        ...db[index],
+        priority: body.priority,
+        updatedAt: new Date().toISOString(),
+      };
+
+      db[index] = updated;
+
+      return HttpResponse.json(updated);
+    },
+  ),
 ];

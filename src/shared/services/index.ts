@@ -16,9 +16,13 @@ import { toggleUserStatus } from "./toggle-user-status";
 import { resendProvisionalPassword } from "./resend-provisional-password";
 import { changeCurrentUserPassword } from "./change-current-user-password";
 import { createFeedback } from "./create-feedback";
+import { getFeedbacks } from "./get-feedbacks";
+import { updateFeedback } from "./update-feedback";
 
 export {
   createFeedback,
+  getFeedbacks,
+  updateFeedback,
   changeCurrentUserPassword,
   createQuotation,
   createUser,

@@ -1,0 +1,76 @@
+import type { FeedbackCategory, FeedbackPriority } from "../types/feedback";
+
+const LABELS_FEEDBACK_MANAGEMENT_PAGE = {
+  title: "Gestión de Feedback",
+  subtitle: "Supervisa y responde a las sugerencias de los usuarios.",
+  exportCsv: "Exportar CSV",
+  loading: "Cargando feedback...",
+  loadError: "No se pudo cargar el listado de feedback.",
+  empty: "No hay feedback que coincida con los filtros.",
+  stats: {
+    total: "Total Comentarios",
+    high: "Prioridad Alta",
+    medium: "Prioridad Media",
+    low: "Prioridad Baja",
+  },
+  filters: {
+    category: "Categoría",
+    priority: "Prioridad",
+    allFeminine: "Todas",
+    showing: "Mostrando {from}-{to} de {total}",
+  },
+  table: {
+    author: "Autor",
+    feedback: "Feedback",
+    category: "Categoría",
+    priority: "Prioridad",
+    actions: "Acciones",
+    viewDetail: "Ver Detalle",
+    pageOf: "Página {page} de {totalPages}",
+    previous: "Anterior",
+    next: "Siguiente",
+  },
+  priority: {
+    high: "Alta",
+    medium: "Media",
+    low: "Baja",
+  } satisfies Record<FeedbackPriority, string>,
+  category: {
+    idea: "Idea",
+    feature: "Funcionalidad",
+    improvement: "Mejora",
+    complaint: "Reclamo",
+    opinion: "Opinión",
+    bug: "Error",
+    other: "Otro",
+  } satisfies Record<FeedbackCategory, string>,
+  detailModal: {
+    title: "Detalle del Feedback",
+    author: "Autor",
+    email: "Correo",
+    date: "Fecha",
+    category: "Categoría",
+    priority: "Prioridad",
+    description: "Descripción",
+    save: "Guardar cambios",
+    saving: "Guardando...",
+    close: "Cerrar",
+    success: "Feedback actualizado correctamente",
+    error: "No se pudo actualizar el feedback",
+  },
+  csv: {
+    filename: "feedback-export.csv",
+    headers: {
+      id: "ID",
+      author: "Autor",
+      email: "Correo",
+      title: "Título",
+      category: "Categoría",
+      priority: "Prioridad",
+      description: "Descripción",
+      createdAt: "Fecha creación",
+    },
+  },
+};
+
+export default LABELS_FEEDBACK_MANAGEMENT_PAGE;

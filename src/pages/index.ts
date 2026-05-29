@@ -6,6 +6,7 @@ import QuotationsListPage from "./QuotationsListPage";
 import CompanyExpensesPage from "./CompanyExpensesPage";
 import SettingsPage from "./SettingsPage";
 import AdminUsersPage from "./AdminUsersPage";
+import FeedbackManagementPage from "./FeedbackManagementPage";
 
 export {
   LoginPage,
@@ -16,4 +17,5 @@ export {
   CompanyExpensesPage,
   SettingsPage,
   AdminUsersPage,
+  FeedbackManagementPage,
 };

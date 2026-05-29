@@ -15,9 +15,13 @@ import {
   useUpdateUser,
 } from "./useUserMutations";
 import { useCreateFeedback } from "./useCreateFeedback";
+import { useFeedbacks } from "./useFeedbacks";
+import { useUpdateFeedback } from "./useUpdateFeedback";
 
 export {
   useCreateFeedback,
+  useFeedbacks,
+  useUpdateFeedback,
   useQuotations,
   useCurrentUser,
   useCompany,
