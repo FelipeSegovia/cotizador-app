@@ -399,13 +399,26 @@ const QuotationPreviewPage = () => {
           {/* Company header */}
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-800 text-sm font-black text-white">
-                {companyQuery.isPending
-                  ? "…"
-                  : companyIssuerName
-                    ? companyInitialsFromName(companyIssuerName)
-                    : "—"}
-              </div>
+              {company?.logoUrl ? (
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-white">
+                  <img
+                    src={company.logoUrl}
+                    alt={LABELS_QUOTATION_PREVIEW_PAGE.company.logoAlt.replace(
+                      "{name}",
+                      companyIssuerName || company.name,
+                    )}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+              ) : (
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-800 text-sm font-black text-white">
+                  {companyQuery.isPending
+                    ? "…"
+                    : companyIssuerName
+                      ? companyInitialsFromName(companyIssuerName)
+                      : "—"}
+                </div>
+              )}
               <div>
                 {companyQuery.isPending ? (
                   <div className="space-y-2" aria-busy="true">

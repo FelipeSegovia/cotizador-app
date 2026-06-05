@@ -70,6 +70,7 @@ const LABELS_QUOTATION_PREVIEW_PAGE = {
       "No se pudieron obtener los datos de la empresa. Revisa tu conexion e intenta de nuevo.",
     notConfigured:
       "Aun no has configurado los datos de tu empresa. Ve a Ajustes para que aparezcan aqui y en el PDF.",
+    logoAlt: "Logo de {name}",
   },
 };
 

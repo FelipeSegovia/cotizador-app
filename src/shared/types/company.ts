@@ -5,6 +5,7 @@ export type Company = {
   address: string;
   city: string;
   contact: string;
+  logoUrl?: string | null;
   createdAt: string;
   updatedAt: string;
 };

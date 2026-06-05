@@ -6,20 +6,22 @@ import { authenticatedFetch } from "./authenticated-fetch";
 
 export const saveCompany = async (
   body: CompanyWriteDto,
+  logoFile?: File | null,
 ): Promise<Company> => {
-  const payload: CompanyWriteDto = {
-    ...body,
-    name: body.name.trim(),
-    rut: stripRutForApi(body.rut),
-    address: body.address?.trim() ?? "",
-    city: body.city?.trim() ?? "",
-    contact: body.contact?.trim() ?? "",
-  };
+  const formData = new FormData();
+  formData.append("name", body.name.trim());
+  formData.append("rut", stripRutForApi(body.rut));
+  formData.append("address", body.address?.trim() ?? "");
+  formData.append("city", body.city?.trim() ?? "");
+  formData.append("contact", body.contact?.trim() ?? "");
+
+  if (logoFile) {
+    formData.append("logo", logoFile);
+  }
 
   const res = await authenticatedFetch(endpoints.COMPANY, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    body: formData,
   });
 
   if (!res.ok) {

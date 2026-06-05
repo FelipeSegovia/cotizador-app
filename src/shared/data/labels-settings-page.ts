@@ -46,6 +46,15 @@ const LABELS_SETTINGS_PAGE = {
         label: "Contacto",
         placeholder: "Teléfono o correo de contacto",
       },
+      logo: {
+        label: "Logo de la empresa",
+        hint: "Formatos permitidos: JPG, JPEG, PNG o SVG. Tamaño máximo: 2 MB.",
+        uploadButton: "Subir logo",
+        changeButton: "Cambiar logo",
+        invalidType: "El archivo debe ser una imagen JPG, JPEG, PNG o SVG.",
+        maxSize: "El archivo no puede superar los 2 MB.",
+        alt: "Logo de la empresa",
+      },
     },
     ivaInfo: {
       title: "IVA en documentos",
