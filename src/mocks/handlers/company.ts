@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import type { Company, CompanyWriteDto } from "../../shared/types/company";
+import type { Company } from "../../shared/types/company";
 import { mockApiPath } from "../mock-api-path";
 
 type JwtPayload = {
@@ -79,9 +79,15 @@ export const companyHandlers = [
       return HttpResponse.json({ message: "Token inválido" }, { status: 401 });
     }
 
-    const body = (await request.json()) as Partial<CompanyWriteDto>;
-    const name = typeof body.name === "string" ? body.name.trim() : "";
-    const rut = typeof body.rut === "string" ? body.rut.trim() : "";
+    const formData = await request.formData();
+    const name =
+      typeof formData.get("name") === "string"
+        ? formData.get("name")!.toString().trim()
+        : "";
+    const rut =
+      typeof formData.get("rut") === "string"
+        ? formData.get("rut")!.toString().trim()
+        : "";
 
     if (!name || !rut) {
       return HttpResponse.json(
@@ -92,14 +98,29 @@ export const companyHandlers = [
 
     const now = new Date().toISOString();
     const existing = companiesByUserId.get(payload.sub);
+    const logoEntry = formData.get("logo");
+    const logoUrl =
+      logoEntry instanceof File && logoEntry.size > 0
+        ? URL.createObjectURL(logoEntry)
+        : (existing?.logoUrl ?? null);
 
     const company: Company = {
       id: existing?.id ?? crypto.randomUUID(),
       name,
       rut,
-      address: typeof body.address === "string" ? body.address : "",
-      city: typeof body.city === "string" ? body.city : "",
-      contact: typeof body.contact === "string" ? body.contact : "",
+      address:
+        typeof formData.get("address") === "string"
+          ? formData.get("address")!.toString()
+          : "",
+      city:
+        typeof formData.get("city") === "string"
+          ? formData.get("city")!.toString()
+          : "",
+      contact:
+        typeof formData.get("contact") === "string"
+          ? formData.get("contact")!.toString()
+          : "",
+      logoUrl,
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,
     };

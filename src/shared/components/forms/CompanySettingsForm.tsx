@@ -1,7 +1,7 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { HiBuildingOffice2, HiMapPin } from "react-icons/hi2";
+import { HiBuildingOffice2, HiMapPin, HiPhoto } from "react-icons/hi2";
 import { LABELS_SETTINGS_PAGE } from "../../data";
 import { useCompany } from "../../hooks";
 import { saveCompany } from "../../services";
@@ -20,10 +20,32 @@ const EMPTY_COMPANY_FORM: CompanyFormValues = {
   contact: "",
 };
 
+const ACCEPTED_LOGO_MIME_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/svg+xml",
+]);
+
+const MAX_LOGO_SIZE_BYTES = 2 * 1024 * 1024;
+
+const companyInitialsFromName = (name: string) => {
+  const trimmed = name.trim();
+  if (!trimmed) return "—";
+  const parts = trimmed.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) {
+    return `${parts[0]![0] ?? ""}${parts[1]![0] ?? ""}`.toUpperCase();
+  }
+  return trimmed.slice(0, 2).toUpperCase();
+};
+
 const CompanySettingsForm = () => {
   const queryClient = useQueryClient();
   const companyQuery = useCompany();
+  const logoInputRef = useRef<HTMLInputElement>(null);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(null);
+  const [logoError, setLogoError] = useState<string | null>(null);
 
   const {
     register,
@@ -54,8 +76,22 @@ const CompanySettingsForm = () => {
     }
   }, [companyQuery.isPending, companyQuery.data, reset]);
 
+  useEffect(() => {
+    return () => {
+      if (logoPreviewUrl) {
+        URL.revokeObjectURL(logoPreviewUrl);
+      }
+    };
+  }, [logoPreviewUrl]);
+
   const saveMutation = useMutation({
-    mutationFn: (payload: CompanyWriteDto) => saveCompany(payload),
+    mutationFn: ({
+      payload,
+      logo,
+    }: {
+      payload: CompanyWriteDto;
+      logo: File | null;
+    }) => saveCompany(payload, logo),
     onSuccess: (saved) => {
       queryClient.setQueryData(["company"], saved);
       reset({
@@ -65,6 +101,15 @@ const CompanySettingsForm = () => {
         city: saved.city ?? "",
         contact: saved.contact ?? "",
       });
+      if (logoPreviewUrl) {
+        URL.revokeObjectURL(logoPreviewUrl);
+      }
+      setLogoFile(null);
+      setLogoPreviewUrl(null);
+      setLogoError(null);
+      if (logoInputRef.current) {
+        logoInputRef.current.value = "";
+      }
       setSaveMessage(LABELS_SETTINGS_PAGE.companyCard.saveSuccess);
     },
     onError: () => {
@@ -80,16 +125,55 @@ const CompanySettingsForm = () => {
     return () => window.clearTimeout(timerId);
   }, [saveMessage]);
 
+  const handleLogoChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    if (!ACCEPTED_LOGO_MIME_TYPES.has(file.type)) {
+      setLogoError(LABELS_SETTINGS_PAGE.companyCard.fields.logo.invalidType);
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_LOGO_SIZE_BYTES) {
+      setLogoError(LABELS_SETTINGS_PAGE.companyCard.fields.logo.maxSize);
+      event.target.value = "";
+      return;
+    }
+
+    if (logoPreviewUrl) {
+      URL.revokeObjectURL(logoPreviewUrl);
+    }
+
+    setLogoError(null);
+    setLogoFile(file);
+    setLogoPreviewUrl(URL.createObjectURL(file));
+  };
+
   const onSubmit = (data: CompanyFormValues) => {
+    if (logoError) {
+      return;
+    }
+
     setSaveMessage(null);
     saveMutation.mutate({
-      name: data.name.trim(),
-      rut: data.rut,
-      address: data.address?.trim() ?? "",
-      city: data.city?.trim() ?? "",
-      contact: data.contact?.trim() ?? "",
+      payload: {
+        name: data.name.trim(),
+        rut: data.rut,
+        address: data.address?.trim() ?? "",
+        city: data.city?.trim() ?? "",
+        contact: data.contact?.trim() ?? "",
+      },
+      logo: logoFile,
     });
   };
+
+  const company = companyQuery.data;
+  const companyName = company?.name?.trim() ?? "";
+  const displayedLogoUrl = logoPreviewUrl ?? company?.logoUrl ?? null;
+  const hasLogo = Boolean(displayedLogoUrl);
 
   return (
     <SectionCard
@@ -114,6 +198,54 @@ const CompanySettingsForm = () => {
           onSubmit={handleSubmit(onSubmit)}
           noValidate
         >
+          <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50/60 p-4">
+            <p className="text-sm font-semibold text-slate-800">
+              {LABELS_SETTINGS_PAGE.companyCard.fields.logo.label}
+            </p>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-white">
+                {hasLogo ? (
+                  <img
+                    src={displayedLogoUrl!}
+                    alt={LABELS_SETTINGS_PAGE.companyCard.fields.logo.alt}
+                    className="h-full w-full object-contain"
+                  />
+                ) : companyName ? (
+                  <span className="text-sm font-black text-slate-700">
+                    {companyInitialsFromName(companyName)}
+                  </span>
+                ) : (
+                  <HiPhoto className="h-6 w-6 text-slate-400" aria-hidden />
+                )}
+              </div>
+              <div className="space-y-2">
+                <input
+                  ref={logoInputRef}
+                  id="companyLogo"
+                  type="file"
+                  accept="image/jpeg,image/png,image/svg+xml"
+                  className="sr-only"
+                  onChange={handleLogoChange}
+                />
+                <button
+                  type="button"
+                  onClick={() => logoInputRef.current?.click()}
+                  className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                >
+                  {hasLogo
+                    ? LABELS_SETTINGS_PAGE.companyCard.fields.logo.changeButton
+                    : LABELS_SETTINGS_PAGE.companyCard.fields.logo.uploadButton}
+                </button>
+                <p className="text-xs text-slate-500">
+                  {LABELS_SETTINGS_PAGE.companyCard.fields.logo.hint}
+                </p>
+                {logoError ? (
+                  <p className="text-xs font-medium text-rose-600">{logoError}</p>
+                ) : null}
+              </div>
+            </div>
+          </div>
+
           <FormField
             id="companyName"
             label={LABELS_SETTINGS_PAGE.companyCard.fields.name.label}

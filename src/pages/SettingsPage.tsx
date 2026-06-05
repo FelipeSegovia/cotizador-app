@@ -42,9 +42,13 @@ const SettingsPage = () => {
         </div>
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <PersonalProfileForm />
-        <CompanySettingsForm />
+      <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:items-start">
+        <div className="w-full lg:max-w-md lg:shrink-0">
+          <PersonalProfileForm />
+        </div>
+        <div className="min-w-0 flex-1">
+          <CompanySettingsForm />
+        </div>
       </div>
 
       <section className="mt-8 grid gap-4 md:grid-cols-3">
