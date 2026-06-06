@@ -4,6 +4,7 @@ import {
   FeedbackManagementPage,
   CompanyExpensesPage,
   LoginPage,
+  RecoverPasswordPage,
   QuotationCreatorPage,
   QuotationsListPage,
   RootPage,
@@ -26,6 +27,14 @@ const AppRouter = () => {
           element={
             <GuestRoute>
               <LoginPage />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path={PATHS.RECOVER_PASSWORD}
+          element={
+            <GuestRoute>
+              <RecoverPasswordPage />
             </GuestRoute>
           }
         />
