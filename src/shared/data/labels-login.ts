@@ -7,6 +7,8 @@ const LABELS_LOGIN = {
   placeholderPassword: "••••••••••",
   submitButton: "Iniciar sesión",
   forgotPassword: "¿Olvidé mi contraseña?",
+  showPassword: "Mostrar contraseña",
+  hidePassword: "Ocultar contraseña",
   footer: "Soluciones digitales en todo Chile",
   requiredField: {
     email: "El correo electrónico es obligatorio",

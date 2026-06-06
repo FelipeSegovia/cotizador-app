@@ -1,5 +1,6 @@
 import { type InputHTMLAttributes } from "react";
 import { type IconType } from "react-icons";
+import { HiEye, HiEyeSlash } from "react-icons/hi2";
 import {
   type UseFormRegisterReturn,
   type ControllerRenderProps,
@@ -10,12 +11,20 @@ type ControllerFieldRegistration = Pick<
   "name" | "onBlur" | "ref" | "onChange"
 >;
 
+type PasswordToggleProps = {
+  visible: boolean;
+  onToggle: () => void;
+  showLabel: string;
+  hideLabel: string;
+};
+
 type FormFieldProps = {
   id: string;
   label: string;
   icon?: IconType;
   registration: UseFormRegisterReturn | ControllerFieldRegistration;
   error?: string;
+  passwordToggle?: PasswordToggleProps;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, "id" | "name">;
 
 const FormField = ({
@@ -24,6 +33,7 @@ const FormField = ({
   icon: Icon,
   registration,
   error,
+  passwordToggle,
   ...inputProps
 }: FormFieldProps) => {
   return (
@@ -44,6 +54,20 @@ const FormField = ({
           {...registration}
           {...inputProps}
         />
+        {passwordToggle ? (
+          <button
+            type="button"
+            onClick={passwordToggle.onToggle}
+            aria-label={
+              passwordToggle.visible
+                ? passwordToggle.hideLabel
+                : passwordToggle.showLabel
+            }
+            className="shrink-0 rounded-md p-1 text-lg text-slate-400 transition hover:text-slate-600"
+          >
+            {passwordToggle.visible ? <HiEyeSlash /> : <HiEye />}
+          </button>
+        ) : null}
       </div>
 
       {error ? (

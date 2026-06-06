@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   HiArrowRight,
   HiGlobeAlt,
@@ -18,6 +19,7 @@ type LoginFormValues = {
 const LoginPage = () => {
   const navigate = useNavigate();
   const { login, error: authError, clearError } = useAuthStore();
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -80,7 +82,7 @@ const LoginPage = () => {
 
             <FormField
               id="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               label={LABELS_LOGIN.labelPassword}
               placeholder={LABELS_LOGIN.placeholderPassword}
               icon={HiLockClosed}
@@ -93,6 +95,12 @@ const LoginPage = () => {
                 },
               })}
               error={errors.password?.message}
+              passwordToggle={{
+                visible: showPassword,
+                onToggle: () => setShowPassword((prev) => !prev),
+                showLabel: LABELS_LOGIN.showPassword,
+                hideLabel: LABELS_LOGIN.hidePassword,
+              }}
             />
 
             {authError && (
