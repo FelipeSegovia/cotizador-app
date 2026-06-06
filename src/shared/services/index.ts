@@ -15,6 +15,9 @@ import { updateUser } from "./update-user";
 import { toggleUserStatus } from "./toggle-user-status";
 import { resendProvisionalPassword } from "./resend-provisional-password";
 import { changeCurrentUserPassword } from "./change-current-user-password";
+import { forgotPassword } from "./forgot-password";
+import { verifyResetCode } from "./verify-reset-code";
+import { resetPassword } from "./reset-password";
 import { createFeedback } from "./create-feedback";
 import { getFeedbacks } from "./get-feedbacks";
 import { updateFeedback } from "./update-feedback";
@@ -24,6 +27,9 @@ export {
   getFeedbacks,
   updateFeedback,
   changeCurrentUserPassword,
+  forgotPassword,
+  verifyResetCode,
+  resetPassword,
   createQuotation,
   createUser,
   downloadQuotationPdf,

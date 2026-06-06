@@ -9,6 +9,7 @@ import LABELS_SETTINGS_PAGE from "./labels-settings-page";
 import LABELS_ADMIN_USERS_PAGE from "./labels-admin-users-page";
 import LABELS_FEEDBACK_MODAL from "./labels-feedback-modal";
 import LABELS_FEEDBACK_MANAGEMENT_PAGE from "./labels-feedback-management-page";
+import LABELS_RECOVER_PASSWORD from "./labels-recover-password";
 import PATHS from "./paths";
 import endpoints from "./endpoint";
 
@@ -24,6 +25,7 @@ export {
   LABELS_QUOTATIONS_LIST_PAGE,
   LABELS_ROOT_PAGE,
   LABELS_SETTINGS_PAGE,
+  LABELS_RECOVER_PASSWORD,
   PATHS,
   endpoints,
 };

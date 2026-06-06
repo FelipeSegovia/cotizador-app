@@ -1,5 +1,6 @@
 const PATHS = {
   LOGIN: "/login",
+  RECOVER_PASSWORD: "/recuperar-contrasena",
   DASHBOARD: "/dashboard",
   QUOTATIONS: "/dashboard/cotizaciones",
   NEW_QUOTATION: "/dashboard/cotizaciones/nueva",

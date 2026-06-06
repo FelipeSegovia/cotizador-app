@@ -13,6 +13,20 @@ import {
   validTokens,
 } from "./auth-helpers";
 
+const resetCodesByEmail = new Map<string, string>();
+
+const generateResetCode = (): string => {
+  return String(Math.floor(100000 + Math.random() * 900000));
+};
+
+const simulateResetCodeEmail = (params: { to: string; code: string }) => {
+  console.info("[MSW] Correo simulado — Recuperación de contraseña", {
+    to: params.to,
+    subject: "Código de recuperación de contraseña",
+    body: `Tu código de verificación es: ${params.code}. Válido por 15 minutos.`,
+  });
+};
+
 export const authHandlers = [
   http.post(mockApiPath("/api/auth/login"), async ({ request }) => {
     const body = (await request.json()) as {
@@ -206,5 +220,118 @@ export const authHandlers = [
     }
 
     return HttpResponse.json({ message: "Logout exitoso" }, { status: 200 });
+  }),
+
+  http.post(mockApiPath("/api/auth/forgot-password"), async ({ request }) => {
+    const body = (await request.json()) as { email?: string };
+    const email = typeof body.email === "string" ? body.email.trim() : "";
+
+    if (!email) {
+      return HttpResponse.json(
+        { message: "El correo electrónico es obligatorio" },
+        { status: 400 },
+      );
+    }
+
+    const user = mockUsers.find(
+      (u) => u.email.toLowerCase() === email.toLowerCase(),
+    );
+
+    if (user && user.isActive) {
+      const code = generateResetCode();
+      resetCodesByEmail.set(email.toLowerCase(), code);
+      simulateResetCodeEmail({ to: email, code });
+    }
+
+    return HttpResponse.json(
+      {
+        message:
+          "Si el correo está registrado, recibirás un código de verificación.",
+      },
+      { status: 200 },
+    );
+  }),
+
+  http.post(mockApiPath("/api/auth/verify-reset-code"), async ({ request }) => {
+    const body = (await request.json()) as { email?: string; code?: string };
+    const email = typeof body.email === "string" ? body.email.trim() : "";
+    const code = typeof body.code === "string" ? body.code.trim() : "";
+
+    if (!email || !code) {
+      return HttpResponse.json(
+        { message: "El correo y el código son obligatorios" },
+        { status: 400 },
+      );
+    }
+
+    const storedCode = resetCodesByEmail.get(email.toLowerCase());
+
+    if (!storedCode || storedCode !== code) {
+      return HttpResponse.json(
+        { message: "Código de verificación inválido o expirado" },
+        { status: 401 },
+      );
+    }
+
+    return HttpResponse.json(
+      { message: "Código verificado correctamente" },
+      { status: 200 },
+    );
+  }),
+
+  http.post(mockApiPath("/api/auth/reset-password"), async ({ request }) => {
+    const body = (await request.json()) as {
+      email?: string;
+      code?: string;
+      newPassword?: string;
+    };
+    const email = typeof body.email === "string" ? body.email.trim() : "";
+    const code = typeof body.code === "string" ? body.code.trim() : "";
+    const newPassword =
+      typeof body.newPassword === "string" ? body.newPassword.trim() : "";
+
+    if (!email || !code || !newPassword) {
+      return HttpResponse.json(
+        { message: "El correo, código y nueva contraseña son obligatorios" },
+        { status: 400 },
+      );
+    }
+
+    if (newPassword.length < 8) {
+      return HttpResponse.json(
+        { message: "La nueva contraseña debe tener al menos 8 caracteres" },
+        { status: 400 },
+      );
+    }
+
+    const storedCode = resetCodesByEmail.get(email.toLowerCase());
+
+    if (!storedCode || storedCode !== code) {
+      return HttpResponse.json(
+        { message: "Código de verificación inválido o expirado" },
+        { status: 401 },
+      );
+    }
+
+    const dbUser = mockUsers.find(
+      (u) => u.email.toLowerCase() === email.toLowerCase(),
+    );
+
+    if (!dbUser) {
+      return HttpResponse.json(
+        { message: "Usuario no encontrado" },
+        { status: 404 },
+      );
+    }
+
+    dbUser.password = newPassword;
+    dbUser.mustChangePassword = false;
+    dbUser.updatedAt = new Date().toISOString();
+    resetCodesByEmail.delete(email.toLowerCase());
+
+    return HttpResponse.json(
+      { message: "Contraseña restablecida correctamente" },
+      { status: 200 },
+    );
   }),
 ];

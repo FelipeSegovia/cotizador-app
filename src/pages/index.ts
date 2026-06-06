@@ -1,4 +1,5 @@
 import LoginPage from "./LoginPage";
+import RecoverPasswordPage from "./RecoverPasswordPage";
 import RootPage from "./RootPage";
 import QuotationPage from "./QuotationPage";
 import QuotationCreatorPage from "./QuotationCreatorPage";
@@ -10,6 +11,7 @@ import FeedbackManagementPage from "./FeedbackManagementPage";
 
 export {
   LoginPage,
+  RecoverPasswordPage,
   RootPage,
   QuotationPage,
   QuotationCreatorPage,

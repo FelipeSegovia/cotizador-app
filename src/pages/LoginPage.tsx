@@ -104,6 +104,7 @@ const LoginPage = () => {
             <div className="flex items-center justify-end gap-4 text-sm">
               <button
                 type="button"
+                onClick={() => navigate(PATHS.RECOVER_PASSWORD)}
                 className="font-medium text-emerald-700 transition hover:text-emerald-800"
               >
                 {LABELS_LOGIN.forgotPassword}
