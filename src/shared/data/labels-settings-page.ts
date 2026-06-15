@@ -66,6 +66,30 @@ const LABELS_SETTINGS_PAGE = {
     saveSuccess: "Datos guardados correctamente.",
     loadError: "No se pudo cargar la empresa.",
   },
+  termsCard: {
+    title: "Términos y Condiciones",
+    description:
+      "Estos ítems aparecen en la previsualización de cotizaciones y en el PDF generado.",
+    footerNote:
+      "Puedes agregar, editar, eliminar y reordenar cada término. Los cambios se aplican a todas las cotizaciones futuras.",
+    fields: {
+      term: {
+        placeholder: "Escribe un término o condición…",
+        required: "El término no puede estar vacío",
+      },
+    },
+    addButton: "Agregar término",
+    dragHandle: "Arrastrar para reordenar",
+    remove: "Eliminar",
+    emptyList: "No hay términos configurados. Agrega al menos uno.",
+    saveButton: "Guardar términos",
+    saving: "Guardando…",
+    saveSuccess: "Términos y condiciones guardados correctamente.",
+    loadError: "No se pudieron cargar los términos y condiciones.",
+    validation: {
+      minOne: "Debe existir al menos un término con contenido.",
+    },
+  },
   infoTiles: {
     security: {
       title: "Seguridad",
@@ -84,6 +108,7 @@ const LABELS_SETTINGS_PAGE = {
   },
   loadingUser: "Cargando perfil…",
   loadingCompany: "Cargando datos de empresa…",
+  loadingTerms: "Cargando términos y condiciones…",
 };
 
 export default LABELS_SETTINGS_PAGE;

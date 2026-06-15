@@ -8,6 +8,8 @@ import getCurrentUser from "./get-current-user";
 import { updateCurrentUser } from "./update-current-user";
 import { getCompany } from "./get-company";
 import { saveCompany } from "./save-company";
+import { getCompanyTerms } from "./get-company-terms";
+import { saveCompanyTerms } from "./save-company-terms";
 import { downloadQuotationPdf } from "./download-quotation-pdf";
 import { getUsers } from "./get-users";
 import { createUser } from "./create-user";
@@ -34,6 +36,7 @@ export {
   createUser,
   downloadQuotationPdf,
   getCompany,
+  getCompanyTerms,
   getQuotations,
   getUsers,
   resendProvisionalPassword,
@@ -47,4 +50,5 @@ export {
   getCurrentUser,
   updateCurrentUser,
   saveCompany,
+  saveCompanyTerms,
 };

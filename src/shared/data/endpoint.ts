@@ -7,6 +7,7 @@ const endpoints = {
   VERIFY_RESET_CODE: "/api/auth/verify-reset-code",
   RESET_PASSWORD: "/api/auth/reset-password",
   COMPANY: "/api/company",
+  COMPANY_TERMS: "/api/company/terms",
   QUOTATIONS: "/api/quotations",
   USERS: "/api/users",
   USER_BY_ID: (id: string) => `/api/users/${id}`,

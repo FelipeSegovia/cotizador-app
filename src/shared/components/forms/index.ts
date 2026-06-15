@@ -3,6 +3,7 @@ import FormSubmitButton from "./FormSubmitButton";
 import FormTextareaField from "./FormTextareaField";
 import CompanySettingsForm from "./CompanySettingsForm";
 import PersonalProfileForm from "./PersonalProfileForm";
+import TermsSettingsForm from "./TermsSettingsForm";
 
 export {
   CompanySettingsForm,
@@ -10,4 +11,5 @@ export {
   FormSubmitButton,
   FormTextareaField,
   PersonalProfileForm,
+  TermsSettingsForm,
 };
