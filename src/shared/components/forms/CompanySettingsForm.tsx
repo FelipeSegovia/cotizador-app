@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { HiBuildingOffice2, HiMapPin, HiPhoto } from "react-icons/hi2";
 import { LABELS_SETTINGS_PAGE } from "../../data";
 import { useCompany } from "../../hooks";
@@ -42,7 +43,6 @@ const CompanySettingsForm = () => {
   const queryClient = useQueryClient();
   const companyQuery = useCompany();
   const logoInputRef = useRef<HTMLInputElement>(null);
-  const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(null);
   const [logoError, setLogoError] = useState<string | null>(null);
@@ -110,20 +110,9 @@ const CompanySettingsForm = () => {
       if (logoInputRef.current) {
         logoInputRef.current.value = "";
       }
-      setSaveMessage(LABELS_SETTINGS_PAGE.companyCard.saveSuccess);
-    },
-    onError: () => {
-      setSaveMessage(null);
+      toast.success(LABELS_SETTINGS_PAGE.companyCard.saveSuccess);
     },
   });
-
-  useEffect(() => {
-    if (!saveMessage) {
-      return;
-    }
-    const timerId = window.setTimeout(() => setSaveMessage(null), 4000);
-    return () => window.clearTimeout(timerId);
-  }, [saveMessage]);
 
   const handleLogoChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -157,7 +146,6 @@ const CompanySettingsForm = () => {
       return;
     }
 
-    setSaveMessage(null);
     saveMutation.mutate({
       payload: {
         name: data.name.trim(),
@@ -336,10 +324,6 @@ const CompanySettingsForm = () => {
             <p className="text-sm font-medium text-rose-600">
               {(saveMutation.error as Error).message}
             </p>
-          ) : null}
-
-          {saveMessage ? (
-            <p className="text-sm font-medium text-emerald-700">{saveMessage}</p>
           ) : null}
 
           <div className="flex justify-end pt-2">

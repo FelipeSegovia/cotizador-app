@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { HiDevicePhoneMobile, HiLockClosed, HiUser } from "react-icons/hi2";
 import { MdOutlineEmail } from "react-icons/md";
 import { LABELS_SETTINGS_PAGE } from "../../data";
@@ -23,7 +24,6 @@ const PersonalProfileForm = () => {
   const storeUser = useAuthStore((s) => s.user);
   const setUser = useAuthStore((s) => s.setUser);
   const currentUserQuery = useCurrentUser();
-  const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
   const profileUser: User | null = currentUserQuery.data ?? storeUser ?? null;
 
@@ -55,23 +55,11 @@ const PersonalProfileForm = () => {
         name: user.name,
         mobilePhone: user.mobilePhone ?? "",
       });
-      setSaveMessage(LABELS_SETTINGS_PAGE.profileCard.saveSuccess);
-    },
-    onError: () => {
-      setSaveMessage(null);
+      toast.success(LABELS_SETTINGS_PAGE.profileCard.saveSuccess);
     },
   });
 
-  useEffect(() => {
-    if (!saveMessage) {
-      return;
-    }
-    const timerId = window.setTimeout(() => setSaveMessage(null), 4000);
-    return () => window.clearTimeout(timerId);
-  }, [saveMessage]);
-
   const onSubmit = (data: ProfileFormValues) => {
-    setSaveMessage(null);
     saveMutation.mutate({
       name: data.name.trim(),
       mobilePhone: data.mobilePhone.trim(),
@@ -142,12 +130,6 @@ const PersonalProfileForm = () => {
           {saveMutation.isError ? (
             <p className="text-sm font-medium text-rose-600">
               {(saveMutation.error as Error).message}
-            </p>
-          ) : null}
-
-          {saveMessage ? (
-            <p className="text-sm font-medium text-emerald-700">
-              {saveMessage}
             </p>
           ) : null}
 

@@ -5,6 +5,7 @@ import { useCompany } from "../shared/hooks";
 import {
   CompanySettingsForm,
   PersonalProfileForm,
+  TermsSettingsForm,
 } from "../shared/components/forms";
 import { InfoTile } from "../shared/components/ui";
 
@@ -49,6 +50,10 @@ const SettingsPage = () => {
         <div className="min-w-0 flex-1">
           <CompanySettingsForm />
         </div>
+      </div>
+
+      <div className="mt-8">
+        <TermsSettingsForm />
       </div>
 
       <section className="mt-8 grid gap-4 md:grid-cols-3">

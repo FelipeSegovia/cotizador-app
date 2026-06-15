@@ -1,6 +1,7 @@
 import { useQuotations } from "./useQuotations";
 import { useCurrentUser } from "./useCurrentUser";
 import { useCompany } from "./useCompany";
+import { useCompanyTerms } from "./useCompanyTerms";
 import { useCompanyRequiredGuard } from "./useCompanyRequiredGuard";
 import { useSendQuotation } from "./useSendQuotation";
 import { useUpdateQuotationStatus } from "./useUpdateQuotationStatus";
@@ -25,6 +26,7 @@ export {
   useQuotations,
   useCurrentUser,
   useCompany,
+  useCompanyTerms,
   useCompanyRequiredGuard,
   useSendQuotation,
   useUpdateQuotationStatus,

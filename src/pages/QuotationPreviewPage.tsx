@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import {
@@ -12,8 +12,10 @@ import {
 } from "react-icons/hi2";
 import { ConfirmQuotationStatusChangeModal } from "../shared/components/ui";
 import { LABELS_QUOTATION_PREVIEW_PAGE, PATHS } from "../shared/data";
+import DEFAULT_TERMS from "../shared/data/default-terms";
 import {
   useCompany,
+  useCompanyTerms,
   useSendQuotation,
   useUpdateQuotationStatus,
 } from "../shared/hooks";
@@ -37,15 +39,6 @@ const companyInitialsFromName = (name: string) => {
   return trimmed.slice(0, 2).toUpperCase();
 };
 
-const TERMS = [
-  "Forma de pago: 50% al aceptar cotización, 50% al término de implementación.",
-  "Los precios están expresados en Pesos Chilenos (CLP).",
-  "La validez de esta oferta es de 15 días corridos.",
-  "El soporte premium incluido cubre incidencias de software nivel 1 y 2.",
-  "Toda modificación adicional será facturada por separado previa aprobación.",
-  "Se requiere firma de contrato de confidencialidad antes del inicio.",
-];
-
 const formatCLP = (value: number) =>
   `$${Math.round(value).toLocaleString("es-CL")}`;
 
@@ -59,6 +52,7 @@ const formatDate = (date: Date) =>
 const QuotationPreviewPage = () => {
   const navigate = useNavigate();
   const companyQuery = useCompany();
+  const termsQuery = useCompanyTerms();
   const updateStatusMutation = useUpdateQuotationStatus();
   const sendMutation = useSendQuotation();
   const {
@@ -93,6 +87,14 @@ const QuotationPreviewPage = () => {
     const timer = window.setTimeout(() => setStatusAlert(null), 6000);
     return () => window.clearTimeout(timer);
   }, [statusAlert]);
+
+  const displayTerms = useMemo(() => {
+    const terms = termsQuery.data?.terms;
+    if (terms && terms.length > 0) {
+      return terms;
+    }
+    return DEFAULT_TERMS;
+  }, [termsQuery.data?.terms]);
 
   if (draft === null) return null;
 
@@ -585,8 +587,8 @@ const QuotationPreviewPage = () => {
               {LABELS_QUOTATION_PREVIEW_PAGE.terms.title}
             </p>
             <div className="grid gap-x-8 gap-y-1.5 sm:grid-cols-2">
-              {TERMS.map((term) => (
-                <div key={term} className="flex items-start gap-2">
+              {displayTerms.map((term, index) => (
+                <div key={`${index}-${term}`} className="flex items-start gap-2">
                   <span className="mt-1 block h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
                   <p className="text-xs text-slate-600">{term}</p>
                 </div>
