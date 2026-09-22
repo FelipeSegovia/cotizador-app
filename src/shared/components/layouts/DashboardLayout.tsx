@@ -16,7 +16,11 @@ import {
   HiUsers,
   HiXMark,
 } from "react-icons/hi2";
-import { FirstLoginPasswordModal, SuggestIdeaButton } from "../ui";
+import {
+  FirstLoginPasswordModal,
+  SuggestIdeaButton,
+  ThemeToggle,
+} from "../ui";
 import {
   SidebarBrand,
   SidebarMenuList,
@@ -101,20 +105,20 @@ const DashboardLayout = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#eff2f8] text-slate-900">
+    <div className="min-h-screen bg-background text-foreground">
       <FirstLoginPasswordModal />
       <SuggestIdeaButton />
       {isMobileMenuOpen ? (
         <button
           type="button"
           aria-label="Cerrar menú"
-          className="fixed inset-0 z-30 bg-slate-900/40 md:hidden"
+          className="fixed inset-0 z-30 bg-secondary/40 md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       ) : null}
       {/* Mobile sidebar */}
       <aside
-        className={`fixed left-0 top-0 z-40 flex h-screen w-72 flex-col border-r border-slate-200 bg-[#f5f7fb] px-6 py-8 transition-transform md:hidden ${
+        className={`fixed left-0 top-0 z-40 flex h-screen w-72 flex-col border-r border-sidebar-border bg-sidebar px-6 py-8 text-sidebar-foreground transition-transform md:hidden ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -123,7 +127,7 @@ const DashboardLayout = () => {
             <button
               type="button"
               aria-label="Cerrar navegación"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-sidebar-border bg-card text-muted-foreground"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <HiXMark className="text-lg" />
@@ -140,14 +144,14 @@ const DashboardLayout = () => {
           </nav>
         </div>
 
-        <div className="mt-6 border-t border-slate-200 pt-6">
+        <div className="mt-6 border-t border-sidebar-border pt-6">
           <SidebarMenuList items={secondaryMenu} />
         </div>
       </aside>
       {/* Desktop sidebar */}
       <div className="mx-auto flex min-h-screen max-w-screen-2xl">
         <aside
-          className={`hidden flex-col border-r border-slate-200 bg-[#f5f7fb] py-8 transition-all duration-300 md:sticky md:top-0 md:z-20 md:flex md:h-screen md:self-start md:overflow-visible ${
+          className={`hidden flex-col border-r border-sidebar-border bg-sidebar py-8 text-sidebar-foreground transition-all duration-300 md:sticky md:top-0 md:z-20 md:flex md:h-screen md:self-start md:overflow-visible ${
             isDesktopSidebarCollapsed ? "w-24 px-4" : "w-72 px-6"
           }`}
         >
@@ -161,7 +165,7 @@ const DashboardLayout = () => {
                     ? "Expandir navegación"
                     : "Minimizar navegación"
                 }
-                className={`flex items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-slate-300 hover:text-slate-800 ${
+                className={`flex items-center justify-center rounded-full border border-sidebar-border bg-card text-muted-foreground transition hover:border-sidebar-ring hover:text-sidebar-foreground ${
                   isDesktopSidebarCollapsed ? "h-11 w-11" : "h-9 w-9"
                 }`}
                 onClick={() =>
@@ -192,7 +196,7 @@ const DashboardLayout = () => {
             </nav>
           </div>
 
-          <div className="mt-6 border-t border-slate-200 pt-6">
+          <div className="mt-6 border-t border-sidebar-border pt-6">
             <SidebarMenuList
               items={secondaryMenu}
               isCollapsed={isDesktopSidebarCollapsed}
@@ -201,37 +205,39 @@ const DashboardLayout = () => {
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="border-b border-slate-200 bg-white px-4 py-4 sm:px-6 lg:px-8">
+          <header className="border-b border-border bg-card px-4 py-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-3">
               <button
                 type="button"
                 aria-label="Abrir menú"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-slate-300 hover:text-slate-800 md:hidden"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition hover:border-ring hover:text-foreground md:hidden"
                 onClick={() => setIsMobileMenuOpen(true)}
               >
                 <HiBars3 className="text-lg" />
               </button>
 
               <label className="relative hidden w-full max-w-md lg:block">
-                <HiMagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <HiMagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <input
                   type="text"
                   placeholder="Search quotes, clients..."
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-emerald-300 focus:bg-white"
+                  className="w-full rounded-xl border border-input bg-muted py-2.5 pl-10 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-ring focus:bg-card"
                 />
               </label>
 
               <div className="ml-auto flex items-center gap-2 sm:gap-3">
+                <ThemeToggle />
+
                 <button
                   type="button"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-slate-300 hover:text-slate-700"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition hover:border-ring hover:text-foreground"
                 >
                   <HiBell className="text-lg" />
                 </button>
 
                 <button
                   type="button"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-emerald-800 transition hover:border-emerald-300"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-sidebar-accent bg-accent text-accent-foreground transition hover:border-ring"
                 >
                   <HiUserCircle className="text-2xl" />
                 </button>

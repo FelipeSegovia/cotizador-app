@@ -13,7 +13,7 @@ const QuotationCreatorPage = () => {
 
   if (isLoadingCompany) {
     return (
-      <div className="flex items-center justify-center py-20 text-sm text-slate-500">
+      <div className="flex items-center justify-center py-20 text-sm text-muted-foreground">
         {LABELS_QUOTATIONS_LIST_PAGE.loading}
       </div>
     );

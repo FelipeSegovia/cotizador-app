@@ -68,18 +68,18 @@ const PersonalProfileForm = () => {
 
   return (
     <SectionCard title={LABELS_SETTINGS_PAGE.profileCard.title} icon={HiUser}>
-      <p className="mb-5 text-xs text-slate-500">
+      <p className="mb-5 text-xs text-muted-foreground">
         {LABELS_SETTINGS_PAGE.profileCard.hint}
       </p>
 
       {currentUserQuery.isPending && !profileUser ? (
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-muted-foreground">
           {LABELS_SETTINGS_PAGE.loadingUser}
         </p>
       ) : null}
 
       {currentUserQuery.isError && !profileUser ? (
-        <p className="text-sm text-rose-600">
+        <p className="text-sm text-destructive">
           {currentUserQuery.error instanceof Error
             ? currentUserQuery.error.message
             : "No se pudo cargar el perfil."}
@@ -111,24 +111,24 @@ const PersonalProfileForm = () => {
           />
 
           <div className="space-y-2">
-            <span className="block text-sm font-semibold text-slate-700">
+            <span className="block text-sm font-semibold text-foreground">
               {LABELS_SETTINGS_PAGE.profileCard.fields.email.label}
             </span>
-            <div className="flex items-center rounded-xl border border-slate-200 bg-sky-50/80 px-3 shadow-[inset_0_1px_2px_rgba(15,23,42,0.04)]">
-              <MdOutlineEmail className="shrink-0 text-lg text-slate-400" />
+            <div className="flex items-center rounded-xl border border-input bg-muted px-3">
+              <MdOutlineEmail className="shrink-0 text-lg text-muted-foreground" />
               <input
                 readOnly
                 value={profileUser.email}
-                className="w-full cursor-default border-none bg-transparent px-2 py-3 text-sm text-slate-700 outline-none"
+                className="w-full cursor-default border-none bg-transparent px-2 py-3 text-sm text-foreground outline-none"
               />
               <HiLockClosed
-                className="shrink-0 text-lg text-slate-400"
+                className="shrink-0 text-lg text-muted-foreground"
                 aria-hidden
               />
             </div>
           </div>
           {saveMutation.isError ? (
-            <p className="text-sm font-medium text-rose-600">
+            <p className="text-sm font-medium text-destructive">
               {(saveMutation.error as Error).message}
             </p>
           ) : null}
@@ -137,7 +137,7 @@ const PersonalProfileForm = () => {
             <button
               type="submit"
               disabled={saveMutation.isPending}
-              className="inline-flex items-center justify-center rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(5,150,105,0.35)] transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saveMutation.isPending
                 ? LABELS_SETTINGS_PAGE.profileCard.saving

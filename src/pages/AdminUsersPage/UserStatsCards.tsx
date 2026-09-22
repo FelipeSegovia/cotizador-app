@@ -18,28 +18,28 @@ const UserStatsCards = ({ users }: UserStatsCardsProps) => {
       value: String(total),
       hint: null,
       icon: HiOutlineUserGroup,
-      iconBg: "bg-emerald-50 text-emerald-700",
+      iconBg: "bg-accent text-primary",
     },
     {
       label: LABELS_ADMIN_USERS_PAGE.stats.admins,
       value: String(admins),
       hint: LABELS_ADMIN_USERS_PAGE.stats.adminsHint,
       icon: HiShieldCheck,
-      iconBg: "bg-slate-100 text-slate-700",
+      iconBg: "bg-muted text-foreground",
     },
     {
       label: LABELS_ADMIN_USERS_PAGE.stats.commons,
       value: String(commons),
       hint: LABELS_ADMIN_USERS_PAGE.stats.commonsHint,
       icon: HiUsers,
-      iconBg: "bg-sky-50 text-sky-700",
+      iconBg: "bg-chart-3/10 text-chart-3",
     },
     {
       label: LABELS_ADMIN_USERS_PAGE.stats.activeSessions,
       value: String(activeCount),
       hint: LABELS_ADMIN_USERS_PAGE.stats.activeSessionsHint,
       icon: HiUsers,
-      iconBg: "bg-emerald-50 text-emerald-700",
+      iconBg: "bg-accent text-primary",
       live: true,
     },
   ];
@@ -49,20 +49,20 @@ const UserStatsCards = ({ users }: UserStatsCardsProps) => {
       {cards.map((card) => (
         <article
           key={card.label}
-          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+          className="rounded-2xl border border-border bg-card p-5 shadow-sm"
         >
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 {card.label}
               </p>
-              <p className="mt-2 text-3xl font-bold text-slate-900">
+              <p className="mt-2 text-3xl font-bold text-foreground">
                 {card.value}
               </p>
               {card.hint ? (
-                <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
+                <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
                   {card.live ? (
-                    <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
+                    <span className="inline-block h-2 w-2 rounded-full bg-primary" />
                   ) : null}
                   {card.hint}
                 </p>

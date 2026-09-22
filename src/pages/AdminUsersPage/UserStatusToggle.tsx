@@ -20,18 +20,18 @@ const UserStatusToggle = ({
         disabled={disabled}
         onClick={onToggle}
         className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition disabled:cursor-not-allowed disabled:opacity-50 ${
-          isActive ? "bg-emerald-600" : "bg-slate-300"
+          isActive ? "bg-primary" : "bg-muted"
         }`}
       >
         <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition ${
+          className={`inline-block h-4 w-4 transform rounded-full bg-card shadow transition ${
             isActive ? "translate-x-6" : "translate-x-1"
           }`}
         />
       </button>
       <span
         className={`text-xs font-semibold ${
-          isActive ? "text-emerald-700" : "text-slate-400"
+          isActive ? "text-primary" : "text-muted-foreground"
         }`}
       >
         {isActive

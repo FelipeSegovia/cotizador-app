@@ -57,19 +57,19 @@ export const formatRelativeDate = (isoDate: string): string => {
 };
 
 export const categoryClassMap: Record<FeedbackCategory, string> = {
-  bug: "bg-rose-100 text-rose-700",
-  feature: "bg-emerald-100 text-emerald-700",
-  improvement: "bg-sky-100 text-sky-700",
-  idea: "bg-violet-100 text-violet-700",
-  complaint: "bg-amber-100 text-amber-800",
-  opinion: "bg-slate-200 text-slate-700",
-  other: "bg-slate-100 text-slate-600",
+  bug: "bg-destructive/15 text-destructive dark:bg-destructive/20 dark:text-destructive-foreground",
+  feature: "bg-accent text-accent-foreground dark:bg-primary/20 dark:text-primary-foreground",
+  improvement: "bg-chart-3/15 text-chart-3 dark:bg-chart-2/20 dark:text-chart-2",
+  idea: "bg-secondary/15 text-secondary dark:bg-secondary dark:text-secondary-foreground",
+  complaint: "bg-chart-4/20 text-chart-4",
+  opinion: "bg-muted text-foreground",
+  other: "bg-muted text-muted-foreground",
 };
 
 export const priorityDotClassMap: Record<FeedbackPriority, string> = {
-  high: "bg-rose-500",
-  medium: "bg-amber-400",
-  low: "bg-emerald-500",
+  high: "bg-destructive",
+  medium: "bg-chart-4",
+  low: "bg-primary",
 };
 
 export const truncateText = (text: string, maxLength: number): string => {

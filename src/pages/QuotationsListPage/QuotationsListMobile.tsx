@@ -14,7 +14,7 @@ const QuotationsListMobile = ({
   onViewPreview,
   onRequestStatusChange,
 }: QuotationsListViewProps) => (
-  <ul className="divide-y divide-slate-100 md:hidden">
+  <ul className="divide-y divide-border md:hidden">
     {quotations.map((q, index) => {
       const effectiveStatus = getEffectiveQuotationStatus(q);
       const isUpdatingRow = pendingStatusId === q.id && isUpdating;
@@ -23,14 +23,14 @@ const QuotationsListMobile = ({
         <li key={q.id} className="space-y-3 p-4">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-medium text-slate-400">
+              <p className="text-xs font-medium text-muted-foreground">
                 {LABELS_QUOTATIONS_LIST_PAGE.table.number}{" "}
                 {String(index + 1).padStart(3, "0")}
               </p>
-              <p className="mt-0.5 truncate text-sm font-semibold text-slate-800">
+              <p className="mt-0.5 truncate text-sm font-semibold text-foreground">
                 {q.clientName}
               </p>
-              <p className="truncate text-sm text-slate-600">{q.projectTitle}</p>
+              <p className="truncate text-sm text-muted-foreground">{q.projectTitle}</p>
             </div>
             <QuotationStatusBadge
               status={effectiveStatus}
@@ -39,16 +39,16 @@ const QuotationsListMobile = ({
           </div>
           <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
             <div>
-              <dt className="text-xs font-medium uppercase tracking-wide text-slate-400">
+              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 {LABELS_QUOTATIONS_LIST_PAGE.table.total}
               </dt>
-              <dd className="font-bold text-slate-800">{formatCLP(q.total)}</dd>
+              <dd className="font-bold text-foreground">{formatCLP(q.total)}</dd>
             </div>
             <div>
-              <dt className="text-xs font-medium uppercase tracking-wide text-slate-400">
+              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 {LABELS_QUOTATIONS_LIST_PAGE.table.date}
               </dt>
-              <dd className="text-slate-600">{formatDate(q.createdAt)}</dd>
+              <dd className="text-muted-foreground">{formatDate(q.createdAt)}</dd>
             </div>
           </dl>
           <QuotationRowActions

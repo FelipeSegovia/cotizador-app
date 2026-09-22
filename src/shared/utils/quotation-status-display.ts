@@ -10,11 +10,11 @@ export const QUOTATION_STATUS_LABELS: Record<QuotationStatus, string> = {
 
 /** Mismos colores que los badges de estado en listado y tablas. */
 export const QUOTATION_STATUS_BADGE_CLASSES: Record<QuotationStatus, string> = {
-  draft: "bg-slate-100 text-slate-600",
-  sent: "bg-blue-50 text-blue-700",
-  approved: "bg-emerald-50 text-emerald-700",
-  rejected: "bg-red-50 text-red-600",
-  expired: "bg-amber-50 text-amber-800",
+  draft: "bg-muted text-muted-foreground",
+  sent: "bg-chart-3/15 text-chart-3 dark:bg-chart-2/20 dark:text-chart-2",
+  approved: "bg-accent text-accent-foreground dark:bg-primary/20 dark:text-primary-foreground",
+  rejected: "bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive-foreground",
+  expired: "bg-chart-4/15 text-chart-4",
 };
 
 /** Pills del modal: fondo/texto alineados al badge + punto más oscuro del mismo tono. */
@@ -24,22 +24,22 @@ export const QUOTATION_STATUS_MODAL_PILL: Record<
 > = {
   draft: {
     container: QUOTATION_STATUS_BADGE_CLASSES.draft,
-    dot: "bg-slate-500",
+    dot: "bg-muted-foreground",
   },
   sent: {
     container: QUOTATION_STATUS_BADGE_CLASSES.sent,
-    dot: "bg-blue-600",
+    dot: "bg-chart-3 dark:bg-chart-2",
   },
   approved: {
     container: QUOTATION_STATUS_BADGE_CLASSES.approved,
-    dot: "bg-emerald-600",
+    dot: "bg-primary",
   },
   rejected: {
     container: QUOTATION_STATUS_BADGE_CLASSES.rejected,
-    dot: "bg-red-600",
+    dot: "bg-destructive",
   },
   expired: {
     container: QUOTATION_STATUS_BADGE_CLASSES.expired,
-    dot: "bg-amber-600",
+    dot: "bg-chart-4",
   },
 };

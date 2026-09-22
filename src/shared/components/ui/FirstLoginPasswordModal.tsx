@@ -82,18 +82,18 @@ const FirstLoginPasswordModal = () => {
           error={errors.confirmPassword?.message}
         />
 
-        <label className="flex items-center gap-2 text-sm text-slate-600">
+        <label className="flex items-center gap-2 text-sm text-muted-foreground">
           <input
             type="checkbox"
             checked={showPassword}
             onChange={(e) => setShowPassword(e.target.checked)}
-            className="rounded border-slate-300"
+            className="rounded border-input"
           />
           Mostrar contraseñas
         </label>
 
         {changePassword.isError ? (
-          <p className="text-sm text-rose-600">
+          <p className="text-sm text-destructive">
             {(changePassword.error as Error).message}
           </p>
         ) : null}
@@ -102,7 +102,7 @@ const FirstLoginPasswordModal = () => {
           <button
             type="submit"
             disabled={changePassword.isPending}
-            className="rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:opacity-60"
+            className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
           >
             {changePassword.isPending
               ? LABELS_ADMIN_USERS_PAGE.firstLoginModal.submitting

@@ -4,6 +4,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "sonner";
 import AppRouter from "./AppRouter";
 import useAuthStore from "./shared/store/useAuthStore";
+import { useThemeStore } from "./shared/store";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -15,6 +16,7 @@ const queryClient = new QueryClient({
 
 const App = () => {
   const { loadFromStorage } = useAuthStore();
+  const theme = useThemeStore((state) => state.theme);
 
   useEffect(() => {
     // Cargar autenticación desde localStorage al montar la app
@@ -24,7 +26,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AppRouter />
-      <Toaster richColors position="top-right" />
+      <Toaster richColors position="top-right" theme={theme} />
       <ReactQueryDevtools buttonPosition="bottom-left" initialIsOpen={false} />
     </QueryClientProvider>
   );

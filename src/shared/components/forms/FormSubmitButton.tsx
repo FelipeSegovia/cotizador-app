@@ -15,7 +15,7 @@ const FormSubmitButton = ({
     <button
       type="submit"
       disabled={isLoading}
-      className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0f7a4a] px-4 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(15,122,74,0.25)] transition hover:bg-[#0c6a40] disabled:cursor-not-allowed disabled:opacity-70"
+      className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-70"
     >
       {isLoading ? "Ingresando..." : label}
       {icon}

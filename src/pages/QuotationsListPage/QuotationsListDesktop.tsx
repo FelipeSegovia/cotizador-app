@@ -17,7 +17,7 @@ const QuotationsListDesktop = ({
   <div className="hidden md:block">
     <table className="w-full">
       <thead>
-        <tr className="border-b border-slate-200 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <tr className="border-b border-border text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           <th className="w-14 whitespace-nowrap px-4 pb-3 pt-5 lg:px-6">
             {LABELS_QUOTATIONS_LIST_PAGE.table.number}
           </th>
@@ -43,29 +43,29 @@ const QuotationsListDesktop = ({
           </th>
         </tr>
       </thead>
-      <tbody className="divide-y divide-slate-100">
+      <tbody className="divide-y divide-border">
         {quotations.map((q, index) => {
           const effectiveStatus = getEffectiveQuotationStatus(q);
           const isUpdatingRow = pendingStatusId === q.id && isUpdating;
 
           return (
-            <tr key={q.id} className="transition hover:bg-slate-50">
-              <td className="px-4 py-4 text-sm font-medium text-slate-400 lg:px-6">
+            <tr key={q.id} className="transition hover:bg-muted">
+              <td className="px-4 py-4 text-sm font-medium text-muted-foreground lg:px-6">
                 {String(index + 1).padStart(3, "0")}
               </td>
-              <td className="max-w-0 truncate px-3 py-4 text-sm font-semibold text-slate-800 lg:px-4">
+              <td className="max-w-0 truncate px-3 py-4 text-sm font-semibold text-foreground lg:px-4">
                 {q.clientName}
               </td>
-              <td className="max-w-0 truncate px-3 py-4 text-sm text-slate-600 lg:px-4">
+              <td className="max-w-0 truncate px-3 py-4 text-sm text-muted-foreground lg:px-4">
                 {q.projectTitle}
               </td>
               <td className="px-3 py-4 lg:px-4">
                 <QuotationStatusBadge status={effectiveStatus} />
               </td>
-              <td className="px-3 py-4 text-right text-sm font-bold text-slate-800 lg:px-4">
+              <td className="px-3 py-4 text-right text-sm font-bold text-foreground lg:px-4">
                 {formatCLP(q.total)}
               </td>
-              <td className="hidden w-px whitespace-nowrap px-3 py-4 text-sm text-slate-500 lg:table-cell lg:px-4">
+              <td className="hidden w-px whitespace-nowrap px-3 py-4 text-sm text-muted-foreground lg:table-cell lg:px-4">
                 {formatDate(q.createdAt)}
               </td>
               <td className="w-px whitespace-nowrap px-3 py-4 text-right lg:px-6">

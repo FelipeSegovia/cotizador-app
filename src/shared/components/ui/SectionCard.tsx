@@ -15,12 +15,12 @@ const SectionCard = ({
   children,
 }: SectionCardProps) => {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
       <div
         className={`mb-6 flex items-center ${action ? "justify-between" : ""}`}
       >
-        <h2 className="flex items-center gap-2 text-base font-semibold text-slate-800">
-          <Icon className="text-xl text-emerald-700" />
+        <h2 className="flex items-center gap-2 text-base font-semibold text-card-foreground">
+          <Icon className="text-xl text-primary" />
           {title}
         </h2>
         {action}

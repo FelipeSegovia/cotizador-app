@@ -1,3 +1,4 @@
 import useQuotationDraftStore from "./useQuotationDraftStore";
+import useThemeStore from "./useThemeStore";
 
-export { useQuotationDraftStore };
+export { useQuotationDraftStore, useThemeStore };

@@ -25,7 +25,7 @@ import type {
   ManualQuotationStatusTransition,
   QuotationStatus,
 } from "../shared/types/quotation";
-import { isQuotationExpired } from "../shared/utils";
+import { isQuotationExpired, QUOTATION_STATUS_BADGE_CLASSES } from "../shared/utils";
 
 const IVA_RATE = 0.19;
 
@@ -131,13 +131,7 @@ const QuotationPreviewPage = () => {
     expired: LABELS_QUOTATION_PREVIEW_PAGE.topBar.expiredBadge,
   };
 
-  const statusBadgeClassMap: Record<QuotationStatus, string> = {
-    draft: "bg-amber-100 text-amber-700",
-    sent: "bg-blue-100 text-blue-700",
-    approved: "bg-emerald-100 text-emerald-700",
-    rejected: "bg-slate-100 text-slate-700",
-    expired: "bg-amber-100 text-amber-900",
-  };
+  const statusBadgeClassMap = QUOTATION_STATUS_BADGE_CLASSES;
 
   const baseStatus = previewStatus ?? "draft";
   const isExpiredBySchedule = isQuotationExpired({
@@ -251,19 +245,19 @@ const QuotationPreviewPage = () => {
           <button
             type="button"
             onClick={handleBackToList}
-            className="flex items-center gap-1.5 text-sm font-semibold text-slate-600 transition hover:text-slate-900"
+            className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
           >
             <HiOutlineArrowLeft className="text-base" />
             {LABELS_QUOTATION_PREVIEW_PAGE.topBar.backToList}
           </button>
-          <span className="h-4 w-px bg-slate-300" />
+          <span className="h-4 w-px bg-muted" />
           <span
             className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide ${statusBadgeClassMap[currentStatus]}`}
           >
             {statusBadgeLabelMap[currentStatus]}
           </span>
           {isReadOnlyPreview ? (
-            <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-slate-600">
+            <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               {LABELS_QUOTATION_PREVIEW_PAGE.topBar.readOnlyInfo}
             </span>
           ) : null}
@@ -274,7 +268,7 @@ const QuotationPreviewPage = () => {
             <button
               type="button"
               onClick={() => setPreviewMode(false)}
-              className="flex items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-100"
+              className="flex items-center gap-2 rounded-xl border border-primary/30 bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground transition hover:bg-accent"
             >
               <HiOutlinePencilSquare className="text-base" />
               {LABELS_QUOTATION_PREVIEW_PAGE.topBar.backToEdit}
@@ -284,7 +278,7 @@ const QuotationPreviewPage = () => {
             type="button"
             disabled={isPdfRequesting}
             onClick={handleDownloadPdf}
-            className="flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-70"
+            className="flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-70"
           >
             <HiOutlineArrowDownTray className="text-base" />
             {isPdfRequesting
@@ -296,7 +290,7 @@ const QuotationPreviewPage = () => {
               type="button"
               disabled={sendMutation.isPending}
               onClick={handleSendQuotation}
-              className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-70"
+              className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-70"
             >
               <HiOutlineEnvelope className="text-base" />
               {sendMutation.isPending
@@ -310,7 +304,7 @@ const QuotationPreviewPage = () => {
                 type="button"
                 disabled={updateStatusMutation.isPending}
                 onClick={() => requestStatusChange("approved")}
-                className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-70"
+                className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-70"
               >
                 <HiOutlineCheckCircle className="text-base" />
                 {updateStatusMutation.isPending
@@ -321,7 +315,7 @@ const QuotationPreviewPage = () => {
                 type="button"
                 disabled={updateStatusMutation.isPending}
                 onClick={() => requestStatusChange("rejected")}
-                className="flex items-center gap-2 rounded-xl border border-rose-300 bg-white px-4 py-2.5 text-sm font-semibold text-rose-700 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-70"
+                className="flex items-center gap-2 rounded-xl border border-destructive/40 bg-card px-4 py-2.5 text-sm font-semibold text-destructive transition hover:bg-destructive/10 disabled:cursor-not-allowed disabled:opacity-70"
               >
                 <HiOutlineXCircle className="text-base" />
                 {updateStatusMutation.isPending
@@ -336,7 +330,7 @@ const QuotationPreviewPage = () => {
       {isReadOnlyPreview && isExpiredBySchedule && baseStatus === "sent" ? (
         <div
           role="status"
-          className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+          className="flex items-start gap-2 rounded-xl border border-chart-4/40 bg-chart-4/15 px-4 py-3 text-sm text-chart-4"
         >
           <HiOutlineExclamationCircle className="mt-0.5 shrink-0 text-base" />
           <p>{LABELS_QUOTATION_PREVIEW_PAGE.statusUpdate.expiredInfo}</p>
@@ -348,10 +342,10 @@ const QuotationPreviewPage = () => {
           role="status"
           className={`flex items-start gap-2 rounded-xl border px-4 py-3 text-sm ${
             statusAlert.variant === "success"
-              ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+              ? "border-primary/30 bg-accent text-accent-foreground"
               : statusAlert.variant === "error"
-                ? "border-rose-200 bg-rose-50 text-rose-900"
-                : "border-amber-200 bg-amber-50 text-amber-900"
+                ? "border-destructive/40 bg-destructive/10 text-destructive"
+                : "border-chart-4/40 bg-chart-4/15 text-chart-4"
           }`}
         >
           {statusAlert.variant === "success" ? (
@@ -368,8 +362,8 @@ const QuotationPreviewPage = () => {
           role="status"
           className={`flex items-start gap-2 rounded-xl border px-4 py-3 text-sm ${
             pdfAlert.variant === "success"
-              ? "border-emerald-200 bg-emerald-50 text-emerald-900"
-              : "border-rose-200 bg-rose-50 text-rose-900"
+              ? "border-primary/30 bg-accent text-accent-foreground"
+              : "border-destructive/40 bg-destructive/10 text-destructive"
           }`}
         >
           {pdfAlert.variant === "success" ? (
@@ -393,16 +387,16 @@ const QuotationPreviewPage = () => {
       />
 
       {/* Document */}
-      <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
         {/* Emerald top bar */}
-        <div className="h-2 bg-emerald-600" />
+        <div className="h-2 bg-primary" />
 
         <div className="p-8 sm:p-12">
           {/* Company header */}
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-start gap-3">
               {company?.logoUrl ? (
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-white">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-card">
                   <img
                     src={company.logoUrl}
                     alt={LABELS_QUOTATION_PREVIEW_PAGE.company.logoAlt.replace(
@@ -413,7 +407,7 @@ const QuotationPreviewPage = () => {
                   />
                 </div>
               ) : (
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-800 text-sm font-black text-white">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-sm font-black text-secondary-foreground">
                   {companyQuery.isPending
                     ? "…"
                     : companyIssuerName
@@ -424,40 +418,40 @@ const QuotationPreviewPage = () => {
               <div>
                 {companyQuery.isPending ? (
                   <div className="space-y-2" aria-busy="true">
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                       {LABELS_QUOTATION_PREVIEW_PAGE.company.loading}
                     </p>
                     <div className="space-y-2 animate-pulse">
-                      <div className="h-5 w-52 rounded bg-slate-200" />
-                      <div className="h-3 w-40 rounded bg-slate-200" />
-                      <div className="h-3 w-full max-w-xs rounded bg-slate-200" />
-                      <div className="h-3 w-36 rounded bg-slate-200" />
+                      <div className="h-5 w-52 rounded bg-muted" />
+                      <div className="h-3 w-40 rounded bg-muted" />
+                      <div className="h-3 w-full max-w-xs rounded bg-muted" />
+                      <div className="h-3 w-36 rounded bg-muted" />
                     </div>
                   </div>
                 ) : companyQuery.isError ? (
-                  <p className="text-sm text-red-600">
+                  <p className="text-sm text-destructive">
                     {LABELS_QUOTATION_PREVIEW_PAGE.company.loadError}
                   </p>
                 ) : !company ? (
-                  <p className="text-sm text-amber-800">
+                  <p className="text-sm text-chart-4">
                     {LABELS_QUOTATION_PREVIEW_PAGE.company.notConfigured}
                   </p>
                 ) : (
                   <>
-                    <p className="text-lg font-bold text-slate-900">
+                    <p className="text-lg font-bold text-foreground">
                       {company.name}
                     </p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-muted-foreground">
                       RUT: {company.rut}
                     </p>
                     {company.address?.trim() ? (
-                      <p className="text-xs text-slate-500">{company.address}</p>
+                      <p className="text-xs text-muted-foreground">{company.address}</p>
                     ) : null}
                     {company.city?.trim() ? (
-                      <p className="text-xs text-slate-500">{company.city}</p>
+                      <p className="text-xs text-muted-foreground">{company.city}</p>
                     ) : null}
                     {company.contact?.trim() ? (
-                      <p className="text-xs text-slate-500">{company.contact}</p>
+                      <p className="text-xs text-muted-foreground">{company.contact}</p>
                     ) : null}
                   </>
                 )}
@@ -465,59 +459,59 @@ const QuotationPreviewPage = () => {
             </div>
 
             <div className="text-left sm:text-right">
-              <p className="text-3xl font-black uppercase tracking-tight text-slate-900">
+              <p className="text-3xl font-black uppercase tracking-tight text-foreground">
                 {LABELS_QUOTATION_PREVIEW_PAGE.document.title}
               </p>
-              <p className="mt-0.5 text-lg font-bold text-emerald-600">
+              <p className="mt-0.5 text-lg font-bold text-primary">
                 {LABELS_QUOTATION_PREVIEW_PAGE.document.quoteNumber}
               </p>
-              <p className="mt-2 text-xs text-slate-500">
+              <p className="mt-2 text-xs text-muted-foreground">
                 {LABELS_QUOTATION_PREVIEW_PAGE.document.emissionDate}:{" "}
                 {formatDate(emissionDate)}
               </p>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 {LABELS_QUOTATION_PREVIEW_PAGE.document.validUntil}:{" "}
                 {formatDate(validDate)}
               </p>
             </div>
           </div>
 
-          <hr className="my-8 border-slate-200" />
+          <hr className="my-8 border-border" />
 
           {/* Client + Project summary */}
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 {LABELS_QUOTATION_PREVIEW_PAGE.summary.client}
               </p>
-              <p className="text-lg font-bold text-slate-900">
+              <p className="text-lg font-bold text-foreground">
                 {draft.clientName}
               </p>
               {draft.clientRut && (
-                <p className="mt-0.5 text-sm text-slate-600">
+                <p className="mt-0.5 text-sm text-muted-foreground">
                   RUT: {draft.clientRut}
                 </p>
               )}
               {draft.clientEmail && (
-                <p className="text-sm text-slate-600">{draft.clientEmail}</p>
+                <p className="text-sm text-muted-foreground">{draft.clientEmail}</p>
               )}
             </div>
             <div>
-              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 {LABELS_QUOTATION_PREVIEW_PAGE.summary.projectSummary}
               </p>
-              <p className="text-sm italic text-slate-700">
+              <p className="text-sm italic text-foreground">
                 {draft.projectNotes || draft.projectTitle}
               </p>
             </div>
           </div>
 
-          <hr className="my-8 border-slate-200" />
+          <hr className="my-8 border-border" />
 
           {/* Items table */}
           <table className="w-full">
             <thead>
-              <tr className="border-b border-slate-200 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+              <tr className="border-b border-border text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 <th className="pb-3">
                   {
                     LABELS_QUOTATION_PREVIEW_PAGE.summary.tableHeaders
@@ -535,19 +529,19 @@ const QuotationPreviewPage = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-border">
               {draft.items.map((item, index) => (
                 <tr key={index}>
-                  <td className="py-4 pr-4 text-sm text-slate-700">
+                  <td className="py-4 pr-4 text-sm text-foreground">
                     {item.description}
                   </td>
-                  <td className="py-4 text-center text-sm text-slate-700">
+                  <td className="py-4 text-center text-sm text-foreground">
                     {item.quantity}
                   </td>
-                  <td className="py-4 text-right text-sm text-slate-700">
+                  <td className="py-4 text-right text-sm text-foreground">
                     {formatCLP(item.unitPrice)}
                   </td>
-                  <td className="py-4 text-right text-sm font-semibold text-slate-900">
+                  <td className="py-4 text-right text-sm font-semibold text-foreground">
                     {formatCLP(item.unitPrice * item.quantity)}
                   </td>
                 </tr>
@@ -558,18 +552,18 @@ const QuotationPreviewPage = () => {
           {/* Totals */}
           <div className="mt-6 flex justify-end">
             <div className="w-full max-w-xs space-y-2">
-              <div className="flex justify-between text-sm text-slate-600">
+              <div className="flex justify-between text-sm text-muted-foreground">
                 <span>
                   {LABELS_QUOTATION_PREVIEW_PAGE.summary.totals.subtotal}
                 </span>
                 <span>{formatCLP(subtotal)}</span>
               </div>
-              <div className="flex justify-between text-sm text-slate-600">
+              <div className="flex justify-between text-sm text-muted-foreground">
                 <span>{LABELS_QUOTATION_PREVIEW_PAGE.summary.totals.iva}</span>
                 <span>{formatCLP(iva)}</span>
               </div>
-              <div className="border-t border-slate-300 pt-2">
-                <div className="flex justify-between text-base font-black text-slate-900">
+              <div className="border-t border-border pt-2">
+                <div className="flex justify-between text-base font-black text-foreground">
                   <span>
                     {LABELS_QUOTATION_PREVIEW_PAGE.summary.totals.total}
                   </span>
@@ -579,34 +573,34 @@ const QuotationPreviewPage = () => {
             </div>
           </div>
 
-          <hr className="my-8 border-slate-200" />
+          <hr className="my-8 border-border" />
 
           {/* Terms */}
           <div>
-            <p className="mb-4 text-xs font-bold uppercase tracking-wider text-slate-500">
+            <p className="mb-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">
               {LABELS_QUOTATION_PREVIEW_PAGE.terms.title}
             </p>
             <div className="grid gap-x-8 gap-y-1.5 sm:grid-cols-2">
               {displayTerms.map((term, index) => (
                 <div key={`${index}-${term}`} className="flex items-start gap-2">
-                  <span className="mt-1 block h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
-                  <p className="text-xs text-slate-600">{term}</p>
+                  <span className="mt-1 block h-1.5 w-1.5 shrink-0 rounded-full bg-muted-foreground" />
+                  <p className="text-xs text-muted-foreground">{term}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <hr className="my-8 border-slate-200" />
+          <hr className="my-8 border-border" />
 
           {/* Footer */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <div className="mb-1 h-px w-48 bg-slate-400" />
-              <p className="text-xs text-slate-500">
+              <div className="mb-1 h-px w-48 bg-muted-foreground" />
+              <p className="text-xs text-muted-foreground">
                 {LABELS_QUOTATION_PREVIEW_PAGE.footer.signature}
               </p>
             </div>
-            <p className="text-xs italic text-slate-400">
+            <p className="text-xs italic text-muted-foreground">
               {companyIssuerName
                 ? `${LABELS_QUOTATION_PREVIEW_PAGE.footer.generatedBy} ${companyIssuerName}`
                 : LABELS_QUOTATION_PREVIEW_PAGE.footer.generatedByWithoutCompany}

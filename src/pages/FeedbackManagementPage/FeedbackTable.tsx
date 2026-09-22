@@ -19,7 +19,7 @@ const FeedbackTable = ({ feedbacks, onViewDetail }: FeedbackTableProps) => {
     <div className="overflow-x-auto">
       <table className="min-w-full text-left text-sm">
         <thead>
-          <tr className="border-b border-slate-100 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <tr className="border-b border-border text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             <th className="px-6 py-4">
               {LABELS_FEEDBACK_MANAGEMENT_PAGE.table.author}
             </th>
@@ -44,22 +44,22 @@ const FeedbackTable = ({ feedbacks, onViewDetail }: FeedbackTableProps) => {
             return (
               <tr
                 key={feedback.id}
-                className="border-b border-slate-50 transition hover:bg-slate-50/60"
+                className="border-b border-border transition hover:bg-muted/60"
               >
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-800">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground">
                       {getInitials(authorName)}
                     </span>
                     <div>
-                      <p className="font-medium text-slate-800">{authorName}</p>
-                      <p className="text-xs text-slate-500">
+                      <p className="font-medium text-foreground">{authorName}</p>
+                      <p className="text-xs text-muted-foreground">
                         {formatRelativeDate(feedback.createdAt)}
                       </p>
                     </div>
                   </div>
                 </td>
-                <td className="max-w-xs px-6 py-4 text-slate-600">
+                <td className="max-w-xs px-6 py-4 text-muted-foreground">
                   {truncateText(feedback.title, 60)}
                 </td>
                 <td className="px-6 py-4">
@@ -70,7 +70,7 @@ const FeedbackTable = ({ feedbacks, onViewDetail }: FeedbackTableProps) => {
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="inline-flex items-center gap-2 text-slate-700">
+                  <span className="inline-flex items-center gap-2 text-foreground">
                     <span
                       className={`h-2 w-2 rounded-full ${priorityDotClassMap[feedback.priority]}`}
                     />
@@ -81,7 +81,7 @@ const FeedbackTable = ({ feedbacks, onViewDetail }: FeedbackTableProps) => {
                   <button
                     type="button"
                     onClick={() => onViewDetail(feedback)}
-                    className="text-sm font-semibold text-emerald-700 transition hover:text-emerald-800"
+                    className="text-sm font-semibold text-primary transition hover:text-primary"
                   >
                     {LABELS_FEEDBACK_MANAGEMENT_PAGE.table.viewDetail}
                   </button>

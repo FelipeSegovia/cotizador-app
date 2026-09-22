@@ -39,18 +39,18 @@ const FormField = ({
   return (
     <div className="space-y-2">
       <label
-        className="block text-sm font-semibold text-slate-700"
+        className="block text-sm font-semibold text-foreground"
         htmlFor={id}
       >
         {label}
       </label>
 
-      <div className="flex items-center rounded-xl border border-slate-200 bg-white px-3 shadow-[inset_0_1px_2px_rgba(15,23,42,0.04)] transition focus-within:border-emerald-600 focus-within:ring-2 focus-within:ring-emerald-100">
-        {Icon ? <Icon className="shrink-0 text-lg text-slate-400" /> : null}
+      <div className="flex items-center rounded-xl border border-input bg-card px-3 transition focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30">
+        {Icon ? <Icon className="shrink-0 text-lg text-muted-foreground" /> : null}
         <input
           id={id}
           aria-invalid={error ? "true" : "false"}
-          className="w-full border-none bg-transparent px-2 py-3 text-sm text-slate-700 outline-none placeholder:text-slate-400"
+          className="w-full border-none bg-transparent px-2 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground"
           {...registration}
           {...inputProps}
         />
@@ -63,7 +63,7 @@ const FormField = ({
                 ? passwordToggle.hideLabel
                 : passwordToggle.showLabel
             }
-            className="shrink-0 rounded-md p-1 text-lg text-slate-400 transition hover:text-slate-600"
+            className="shrink-0 rounded-md p-1 text-lg text-muted-foreground transition hover:text-foreground"
           >
             {passwordToggle.visible ? <HiEyeSlash /> : <HiEye />}
           </button>
@@ -71,7 +71,7 @@ const FormField = ({
       </div>
 
       {error ? (
-        <p className="text-xs font-medium text-red-600">{error}</p>
+        <p className="text-xs font-medium text-destructive">{error}</p>
       ) : null}
     </div>
   );

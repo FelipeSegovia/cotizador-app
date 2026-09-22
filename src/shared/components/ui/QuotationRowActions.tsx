@@ -26,17 +26,17 @@ export type QuotationRowActionsProps = {
 
 const STACKED_ACTION_TONES = {
   emerald:
-    "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100",
-  blue: "border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100",
-  rose: "border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100",
+    "border-primary/30 bg-accent text-accent-foreground hover:bg-primary/10",
+  blue: "border-chart-3/40 bg-chart-3/10 text-chart-3 hover:bg-chart-3/20 dark:border-chart-2/40 dark:bg-chart-2/15 dark:text-chart-2",
+  rose: "border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/20",
 } as const;
 
 const stackedActionButtonClass = (tone: keyof typeof STACKED_ACTION_TONES) =>
   `flex min-w-[calc(50%-0.25rem)] flex-1 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${STACKED_ACTION_TONES[tone]}`;
 
 const COMPACT_ICON_TONES = {
-  emerald: "text-emerald-700 hover:border-emerald-200 hover:bg-emerald-50",
-  blue: "text-blue-700 hover:border-blue-200 hover:bg-blue-50",
+  emerald: "text-primary hover:border-primary/30 hover:bg-accent",
+  blue: "text-chart-3 hover:border-chart-3/40 hover:bg-chart-3/10 dark:text-chart-2",
 } as const;
 
 const QuotationRowActions = ({
@@ -113,7 +113,7 @@ const QuotationRowActions = ({
   }
 
   const compactIconButtonClass = (tone: keyof typeof COMPACT_ICON_TONES) =>
-    `inline-flex shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white p-1.5 transition disabled:cursor-not-allowed disabled:opacity-60 ${COMPACT_ICON_TONES[tone]}`;
+    `inline-flex shrink-0 items-center justify-center rounded-lg border border-border bg-card p-1.5 transition disabled:cursor-not-allowed disabled:opacity-60 ${COMPACT_ICON_TONES[tone]}`;
 
   return (
     <div className="flex items-center justify-end gap-1.5">
@@ -145,7 +145,7 @@ const QuotationRowActions = ({
         <div
           role="group"
           aria-label={LABELS_QUOTATIONS_LIST_PAGE.table.statusActionsGroup}
-          className="inline-flex shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm"
+          className="inline-flex shrink-0 overflow-hidden rounded-lg border border-border bg-card shadow-sm"
         >
           <button
             type="button"
@@ -163,7 +163,7 @@ const QuotationRowActions = ({
             onClick={() =>
               onRequestStatusChange(quotationId, effectiveStatus, "approved")
             }
-            className="inline-flex items-center gap-1 border-r border-slate-200 bg-emerald-50 px-2 py-1.5 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60 xl:px-2.5"
+            className="inline-flex items-center gap-1 border-r border-border bg-accent px-2 py-1.5 text-xs font-semibold text-accent-foreground transition hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-60 xl:px-2.5"
           >
             <HiOutlineCheckCircle className="h-4 w-4 shrink-0" />
             <span className="hidden whitespace-nowrap 2xl:inline">
@@ -180,7 +180,7 @@ const QuotationRowActions = ({
             onClick={() =>
               onRequestStatusChange(quotationId, effectiveStatus, "rejected")
             }
-            className="inline-flex items-center gap-1 bg-rose-50 px-2 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-60 xl:px-2.5"
+            className="inline-flex items-center gap-1 bg-destructive/10 px-2 py-1.5 text-xs font-semibold text-destructive transition hover:bg-destructive/20 disabled:cursor-not-allowed disabled:opacity-60 xl:px-2.5"
           >
             <HiOutlineXCircle className="h-4 w-4 shrink-0" />
             <span className="hidden whitespace-nowrap 2xl:inline">

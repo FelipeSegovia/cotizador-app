@@ -28,8 +28,8 @@ const FeedbackPagination = ({
   });
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-6 py-4">
-      <p className="text-sm text-slate-500">
+    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-6 py-4">
+      <p className="text-sm text-muted-foreground">
         {LABELS_FEEDBACK_MANAGEMENT_PAGE.table.pageOf
           .replace("{page}", String(page))
           .replace("{totalPages}", String(totalPages))}
@@ -39,13 +39,13 @@ const FeedbackPagination = ({
           type="button"
           disabled={page <= 1}
           onClick={() => onPageChange(page - 1)}
-          className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50 disabled:opacity-40"
+          className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition hover:bg-muted disabled:opacity-40"
         >
           {LABELS_FEEDBACK_MANAGEMENT_PAGE.table.previous}
         </button>
         {items.map((item, index) =>
           item === "ellipsis" ? (
-            <span key={`ellipsis-${index}`} className="px-2 text-slate-400">
+            <span key={`ellipsis-${index}`} className="px-2 text-muted-foreground">
               …
             </span>
           ) : (
@@ -55,8 +55,8 @@ const FeedbackPagination = ({
               onClick={() => onPageChange(item)}
               className={`min-w-[36px] rounded-lg px-3 py-1.5 text-sm font-semibold transition ${
                 item === page
-                  ? "bg-emerald-700 text-white"
-                  : "border border-slate-200 text-slate-600 hover:bg-slate-50"
+                  ? "bg-primary text-primary-foreground"
+                  : "border border-border text-muted-foreground hover:bg-muted"
               }`}
             >
               {item}
@@ -67,7 +67,7 @@ const FeedbackPagination = ({
           type="button"
           disabled={page >= totalPages}
           onClick={() => onPageChange(page + 1)}
-          className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-50 disabled:opacity-40"
+          className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition hover:bg-muted disabled:opacity-40"
         >
           {LABELS_FEEDBACK_MANAGEMENT_PAGE.table.next}
         </button>

@@ -11,8 +11,10 @@ import RoleBadge from "./RoleBadge";
 import FirstLoginPasswordModal from "./FirstLoginPasswordModal";
 import SuggestIdeaButton from "./SuggestIdeaButton";
 import FeedbackModal from "./FeedbackModal";
+import ThemeToggle from "./ThemeToggle";
 
 export {
+  ThemeToggle,
   FeedbackModal,
   SuggestIdeaButton,
   Alert,

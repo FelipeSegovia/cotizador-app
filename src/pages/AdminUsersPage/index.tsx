@@ -77,17 +77,17 @@ const AdminUsersPage = () => {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-2xl font-bold text-foreground">
             {LABELS_ADMIN_USERS_PAGE.title}
           </h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-muted-foreground">
             {LABELS_ADMIN_USERS_PAGE.subtitle}
           </p>
         </div>
         <button
           type="button"
           onClick={() => setIsCreateOpen(true)}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-900"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90"
         >
           <HiPlus className="text-base" />
           {LABELS_ADMIN_USERS_PAGE.newUserButton}
@@ -98,25 +98,25 @@ const AdminUsersPage = () => {
         <UserStatsCards users={users} />
       ) : null}
 
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <div className="flex flex-col gap-3 border-b border-slate-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-base font-semibold text-slate-800">
+      <div className="rounded-2xl border border-border bg-card shadow-sm">
+        <div className="flex flex-col gap-3 border-b border-border px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-base font-semibold text-foreground">
             {LABELS_ADMIN_USERS_PAGE.table.title}
           </h2>
           <label className="relative w-full max-w-xs">
-            <HiMagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <HiMagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
               type="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={LABELS_ADMIN_USERS_PAGE.searchPlaceholder}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-10 pr-4 text-sm text-slate-700 outline-none transition focus:border-emerald-300 focus:bg-white"
+              className="w-full rounded-xl border border-border bg-muted py-2 pl-10 pr-4 text-sm text-foreground outline-none transition focus:border-ring focus:bg-card"
             />
           </label>
         </div>
 
         {isLoading ? (
-          <div className="flex items-center justify-center py-20 text-sm text-slate-500">
+          <div className="flex items-center justify-center py-20 text-sm text-muted-foreground">
             {LABELS_ADMIN_USERS_PAGE.loading}
           </div>
         ) : null}
@@ -128,7 +128,7 @@ const AdminUsersPage = () => {
         ) : null}
 
         {!isLoading && !isError && filteredUsers.length === 0 ? (
-          <div className="flex items-center justify-center py-20 text-sm text-slate-500">
+          <div className="flex items-center justify-center py-20 text-sm text-muted-foreground">
             {LABELS_ADMIN_USERS_PAGE.empty}
           </div>
         ) : null}

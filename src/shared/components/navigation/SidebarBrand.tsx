@@ -28,17 +28,17 @@ const SidebarBrand = ({
     >
       {!isCollapsed && (
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-black tracking-[-0.02em] text-slate-900">
+          <h1 className="flex items-center gap-2 text-2xl font-black tracking-[-0.02em] text-sidebar-foreground">
             {firstName ? (
               <>
                 Hola, {firstName}
-                <MdWavingHand className="text-2xl text-amber-400" aria-hidden />
+                <MdWavingHand className="text-2xl text-chart-4" aria-hidden />
               </>
             ) : (
               "Hola"
             )}
           </h1>
-          <p className="mt-2 text-xs font-medium text-emerald-700">
+          <p className="mt-2 text-xs font-medium text-sidebar-primary">
             Valor IVA 19%
           </p>
         </div>

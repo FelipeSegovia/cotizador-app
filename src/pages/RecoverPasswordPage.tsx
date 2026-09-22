@@ -98,19 +98,19 @@ const RecoverPasswordPage = () => {
   }[step];
 
   return (
-    <main className="min-h-screen bg-[#f5f7fb] px-4 py-8 text-slate-800 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-background px-4 py-8 text-foreground sm:px-6 lg:px-8">
       <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-md flex-col items-center justify-center">
-        <section className="w-full rounded-[22px] border border-slate-200 bg-white px-5 py-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)] sm:px-8">
+        <section className="w-full rounded-[22px] border border-border bg-card px-5 py-8 sm:px-8">
           <div className="flex flex-col items-center text-center">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#65efbe] text-2xl text-emerald-900 shadow-[0_10px_25px_rgba(101,239,190,0.35)]">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-2xl text-primary-foreground">
               <HiOutlineClipboardDocumentList />
             </div>
 
-            <h1 className="mt-5 text-[2.1rem] font-extrabold tracking-[-0.03em] text-slate-900">
+            <h1 className="mt-5 text-[2.1rem] font-extrabold tracking-[-0.03em] text-foreground">
               {stepConfig.title}
             </h1>
 
-            <p className="mt-2 text-sm font-medium text-slate-500">
+            <p className="mt-2 text-sm font-medium text-muted-foreground">
               {stepConfig.description}
             </p>
           </div>
@@ -139,7 +139,7 @@ const RecoverPasswordPage = () => {
               />
 
               {apiError && (
-                <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">
+                <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
                   {apiError}
                 </div>
               )}
@@ -177,7 +177,7 @@ const RecoverPasswordPage = () => {
               />
 
               {apiError && (
-                <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">
+                <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
                   {apiError}
                 </div>
               )}
@@ -231,7 +231,7 @@ const RecoverPasswordPage = () => {
               />
 
               {apiError && (
-                <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">
+                <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
                   {apiError}
                 </div>
               )}
@@ -248,7 +248,7 @@ const RecoverPasswordPage = () => {
             <button
               type="button"
               onClick={() => navigate(PATHS.LOGIN)}
-              className="flex items-center gap-1.5 text-sm font-medium text-emerald-700 transition hover:text-emerald-800"
+              className="flex items-center gap-1.5 text-sm font-medium text-primary transition hover:text-primary"
             >
               <HiArrowLeft className="text-base" />
               {LABELS_RECOVER_PASSWORD.backToLogin}
@@ -256,9 +256,9 @@ const RecoverPasswordPage = () => {
           </div>
         </section>
 
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-slate-500">
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <HiGlobeAlt className="text-base text-slate-400" />
+            <HiGlobeAlt className="text-base text-muted-foreground" />
             <span>{LABELS_LOGIN.footer}</span>
           </div>
         </div>

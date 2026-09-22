@@ -18,7 +18,7 @@ const FormTextareaField = ({
   return (
     <div className="space-y-2">
       <label
-        className="block text-sm font-semibold text-slate-700"
+        className="block text-sm font-semibold text-foreground"
         htmlFor={id}
       >
         {label}
@@ -27,13 +27,13 @@ const FormTextareaField = ({
       <textarea
         id={id}
         aria-invalid={error ? "true" : "false"}
-        className="w-full resize-none rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-700 shadow-[inset_0_1px_2px_rgba(15,23,42,0.04)] outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+        className="w-full resize-none rounded-xl border border-input bg-card px-3 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/30"
         {...registration}
         {...textareaProps}
       />
 
       {error ? (
-        <p className="text-xs font-medium text-red-600">{error}</p>
+        <p className="text-xs font-medium text-destructive">{error}</p>
       ) : null}
     </div>
   );

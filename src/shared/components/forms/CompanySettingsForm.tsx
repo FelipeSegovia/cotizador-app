@@ -169,13 +169,13 @@ const CompanySettingsForm = () => {
       icon={HiBuildingOffice2}
     >
       {companyQuery.isPending ? (
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-muted-foreground">
           {LABELS_SETTINGS_PAGE.loadingCompany}
         </p>
       ) : null}
 
       {companyQuery.isError ? (
-        <p className="mb-4 text-sm text-rose-600">
+        <p className="mb-4 text-sm text-destructive">
           {LABELS_SETTINGS_PAGE.companyCard.loadError}
         </p>
       ) : null}
@@ -186,12 +186,12 @@ const CompanySettingsForm = () => {
           onSubmit={handleSubmit(onSubmit)}
           noValidate
         >
-          <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50/60 p-4">
-            <p className="text-sm font-semibold text-slate-800">
+          <div className="space-y-3 rounded-xl border border-border bg-muted/60 p-4">
+            <p className="text-sm font-semibold text-foreground">
               {LABELS_SETTINGS_PAGE.companyCard.fields.logo.label}
             </p>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-white">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-card">
                 {hasLogo ? (
                   <img
                     src={displayedLogoUrl!}
@@ -199,11 +199,11 @@ const CompanySettingsForm = () => {
                     className="h-full w-full object-contain"
                   />
                 ) : companyName ? (
-                  <span className="text-sm font-black text-slate-700">
+                  <span className="text-sm font-black text-foreground">
                     {companyInitialsFromName(companyName)}
                   </span>
                 ) : (
-                  <HiPhoto className="h-6 w-6 text-slate-400" aria-hidden />
+                  <HiPhoto className="h-6 w-6 text-muted-foreground" aria-hidden />
                 )}
               </div>
               <div className="space-y-2">
@@ -218,17 +218,17 @@ const CompanySettingsForm = () => {
                 <button
                   type="button"
                   onClick={() => logoInputRef.current?.click()}
-                  className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                  className="inline-flex items-center justify-center rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition hover:bg-muted"
                 >
                   {hasLogo
                     ? LABELS_SETTINGS_PAGE.companyCard.fields.logo.changeButton
                     : LABELS_SETTINGS_PAGE.companyCard.fields.logo.uploadButton}
                 </button>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-muted-foreground">
                   {LABELS_SETTINGS_PAGE.companyCard.fields.logo.hint}
                 </p>
                 {logoError ? (
-                  <p className="text-xs font-medium text-rose-600">{logoError}</p>
+                  <p className="text-xs font-medium text-destructive">{logoError}</p>
                 ) : null}
               </div>
             </div>
@@ -277,11 +277,11 @@ const CompanySettingsForm = () => {
               )}
             />
 
-            <div className="space-y-2 rounded-xl border border-emerald-100 bg-emerald-50/50 p-4">
-              <p className="text-sm font-semibold text-emerald-900">
+            <div className="space-y-2 rounded-xl border border-primary/20 bg-accent p-4">
+              <p className="text-sm font-semibold text-accent-foreground">
                 {LABELS_SETTINGS_PAGE.companyCard.ivaInfo.title}
               </p>
-              <p className="text-xs leading-relaxed text-emerald-900/80">
+              <p className="text-xs leading-relaxed text-accent-foreground/80">
                 {LABELS_SETTINGS_PAGE.companyCard.ivaInfo.body}
               </p>
             </div>
@@ -316,12 +316,12 @@ const CompanySettingsForm = () => {
             />
           </div>
 
-          <p className="text-xs italic text-slate-500">
+          <p className="text-xs italic text-muted-foreground">
             {LABELS_SETTINGS_PAGE.companyCard.footerNote}
           </p>
 
           {saveMutation.isError ? (
-            <p className="text-sm font-medium text-rose-600">
+            <p className="text-sm font-medium text-destructive">
               {(saveMutation.error as Error).message}
             </p>
           ) : null}
@@ -330,7 +330,7 @@ const CompanySettingsForm = () => {
             <button
               type="submit"
               disabled={saveMutation.isPending}
-              className="inline-flex items-center justify-center rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(5,150,105,0.35)] transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saveMutation.isPending
                 ? LABELS_SETTINGS_PAGE.companyCard.saving

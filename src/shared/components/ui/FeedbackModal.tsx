@@ -80,14 +80,14 @@ const FeedbackModal = ({ isOpen, onClose }: FeedbackModalProps) => {
 
         <div className="space-y-2">
           <label
-            className="block text-sm font-semibold text-slate-700"
+            className="block text-sm font-semibold text-foreground"
             htmlFor="feedback-category"
           >
             {LABELS_FEEDBACK_MODAL.fields.category}
           </label>
           <select
             id="feedback-category"
-            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm text-slate-700 shadow-[inset_0_1px_2px_rgba(15,23,42,0.04)] outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
+            className="w-full rounded-xl border border-input bg-card px-3 py-3 text-sm text-foreground outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
             {...register("category", {
               required: LABELS_FEEDBACK_MODAL.validation.categoryRequired,
             })}
@@ -99,7 +99,7 @@ const FeedbackModal = ({ isOpen, onClose }: FeedbackModalProps) => {
             ))}
           </select>
           {errors.category?.message ? (
-            <p className="text-xs font-medium text-red-600">
+            <p className="text-xs font-medium text-destructive">
               {errors.category.message}
             </p>
           ) : null}
@@ -121,7 +121,7 @@ const FeedbackModal = ({ isOpen, onClose }: FeedbackModalProps) => {
         />
 
         {createFeedback.isError ? (
-          <p className="text-sm text-rose-600">
+          <p className="text-sm text-destructive">
             {(createFeedback.error as Error).message ||
               LABELS_FEEDBACK_MODAL.errors.submit}
           </p>
@@ -131,14 +131,14 @@ const FeedbackModal = ({ isOpen, onClose }: FeedbackModalProps) => {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-800"
+            className="rounded-xl px-4 py-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground"
           >
             {LABELS_FEEDBACK_MODAL.actions.cancel}
           </button>
           <button
             type="submit"
             disabled={createFeedback.isPending}
-            className="rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:opacity-60"
+            className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
           >
             {createFeedback.isPending
               ? LABELS_FEEDBACK_MODAL.actions.submitting

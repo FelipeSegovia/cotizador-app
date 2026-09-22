@@ -30,9 +30,9 @@ const FeedbackFilters = ({
     .replace("{total}", String(totalFiltered));
 
   return (
-    <div className="flex flex-col gap-4 border-b border-slate-100 px-6 py-4 lg:flex-row lg:items-center lg:justify-between">
+    <div className="flex flex-col gap-4 border-b border-border px-6 py-4 lg:flex-row lg:items-center lg:justify-between">
       <div className="flex flex-wrap gap-3">
-        <label className="flex flex-col gap-1 text-xs font-semibold text-slate-500">
+        <label className="flex flex-col gap-1 text-xs font-semibold text-muted-foreground">
           {LABELS_FEEDBACK_MANAGEMENT_PAGE.filters.category}
           <select
             value={filters.category}
@@ -42,7 +42,7 @@ const FeedbackFilters = ({
                 category: e.target.value as FeedbackFiltersState["category"],
               })
             }
-            className="min-w-[140px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-emerald-300"
+            className="min-w-[140px] rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground outline-none focus:border-ring"
           >
             <option value="all">
               {LABELS_FEEDBACK_MANAGEMENT_PAGE.filters.allFeminine}
@@ -57,7 +57,7 @@ const FeedbackFilters = ({
           </select>
         </label>
 
-        <label className="flex flex-col gap-1 text-xs font-semibold text-slate-500">
+        <label className="flex flex-col gap-1 text-xs font-semibold text-muted-foreground">
           {LABELS_FEEDBACK_MANAGEMENT_PAGE.filters.priority}
           <select
             value={filters.priority}
@@ -67,7 +67,7 @@ const FeedbackFilters = ({
                 priority: e.target.value as FeedbackFiltersState["priority"],
               })
             }
-            className="min-w-[140px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-emerald-300"
+            className="min-w-[140px] rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground outline-none focus:border-ring"
           >
             <option value="all">
               {LABELS_FEEDBACK_MANAGEMENT_PAGE.filters.allFeminine}
@@ -83,7 +83,7 @@ const FeedbackFilters = ({
         </label>
       </div>
 
-      <p className="text-sm text-slate-500">{showingText}</p>
+      <p className="text-sm text-muted-foreground">{showingText}</p>
     </div>
   );
 };

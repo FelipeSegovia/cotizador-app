@@ -46,7 +46,7 @@ const SidebarMenuItem = ({
     }
 
     return (
-      <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-3 -translate-y-1/2 whitespace-nowrap rounded-md bg-slate-800 px-2 py-1 text-xs font-semibold text-white opacity-0 shadow-md transition-opacity duration-150 group-hover:opacity-100">
+      <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-3 -translate-y-1/2 whitespace-nowrap rounded-md bg-popover px-2 py-1 text-xs font-semibold text-popover-foreground opacity-0 shadow-md transition-opacity duration-150 group-hover:opacity-100">
         {label}
       </span>
     );
@@ -90,15 +90,15 @@ const SidebarMenuItem = ({
             onClick={() => setIsCollapsedOpen((prev) => !prev)}
             className={`group relative flex h-11 w-11 items-center justify-center rounded-xl transition ${
               isChildActive
-                ? "bg-emerald-50 text-emerald-800"
-                : "text-slate-600 hover:bg-white hover:text-slate-900"
+                ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground"
             }`}
           >
             <span
               className={`transition ${
                 isChildActive
-                  ? "text-emerald-700"
-                  : "text-slate-400 group-hover:text-slate-700"
+                  ? "text-sidebar-accent-foreground"
+                  : "text-muted-foreground group-hover:text-sidebar-foreground"
               }`}
             >
               {item.icon}
@@ -107,8 +107,8 @@ const SidebarMenuItem = ({
           </button>
 
           {isOpen && (
-            <div className="absolute left-full top-1/2 z-50 ml-3 w-56 -translate-y-1/2 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
-              <p className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+            <div className="absolute left-full top-1/2 z-50 ml-3 w-56 -translate-y-1/2 rounded-2xl border border-sidebar-border bg-popover p-2 shadow-xl">
+              <p className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 {item.label}
               </p>
               <div className="space-y-1">
@@ -124,8 +124,8 @@ const SidebarMenuItem = ({
                     className={({ isActive }) =>
                       `flex w-full items-center rounded-xl px-3 py-2 text-sm font-medium transition ${
                         isActive
-                          ? "bg-emerald-50 text-emerald-800"
-                          : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                          ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                          : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground"
                       }`
                     }
                   >
@@ -146,22 +146,22 @@ const SidebarMenuItem = ({
           onClick={() => setIsExpandedOpen((prev) => !prev)}
           className={`group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
             isChildActive
-              ? "bg-emerald-50 text-emerald-800"
-              : "text-slate-600 hover:bg-white hover:text-slate-900"
+              ? "bg-sidebar-accent text-sidebar-accent-foreground"
+              : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground"
           }`}
         >
           <span
             className={`transition ${
-              isChildActive
-                ? "text-emerald-700"
-                : "text-slate-400 group-hover:text-slate-700"
+                isChildActive
+                  ? "text-sidebar-accent-foreground"
+                  : "text-muted-foreground group-hover:text-sidebar-foreground"
             }`}
           >
             {item.icon}
           </span>
           <span className="flex-1 text-left">{item.label}</span>
           <HiChevronDown
-            className={`text-slate-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+            className={`text-muted-foreground transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
           />
         </button>
 
@@ -179,8 +179,8 @@ const SidebarMenuItem = ({
                 className={({ isActive }) =>
                   `flex w-full items-center rounded-xl px-3 py-2 text-sm font-medium transition ${
                     isActive
-                      ? "bg-emerald-50 text-emerald-800"
-                      : "text-slate-500 hover:bg-white hover:text-slate-900"
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                      : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground"
                   }`
                 }
               >
@@ -208,8 +208,8 @@ const SidebarMenuItem = ({
               : "w-full gap-3 px-3 py-2.5"
           } ${
             isActive
-              ? "bg-emerald-50 text-emerald-800"
-              : "text-slate-600 hover:bg-white hover:text-slate-900"
+              ? "bg-sidebar-accent text-sidebar-accent-foreground"
+              : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground"
           }`
         }
       >
@@ -218,8 +218,8 @@ const SidebarMenuItem = ({
             <span
               className={`transition ${
                 isActive
-                  ? "text-emerald-700"
-                  : "text-slate-400 group-hover:text-slate-700"
+                  ? "text-sidebar-accent-foreground"
+                  : "text-muted-foreground group-hover:text-sidebar-foreground"
               }`}
             >
               {item.icon}
@@ -238,13 +238,13 @@ const SidebarMenuItem = ({
       onClick={onClick}
       title={isCollapsed ? item.label : undefined}
       aria-label={isCollapsed ? item.label : undefined}
-      className={`group relative flex items-center rounded-xl text-sm font-semibold text-slate-600 transition hover:bg-white hover:text-slate-900 ${
+      className={`group relative flex items-center rounded-xl text-sm font-semibold text-muted-foreground transition hover:bg-sidebar-accent hover:text-sidebar-foreground ${
         isCollapsed
           ? "mx-auto h-11 w-11 justify-center px-0"
           : "w-full gap-3 px-3 py-2.5"
       }`}
     >
-      <span className="text-slate-400 transition group-hover:text-slate-700">
+      <span className="text-muted-foreground transition group-hover:text-sidebar-foreground">
         {item.icon}
       </span>
       {!isCollapsed ? item.label : null}

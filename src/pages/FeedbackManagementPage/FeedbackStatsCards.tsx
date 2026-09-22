@@ -16,24 +16,24 @@ const FeedbackStatsCards = ({ feedbacks }: FeedbackStatsCardsProps) => {
     {
       label: LABELS_FEEDBACK_MANAGEMENT_PAGE.stats.total,
       value: total.toLocaleString("es-CL"),
-      iconClass: "bg-emerald-50 text-emerald-700",
+      iconClass: "bg-accent text-primary",
     },
     {
       label: LABELS_FEEDBACK_MANAGEMENT_PAGE.stats.high,
       value: high.toLocaleString("es-CL"),
-      iconClass: "bg-rose-50 text-rose-600",
+      iconClass: "bg-destructive/10 text-destructive",
       badge: high > 0 ? "Acción Requerida" : undefined,
-      badgeClass: "bg-rose-100 text-rose-700",
+      badgeClass: "bg-destructive/15 text-destructive",
     },
     {
       label: LABELS_FEEDBACK_MANAGEMENT_PAGE.stats.medium,
       value: medium.toLocaleString("es-CL"),
-      iconClass: "bg-amber-50 text-amber-600",
+      iconClass: "bg-chart-4/15 text-chart-4",
     },
     {
       label: LABELS_FEEDBACK_MANAGEMENT_PAGE.stats.low,
       value: low.toLocaleString("es-CL"),
-      iconClass: "bg-sky-50 text-sky-700",
+      iconClass: "bg-chart-3/10 text-chart-3",
     },
   ];
 
@@ -42,7 +42,7 @@ const FeedbackStatsCards = ({ feedbacks }: FeedbackStatsCardsProps) => {
       {cards.map((card) => (
         <article
           key={card.label}
-          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+          className="rounded-2xl border border-border bg-card p-5 shadow-sm"
         >
           <div className="flex items-start justify-between gap-2">
             <div
@@ -58,10 +58,10 @@ const FeedbackStatsCards = ({ feedbacks }: FeedbackStatsCardsProps) => {
               </span>
             ) : null}
           </div>
-          <p className="mt-4 text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">
+          <p className="mt-4 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
             {card.label}
           </p>
-          <p className="mt-1 text-3xl font-black tracking-[-0.03em] text-slate-900">
+          <p className="mt-1 text-3xl font-black tracking-[-0.03em] text-foreground">
             {card.value}
           </p>
         </article>

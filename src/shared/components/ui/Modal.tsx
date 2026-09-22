@@ -56,7 +56,7 @@ const Modal = ({
       <button
         type="button"
         aria-label="Cerrar"
-        className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-secondary/50 backdrop-blur-sm"
         onClick={dismissible ? onClose : undefined}
         tabIndex={dismissible ? 0 : -1}
       />
@@ -64,25 +64,25 @@ const Modal = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className={`relative z-10 w-full ${maxWidthClass} rounded-2xl border border-slate-200 bg-white shadow-2xl`}
+        className={`relative z-10 w-full ${maxWidthClass} rounded-2xl border border-border bg-card shadow-2xl`}
       >
-        <div className="flex items-start justify-between border-b border-slate-100 px-6 py-5">
+        <div className="flex items-start justify-between border-b border-border px-6 py-5">
           <div>
             <h2
               id="modal-title"
-              className="text-lg font-bold text-slate-900"
+              className="text-lg font-bold text-card-foreground"
             >
               {title}
             </h2>
             {subtitle ? (
-              <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
             ) : null}
           </div>
           {dismissible && onClose ? (
             <button
               type="button"
               onClick={onClose}
-              className="flex h-9 w-9 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground"
               aria-label="Cerrar modal"
             >
               <HiXMark className="text-xl" />

@@ -196,21 +196,21 @@ const QuotationPage = () => {
       {/* Page Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <nav className="flex items-center gap-1.5 text-sm text-slate-500">
+          <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <span>{LABELS_QUOTATION_PAGE.breadcrumb.list}</span>
             <span>/</span>
-            <span className="font-medium text-slate-700">
+            <span className="font-medium text-foreground">
               {LABELS_QUOTATION_PAGE.breadcrumb.createNew}
             </span>
           </nav>
-          <h1 className="mt-0.5 text-2xl font-bold text-slate-800">
+          <h1 className="mt-0.5 text-2xl font-bold text-foreground">
             {LABELS_QUOTATION_PAGE.title}
           </h1>
         </div>
         <div className="flex items-center gap-3">
           <button
             type="button"
-            className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            className="rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground transition hover:bg-muted"
           >
             {LABELS_QUOTATION_PAGE.actions.discardDraft}
           </button>
@@ -218,7 +218,7 @@ const QuotationPage = () => {
             type="button"
             disabled={isSaving}
             onClick={handleSubmit(onSubmit)}
-            className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-70"
+            className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-70"
           >
             <HiOutlineEye className="text-base" />
             {isSaving
@@ -229,7 +229,7 @@ const QuotationPage = () => {
       </div>
 
       {saveError ? (
-        <p className="text-sm font-medium text-rose-600">{saveError}</p>
+        <p className="text-sm font-medium text-destructive">{saveError}</p>
       ) : null}
 
       {/* Content Grid */}
@@ -395,7 +395,7 @@ const QuotationPage = () => {
                 onClick={() =>
                   append({ description: "", unitPrice: 0, quantity: 1 })
                 }
-                className="flex items-center gap-1.5 text-sm font-semibold text-emerald-700 transition hover:text-emerald-800"
+                className="flex items-center gap-1.5 text-sm font-semibold text-primary transition hover:text-primary"
               >
                 <HiPlusCircle className="text-base" />
                 {LABELS_QUOTATION_PAGE.itemsSection.addItem}
@@ -405,7 +405,7 @@ const QuotationPage = () => {
             <div className="overflow-x-auto">
               <table className="w-full min-w-130">
                 <thead>
-                  <tr className="border-b border-slate-200 text-left text-sm font-semibold text-slate-600">
+                  <tr className="border-b border-border text-left text-sm font-semibold text-muted-foreground">
                     <th className="pb-3 pr-4">
                       {LABELS_QUOTATION_PAGE.itemsSection.columns.description}
                     </th>
@@ -421,7 +421,7 @@ const QuotationPage = () => {
                     <th className="w-10 pb-3" />
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-border">
                   {fields.map((field, index) => {
                     const unitPrice =
                       Number(watchedItems[index]?.unitPrice) || 0;
@@ -437,7 +437,7 @@ const QuotationPage = () => {
                               LABELS_QUOTATION_PAGE.itemsSection.placeholders
                                 .description
                             }
-                            className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-100"
+                            className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-ring focus:bg-card focus:ring-1 focus:ring-ring/30"
                             {...register(`items.${index}.description`, {
                               required: true,
                             })}
@@ -451,7 +451,7 @@ const QuotationPage = () => {
                               LABELS_QUOTATION_PAGE.itemsSection.placeholders
                                 .unitPrice
                             }
-                            className="w-28 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-right text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-100"
+                            className="w-28 rounded-lg border border-border bg-muted px-3 py-2 text-right text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-ring focus:bg-card focus:ring-1 focus:ring-ring/30"
                             {...register(`items.${index}.unitPrice`, {
                               valueAsNumber: true,
                             })}
@@ -465,13 +465,13 @@ const QuotationPage = () => {
                               LABELS_QUOTATION_PAGE.itemsSection.placeholders
                                 .quantity
                             }
-                            className="w-20 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-right text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:ring-1 focus:ring-emerald-100"
+                            className="w-20 rounded-lg border border-border bg-muted px-3 py-2 text-right text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-ring focus:bg-card focus:ring-1 focus:ring-ring/30"
                             {...register(`items.${index}.quantity`, {
                               valueAsNumber: true,
                             })}
                           />
                         </td>
-                        <td className="py-3 pr-4 text-right text-sm font-bold text-slate-800">
+                        <td className="py-3 pr-4 text-right text-sm font-bold text-foreground">
                           {formatCLP(rowTotal)}
                         </td>
                         <td className="py-3 text-right">
@@ -483,7 +483,7 @@ const QuotationPage = () => {
                               LABELS_QUOTATION_PAGE.itemsSection
                                 .removeItemAriaLabel
                             }
-                            className="text-slate-300 transition hover:text-red-500 disabled:pointer-events-none disabled:opacity-30"
+                            className="text-muted-foreground transition hover:text-destructive disabled:pointer-events-none disabled:opacity-30"
                           >
                             <HiOutlineTrash className="text-lg" />
                           </button>
@@ -500,50 +500,50 @@ const QuotationPage = () => {
         {/* Sidebar */}
         <aside className="w-full space-y-4 lg:w-80 lg:shrink-0">
           {/* Quote Summary */}
-          <div className="rounded-2xl bg-[#1c2b3a] p-6 text-white">
-            <h3 className="mb-5 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+          <div className="rounded-2xl border border-border bg-card p-6 text-card-foreground">
+            <h3 className="mb-5 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               <HiOutlineDocumentText className="text-base" />
               {LABELS_QUOTATION_PAGE.summary.title}
             </h3>
 
             <div className="space-y-3">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-400">
+                <span className="text-muted-foreground">
                   {LABELS_QUOTATION_PAGE.summary.subtotal}
                 </span>
-                <span className="font-medium text-white">
+                <span className="font-medium text-foreground">
                   {formatCLP(subtotal)}
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-400">
+                <span className="text-muted-foreground">
                   {LABELS_QUOTATION_PAGE.summary.iva}
                 </span>
-                <span className="font-medium text-white">{formatCLP(iva)}</span>
+                <span className="font-medium text-foreground">{formatCLP(iva)}</span>
               </div>
-              <div className="my-3 border-t border-slate-600" />
+              <div className="my-3 border-t border-border" />
               <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-white">
+                <span className="text-sm font-semibold text-foreground">
                   {LABELS_QUOTATION_PAGE.summary.total}
                 </span>
-                <span className="text-lg font-bold text-emerald-400">
+                <span className="text-lg font-bold text-primary">
                   {formatCLP(total)}
                 </span>
               </div>
-              <p className="text-right text-xs text-slate-500">
+              <p className="text-right text-xs text-muted-foreground">
                 {LABELS_QUOTATION_PAGE.summary.currency}
               </p>
             </div>
 
             {/* Status */}
-            <div className="mt-6 rounded-xl bg-slate-700/50 p-4">
-              <p className="mb-2 text-xs font-bold uppercase tracking-widest text-slate-400">
+            <div className="mt-6 rounded-xl bg-muted p-4">
+              <p className="mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
                 {LABELS_QUOTATION_PAGE.summary.status}
               </p>
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-600">
-                <div className="h-full w-2/3 rounded-full bg-emerald-500" />
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-border">
+                <div className="h-full w-2/3 rounded-full bg-primary" />
               </div>
-              <p className="mt-2 text-xs italic text-slate-400">
+              <p className="mt-2 text-xs italic text-muted-foreground">
                 {`"${LABELS_QUOTATION_PAGE.summary.statusMessage}"`}
               </p>
             </div>
@@ -554,7 +554,7 @@ const QuotationPage = () => {
                 type="button"
                 disabled={isSaving}
                 onClick={handleSubmit(onSubmit)}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 py-3 text-sm font-semibold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-70"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-70"
               >
                 <HiOutlineEye className="text-base" />
                 {isSaving
@@ -565,7 +565,7 @@ const QuotationPage = () => {
                 type="button"
                 disabled={isSaving || sendMutation.isPending}
                 onClick={handleSendToClient}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-500 bg-transparent py-3 text-sm font-semibold text-slate-200 transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-70"
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-card py-3 text-sm font-semibold text-foreground transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-70"
               >
                 <MdOutlineEmail className="text-base" />
                 {isSaving || sendMutation.isPending
@@ -576,17 +576,17 @@ const QuotationPage = () => {
           </div>
 
           {/* Quick Help */}
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <h3 className="mb-3 text-sm font-semibold text-slate-700">
+          <div className="rounded-2xl border border-border bg-muted p-5">
+            <h3 className="mb-3 text-sm font-semibold text-foreground">
               {LABELS_QUOTATION_PAGE.quickHelp.title}
             </h3>
             <ul className="space-y-2">
               {LABELS_QUOTATION_PAGE.quickHelp.tips.map((tip) => (
                 <li
                   key={tip}
-                  className="flex items-start gap-2 text-xs text-slate-600"
+                  className="flex items-start gap-2 text-xs text-muted-foreground"
                 >
-                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white">
+                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                     ✓
                   </span>
                   {tip}

@@ -70,17 +70,17 @@ const QuotationsListPage = () => {
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">
+          <h1 className="text-2xl font-bold text-foreground">
             {LABELS_QUOTATIONS_LIST_PAGE.title}
           </h1>
-          <p className="mt-0.5 text-sm text-slate-500">
+          <p className="mt-0.5 text-sm text-muted-foreground">
             {LABELS_QUOTATIONS_LIST_PAGE.subtitle}
           </p>
         </div>
         <button
           type="button"
           onClick={handleStartNewQuotation}
-          className="flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
+          className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
         >
           <HiOutlineDocumentPlus className="text-base" />
           {LABELS_QUOTATIONS_LIST_PAGE.newQuotationButton}
@@ -91,15 +91,15 @@ const QuotationsListPage = () => {
 
       {error ? <Alert variant="error">{error}</Alert> : null}
 
-      <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="rounded-2xl border border-border bg-card shadow-sm">
         {isLoading && (
-          <div className="flex items-center justify-center py-20 text-sm text-slate-500">
+          <div className="flex items-center justify-center py-20 text-sm text-muted-foreground">
             {LABELS_QUOTATIONS_LIST_PAGE.loading}
           </div>
         )}
 
         {isError && (
-          <div className="flex items-center justify-center py-20 text-sm text-red-500">
+          <div className="flex items-center justify-center py-20 text-sm text-destructive">
             {LABELS_QUOTATIONS_LIST_PAGE.loadError}
           </div>
         )}

@@ -55,8 +55,8 @@ const SortableTermRow = ({
   return (
     <li
       ref={ref}
-      className={`flex flex-col gap-2 rounded-xl border border-slate-200 bg-slate-50/60 p-3 sm:flex-row sm:items-start ${
-        isDragging ? "opacity-60 shadow-md ring-2 ring-emerald-200" : ""
+      className={`flex flex-col gap-2 rounded-xl border border-border bg-muted/60 p-3 sm:flex-row sm:items-start ${
+        isDragging ? "opacity-60 shadow-md ring-2 ring-ring/40" : ""
       }`}
     >
       <button
@@ -64,23 +64,23 @@ const SortableTermRow = ({
         type="button"
         title={dragHandleLabel}
         aria-label={dragHandleLabel}
-        className="mt-1 inline-flex h-9 w-9 shrink-0 cursor-grab items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-500 transition hover:bg-slate-50 active:cursor-grabbing"
+        className="mt-1 inline-flex h-9 w-9 shrink-0 cursor-grab items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition hover:bg-muted active:cursor-grabbing"
       >
         <HiBars3 className="h-4 w-4" aria-hidden />
       </button>
-      <span className="mt-2.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-200 text-xs font-semibold text-slate-600">
+      <span className="mt-2.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
         {index + 1}
       </span>
       <div className="min-w-0 flex-1">
         <input
           type="text"
-          className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+          className="w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20"
           placeholder={placeholder}
           value={item.text}
           onChange={(event) => onChange(event.target.value)}
         />
         {showError ? (
-          <p className="mt-1 text-xs font-medium text-rose-600">
+          <p className="mt-1 text-xs font-medium text-destructive">
             {errorMessage}
           </p>
         ) : null}
@@ -91,7 +91,7 @@ const SortableTermRow = ({
           onClick={onRemove}
           title={removeLabel}
           aria-label={removeLabel}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-rose-200 bg-white text-rose-600 transition hover:bg-rose-50"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-destructive/40 bg-card text-destructive transition hover:bg-destructive/10"
         >
           <HiTrash className="h-4 w-4" />
         </button>
@@ -170,18 +170,18 @@ const TermsSettingsForm = () => {
       title={LABELS_SETTINGS_PAGE.termsCard.title}
       icon={HiDocumentText}
     >
-      <p className="mb-4 text-sm text-slate-500">
+      <p className="mb-4 text-sm text-muted-foreground">
         {LABELS_SETTINGS_PAGE.termsCard.description}
       </p>
 
       {termsQuery.isPending ? (
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-muted-foreground">
           {LABELS_SETTINGS_PAGE.loadingTerms}
         </p>
       ) : null}
 
       {termsQuery.isError ? (
-        <p className="mb-4 text-sm text-rose-600">
+        <p className="mb-4 text-sm text-destructive">
           {LABELS_SETTINGS_PAGE.termsCard.loadError}
         </p>
       ) : null}
@@ -189,7 +189,7 @@ const TermsSettingsForm = () => {
       {!termsQuery.isPending ? (
         <div className="space-y-4">
           {items.length === 0 ? (
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-muted-foreground">
               {LABELS_SETTINGS_PAGE.termsCard.emptyList}
             </p>
           ) : (
@@ -222,23 +222,23 @@ const TermsSettingsForm = () => {
           <button
             type="button"
             onClick={handleAppend}
-            className="inline-flex items-center justify-center rounded-lg border border-dashed border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-emerald-400 hover:text-emerald-700"
+            className="inline-flex items-center justify-center rounded-lg border border-dashed border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary"
           >
             {LABELS_SETTINGS_PAGE.termsCard.addButton}
           </button>
 
-          <p className="text-xs italic text-slate-500">
+          <p className="text-xs italic text-muted-foreground">
             {LABELS_SETTINGS_PAGE.termsCard.footerNote}
           </p>
 
           {showErrors && items.length === 0 ? (
-            <p className="text-sm font-medium text-rose-600">
+            <p className="text-sm font-medium text-destructive">
               {LABELS_SETTINGS_PAGE.termsCard.validation.minOne}
             </p>
           ) : null}
 
           {saveMutation.isError ? (
-            <p className="text-sm font-medium text-rose-600">
+            <p className="text-sm font-medium text-destructive">
               {(saveMutation.error as Error).message}
             </p>
           ) : null}
@@ -248,7 +248,7 @@ const TermsSettingsForm = () => {
               type="button"
               onClick={handleSave}
               disabled={saveMutation.isPending || items.length === 0}
-              className="inline-flex items-center justify-center rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(5,150,105,0.35)] transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saveMutation.isPending
                 ? LABELS_SETTINGS_PAGE.termsCard.saving

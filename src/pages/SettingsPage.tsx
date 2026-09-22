@@ -34,10 +34,10 @@ const SettingsPage = () => {
     <>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-extrabold tracking-[-0.03em] text-slate-900">
+          <h2 className="text-3xl font-extrabold tracking-[-0.03em] text-foreground">
             {LABELS_SETTINGS_PAGE.pageTitle}
           </h2>
-          <p className="mt-1 max-w-2xl text-sm text-slate-500">
+          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
             {LABELS_SETTINGS_PAGE.pageSubtitle}
           </p>
         </div>

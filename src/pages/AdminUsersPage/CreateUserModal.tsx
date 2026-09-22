@@ -122,15 +122,15 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
         <div className="space-y-2">
           <label
             htmlFor="createRole"
-            className="block text-sm font-semibold text-slate-700"
+            className="block text-sm font-semibold text-foreground"
           >
             {LABELS_ADMIN_USERS_PAGE.createModal.fields.role.label}
           </label>
-          <div className="flex items-center rounded-xl border border-slate-200 bg-white px-3 shadow-[inset_0_1px_2px_rgba(15,23,42,0.04)] focus-within:border-emerald-600 focus-within:ring-2 focus-within:ring-emerald-100">
-            <HiIdentification className="shrink-0 text-lg text-slate-400" />
+          <div className="flex items-center rounded-xl border border-border bg-card px-3 focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30">
+            <HiIdentification className="shrink-0 text-lg text-muted-foreground" />
             <select
               id="createRole"
-              className="w-full border-none bg-transparent px-2 py-3 text-sm text-slate-700 outline-none"
+              className="w-full border-none bg-transparent px-2 py-3 text-sm text-foreground outline-none"
               {...register("role", {
                 required: LABELS_ADMIN_USERS_PAGE.validation.roleRequired,
               })}
@@ -144,7 +144,7 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
             </select>
           </div>
           {errors.role?.message ? (
-            <p className="text-xs font-medium text-red-600">
+            <p className="text-xs font-medium text-destructive">
               {errors.role.message}
             </p>
           ) : null}
@@ -168,16 +168,16 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
             })}
             error={errors.password?.message}
           />
-          <label className="flex items-center gap-2 text-xs text-slate-500">
+          <label className="flex items-center gap-2 text-xs text-muted-foreground">
             <input
               type="checkbox"
               checked={showPassword}
               onChange={(e) => setShowPassword(e.target.checked)}
-              className="rounded border-slate-300"
+              className="rounded border-border"
             />
             Mostrar contraseña
           </label>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted-foreground">
             {LABELS_ADMIN_USERS_PAGE.createModal.fields.password.hint}
           </p>
         </div>
@@ -186,14 +186,14 @@ const CreateUserModal = ({ isOpen, onClose }: CreateUserModalProps) => {
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-foreground transition hover:bg-muted"
           >
             {LABELS_ADMIN_USERS_PAGE.createModal.cancel}
           </button>
           <button
             type="submit"
             disabled={createUser.isPending}
-            className="rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:opacity-60"
+            className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
           >
             {createUser.isPending
               ? LABELS_ADMIN_USERS_PAGE.createModal.submitting
