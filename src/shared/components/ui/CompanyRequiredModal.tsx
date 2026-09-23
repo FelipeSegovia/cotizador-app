@@ -4,6 +4,8 @@ import {
 } from "react-icons/hi2";
 import { useNavigate } from "react-router";
 import { LABELS_COMPANY_REQUIRED_MODAL, PATHS } from "../../data";
+import useAuthStore from "../../store/useAuthStore";
+import { can } from "../../utils";
 import Modal from "./Modal";
 
 type CompanyRequiredModalProps = {
@@ -16,6 +18,8 @@ const CompanyRequiredModal = ({
   onClose,
 }: CompanyRequiredModalProps) => {
   const navigate = useNavigate();
+  const role = useAuthStore((s) => s.user?.role);
+  const canEditCompany = can(role, "editCompany");
 
   const handleGoToSettings = () => {
     onClose();
@@ -26,8 +30,16 @@ const CompanyRequiredModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={LABELS_COMPANY_REQUIRED_MODAL.title}
-      subtitle={LABELS_COMPANY_REQUIRED_MODAL.subtitle}
+      title={
+        canEditCompany
+          ? LABELS_COMPANY_REQUIRED_MODAL.title
+          : LABELS_COMPANY_REQUIRED_MODAL.commonTitle
+      }
+      subtitle={
+        canEditCompany
+          ? LABELS_COMPANY_REQUIRED_MODAL.subtitle
+          : LABELS_COMPANY_REQUIRED_MODAL.commonSubtitle
+      }
       maxWidthClass="max-w-md"
     >
       <div className="space-y-5">
@@ -37,10 +49,14 @@ const CompanyRequiredModal = ({
           </div>
           <div className="space-y-1">
             <p className="text-sm leading-relaxed text-foreground">
-              {LABELS_COMPANY_REQUIRED_MODAL.description}
+              {canEditCompany
+                ? LABELS_COMPANY_REQUIRED_MODAL.description
+                : LABELS_COMPANY_REQUIRED_MODAL.commonDescription}
             </p>
             <p className="text-xs font-medium text-accent-foreground">
-              {LABELS_COMPANY_REQUIRED_MODAL.highlight}
+              {canEditCompany
+                ? LABELS_COMPANY_REQUIRED_MODAL.highlight
+                : LABELS_COMPANY_REQUIRED_MODAL.commonHighlight}
             </p>
           </div>
         </div>
@@ -51,16 +67,20 @@ const CompanyRequiredModal = ({
             onClick={onClose}
             className="rounded-xl px-4 py-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground"
           >
-            {LABELS_COMPANY_REQUIRED_MODAL.actions.cancel}
+            {canEditCompany
+              ? LABELS_COMPANY_REQUIRED_MODAL.actions.cancel
+              : LABELS_COMPANY_REQUIRED_MODAL.actions.understood}
           </button>
-          <button
-            type="button"
-            onClick={handleGoToSettings}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
-          >
-            {LABELS_COMPANY_REQUIRED_MODAL.actions.goToSettings}
-            <HiOutlineArrowRight className="text-base" />
-          </button>
+          {canEditCompany ? (
+            <button
+              type="button"
+              onClick={handleGoToSettings}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
+            >
+              {LABELS_COMPANY_REQUIRED_MODAL.actions.goToSettings}
+              <HiOutlineArrowRight className="text-base" />
+            </button>
+          ) : null}
         </div>
       </div>
     </Modal>

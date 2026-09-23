@@ -4,6 +4,7 @@ import {
   HiArrowRightOnRectangle,
   HiBars3,
   HiBell,
+  HiBuildingOffice2,
   HiChartBar,
   HiChatBubbleLeftRight,
   HiChevronDoubleLeft,
@@ -13,6 +14,7 @@ import {
   HiDocumentText,
   HiMagnifyingGlass,
   HiUserCircle,
+  HiUserGroup,
   HiUsers,
   HiXMark,
 } from "react-icons/hi2";
@@ -29,6 +31,7 @@ import {
 import { PATHS } from "../../data";
 import useAuthStore from "../../store/useAuthStore";
 import { useQuotationDraftStore } from "../../store";
+import { can } from "../../utils";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
@@ -37,14 +40,27 @@ const DashboardLayout = () => {
   const resetDraft = useQuotationDraftStore((state) => state.resetDraft);
 
   const mainMenu: NavigationMenuItem[] = useMemo(() => {
-    const items: NavigationMenuItem[] = [
-      {
+    const items: NavigationMenuItem[] = [];
+
+    if (can(userRole, "dashboard")) {
+      items.push({
         label: "Dashboard",
         icon: <HiChartBar className="text-lg" />,
         to: PATHS.DASHBOARD,
         end: true,
-      },
-      {
+      });
+    }
+
+    if (can(userRole, "companies")) {
+      items.push({
+        label: "Empresas",
+        icon: <HiBuildingOffice2 className="text-lg" />,
+        to: PATHS.COMPANIES,
+      });
+    }
+
+    if (can(userRole, "quotations")) {
+      items.push({
         label: "Cotizaciones",
         icon: <HiDocumentText className="text-lg" />,
         children: [
@@ -57,34 +73,47 @@ const DashboardLayout = () => {
             },
           },
         ],
-      },
-      {
+      });
+    }
+
+    if (can(userRole, "clients")) {
+      items.push({
+        label: "Clientes",
+        icon: <HiUserGroup className="text-lg" />,
+        to: PATHS.CLIENTS,
+      });
+    }
+
+    if (can(userRole, "expenses")) {
+      items.push({
         label: "Gastos",
         icon: <HiClipboardDocumentList className="text-lg" />,
         to: PATHS.COMPANY_EXPENSES,
-      },
-      {
+      });
+    }
+
+    if (can(userRole, "users")) {
+      items.push({
+        label: "Usuarios",
+        icon: <HiUsers className="text-lg" />,
+        to: PATHS.USERS,
+      });
+    }
+
+    if (can(userRole, "feedback")) {
+      items.push({
+        label: "Feedback",
+        icon: <HiChatBubbleLeftRight className="text-lg" />,
+        to: PATHS.FEEDBACK,
+      });
+    }
+
+    if (can(userRole, "settings")) {
+      items.push({
         label: "Configuración",
         icon: <HiCog6Tooth className="text-lg" />,
         to: PATHS.SETTINGS,
-      },
-    ];
-
-    if (userRole === "admin") {
-      items.splice(
-        3,
-        0,
-        {
-          label: "Usuarios",
-          icon: <HiUsers className="text-lg" />,
-          to: PATHS.USERS,
-        },
-        {
-          label: "Feedback",
-          icon: <HiChatBubbleLeftRight className="text-lg" />,
-          to: PATHS.FEEDBACK,
-        },
-      );
+      });
     }
 
     return items;
@@ -220,7 +249,7 @@ const DashboardLayout = () => {
                 <HiMagnifyingGlass className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <input
                   type="text"
-                  placeholder="Search quotes, clients..."
+                  placeholder="Buscar…"
                   className="w-full rounded-xl border border-input bg-muted py-2.5 pl-10 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-ring focus:bg-card"
                 />
               </label>

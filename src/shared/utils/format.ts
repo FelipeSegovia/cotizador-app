@@ -9,3 +9,14 @@ export const formatDate = (input: string | Date) => {
     year: "numeric",
   });
 };
+
+export const formatDateTime = (input: string | Date) => {
+  const date = typeof input === "string" ? new Date(input) : input;
+  return date.toLocaleString("es-CL", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};

@@ -1,4 +1,4 @@
-import { HiOutlineUserGroup, HiShieldCheck, HiUsers } from "react-icons/hi2";
+import { HiUsers, HiShieldCheck, HiBriefcase, HiCheckCircle } from "react-icons/hi2";
 import LABELS_ADMIN_USERS_PAGE from "../../shared/data/labels-admin-users-page";
 import type { User } from "../../shared/types/auth";
 
@@ -7,76 +7,61 @@ type UserStatsCardsProps = {
 };
 
 const UserStatsCards = ({ users }: UserStatsCardsProps) => {
-  const total = users.length;
   const admins = users.filter((u) => u.role === "admin").length;
+  const business = users.filter((u) => u.role === "business").length;
   const commons = users.filter((u) => u.role === "common").length;
-  const activeCount = users.filter((u) => u.isActive).length;
+  const active = users.filter((u) => u.isActive).length;
 
   const cards = [
     {
       label: LABELS_ADMIN_USERS_PAGE.stats.total,
-      value: String(total),
-      hint: null,
-      icon: HiOutlineUserGroup,
-      iconBg: "bg-accent text-primary",
+      value: users.length,
+      hint: LABELS_ADMIN_USERS_PAGE.stats.activeSessionsHint,
+      icon: HiUsers,
     },
     {
       label: LABELS_ADMIN_USERS_PAGE.stats.admins,
-      value: String(admins),
+      value: admins,
       hint: LABELS_ADMIN_USERS_PAGE.stats.adminsHint,
       icon: HiShieldCheck,
-      iconBg: "bg-muted text-foreground",
+    },
+    {
+      label: LABELS_ADMIN_USERS_PAGE.stats.business,
+      value: business,
+      hint: LABELS_ADMIN_USERS_PAGE.stats.businessHint,
+      icon: HiBriefcase,
     },
     {
       label: LABELS_ADMIN_USERS_PAGE.stats.commons,
-      value: String(commons),
+      value: commons,
       hint: LABELS_ADMIN_USERS_PAGE.stats.commonsHint,
-      icon: HiUsers,
-      iconBg: "bg-chart-3/10 text-chart-3",
-    },
-    {
-      label: LABELS_ADMIN_USERS_PAGE.stats.activeSessions,
-      value: String(activeCount),
-      hint: LABELS_ADMIN_USERS_PAGE.stats.activeSessionsHint,
-      icon: HiUsers,
-      iconBg: "bg-accent text-primary",
-      live: true,
+      icon: HiCheckCircle,
+      extra: `${active} ${LABELS_ADMIN_USERS_PAGE.stats.activeSessions.toLowerCase()}`,
     },
   ];
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {cards.map((card) => (
         <article
           key={card.label}
           className="rounded-2xl border border-border bg-card p-5 shadow-sm"
         >
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                {card.label}
-              </p>
-              <p className="mt-2 text-3xl font-bold text-foreground">
-                {card.value}
-              </p>
-              {card.hint ? (
-                <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                  {card.live ? (
-                    <span className="inline-block h-2 w-2 rounded-full bg-primary" />
-                  ) : null}
-                  {card.hint}
-                </p>
-              ) : null}
-            </div>
-            <div
-              className={`flex h-10 w-10 items-center justify-center rounded-xl ${card.iconBg}`}
-            >
-              <card.icon className="text-lg" />
-            </div>
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-primary">
+            <card.icon className="text-xl" />
           </div>
+          <p className="mt-4 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            {card.label}
+          </p>
+          <p className="mt-1 text-3xl font-black tracking-[-0.03em] text-foreground">
+            {card.value}
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {card.extra ?? card.hint}
+          </p>
         </article>
       ))}
-    </div>
+    </section>
   );
 };
 

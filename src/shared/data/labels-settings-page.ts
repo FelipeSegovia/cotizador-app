@@ -109,6 +109,14 @@ const LABELS_SETTINGS_PAGE = {
   loadingUser: "Cargando perfil…",
   loadingCompany: "Cargando datos de empresa…",
   loadingTerms: "Cargando términos y condiciones…",
+  readOnlyCompanyNotice:
+    "Solo el dueño de la empresa puede editar estos datos.",
+  companyNotConfiguredCommon:
+    "Pide al dueño de la empresa que configure la ficha (razón social, RUT, etc.).",
+  companyNotConfiguredBusiness:
+    "Completa los datos de tu empresa para poder generar cotizaciones.",
+  adminSettingsHint:
+    "Como administrador de plataforma gestionas empresas desde la sección Empresas. Aquí solo editas tu perfil personal.",
 };
 
 export default LABELS_SETTINGS_PAGE;

@@ -8,6 +8,7 @@ import type {
 import { isQuotationExpired } from "../../shared/utils";
 import { mockQuotations } from "../data/quotations";
 import { mockApiPath } from "../mock-api-path";
+import { requireOperational } from "./auth-helpers";
 
 const db: Quotation[] = [...mockQuotations];
 
@@ -31,7 +32,11 @@ const applyAutoExpiration = () => {
 
 export const quotationHandlers = [
   // GET /api/quotations
-  http.get(mockApiPath("/api/quotations"), () => {
+  http.get(mockApiPath("/api/quotations"), ({ request }) => {
+    const auth = requireOperational(request);
+    if (auth instanceof Response) {
+      return auth;
+    }
     applyAutoExpiration();
     return HttpResponse.json(db);
   }),

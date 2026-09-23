@@ -1,19 +1,43 @@
 const LABELS_ADMIN_USERS_PAGE = {
   title: "Gestión de Usuarios",
-  subtitle: "Administra los accesos y permisos de tu equipo de trabajo.",
+  subtitle: "Administra los accesos y permisos del equipo.",
   searchPlaceholder: "Buscar usuarios...",
-  newUserButton: "Nuevo Usuario",
+  newUserButton: "Invitar usuario",
   loading: "Cargando usuarios...",
   loadError: "No se pudo cargar el listado de usuarios.",
   empty: "No hay usuarios registrados.",
+  companyRequired:
+    "Configura los datos de tu empresa antes de invitar colaboradores.",
+  companyFilter: {
+    label: "Filtrar por empresa",
+    all: "Todas las empresas",
+  },
+  tabs: {
+    users: "Usuarios",
+    invitations: "Invitaciones pendientes",
+  },
+  invitations: {
+    title: "Invitaciones pendientes",
+    empty: "No hay invitaciones pendientes.",
+    loading: "Cargando invitaciones...",
+    loadError: "No se pudieron cargar las invitaciones.",
+    email: "Correo",
+    name: "Nombre",
+    role: "Rol",
+    expiresAt: "Expira",
+    revoke: "Revocar",
+    revokeSuccess: "Invitación revocada",
+  },
   stats: {
     total: "Total Usuarios",
     admins: "Administradores",
-    commons: "Usuarios",
-    activeSessions: "Sesiones Activas",
-    activeSessionsHint: "En tiempo real",
-    adminsHint: "Acceso total al sistema",
-    commonsHint: "Acceso estándar a la plataforma",
+    business: "Dueños",
+    commons: "Colaboradores",
+    activeSessions: "Activos",
+    activeSessionsHint: "Cuentas habilitadas",
+    adminsHint: "Acceso a la plataforma",
+    businessHint: "Dueños de empresa",
+    commonsHint: "Operadores de empresa",
   },
   table: {
     title: "Listado de Personal",
@@ -26,37 +50,28 @@ const LABELS_ADMIN_USERS_PAGE = {
     inactive: "Inactivo",
     showing: "Mostrando {count} de {total} usuarios registrados",
     edit: "Editar usuario",
-    resendPassword: "Reenviar contraseña provisional",
   },
   roles: {
-    admin: "Administrador",
-    common: "Usuario",
+    admin: "Administrador de plataforma",
+    business: "Dueño de empresa",
+    common: "Colaborador",
   },
-  createModal: {
-    title: "Registrar Nuevo Usuario",
-    subtitle:
-      "Ingresa los detalles para crear una nueva cuenta en QuoteFlow",
+  inviteModal: {
+    title: "Invitar usuario",
+    subtitle: "Se enviará un correo con un enlace para crear la cuenta",
     fields: {
       name: { label: "Nombre completo", placeholder: "Ej: Juan Pablo Silva" },
       email: {
-        label: "Correo electrónico corporativo",
-        placeholder: "ejemplo@quoteflow.cl",
+        label: "Correo electrónico",
+        placeholder: "ejemplo@empresa.cl",
       },
-      phone: {
-        label: "Teléfono de contacto",
-        placeholder: "+56 9 1234 5678",
-      },
-      role: { label: "Rol de sistema" },
-      password: {
-        label: "Contraseña provisional",
-        placeholder: "Mínimo 8 caracteres",
-        hint: "El usuario deberá cambiar esta contraseña en su primer inicio de sesión por motivos de seguridad",
-      },
+      company: { label: "Empresa", placeholder: "Selecciona una empresa" },
+      role: { label: "Rol invitado" },
     },
     cancel: "Cancelar",
-    submit: "Crear Usuario",
-    submitting: "Creando...",
-    success: "Usuario creado. Se envió un correo con la contraseña provisional.",
+    submit: "Enviar invitación",
+    submitting: "Enviando...",
+    success: "Invitación enviada correctamente",
     emailSimulated: "Correo simulado (revisa la consola del navegador)",
   },
   editModal: {
@@ -67,7 +82,6 @@ const LABELS_ADMIN_USERS_PAGE = {
     success: "Usuario actualizado correctamente",
   },
   toggleSuccess: "Estado del usuario actualizado",
-  resendSuccess: "Contraseña provisional reenviada por correo",
   firstLoginModal: {
     title: "Actualiza tu contraseña",
     subtitle:
@@ -87,6 +101,7 @@ const LABELS_ADMIN_USERS_PAGE = {
     passwordRequired: "La contraseña es obligatoria",
     passwordMin: "Mínimo 8 caracteres",
     roleRequired: "Selecciona un rol",
+    companyRequired: "Selecciona una empresa",
   },
 };
 

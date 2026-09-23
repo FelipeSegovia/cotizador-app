@@ -10,6 +10,7 @@ import { useNavigate } from "react-router";
 import { FormField, FormSubmitButton } from "../shared/components/forms";
 import { LABELS_LOGIN, PATHS } from "../shared/data";
 import useAuthStore from "../shared/store/useAuthStore";
+import { getRoleHome } from "../shared/utils";
 
 type LoginFormValues = {
   email: string;
@@ -37,7 +38,8 @@ const LoginPage = () => {
     try {
       clearError();
       await login(values.email, values.password);
-      navigate(PATHS.DASHBOARD);
+      const role = useAuthStore.getState().user?.role;
+      navigate(getRoleHome(role));
     } catch (error) {
       // El error ya está en el store
       void error;

@@ -1,5 +1,8 @@
 import type { User, UserRole } from "../types/auth";
 
+const isUserRole = (value: unknown): value is UserRole =>
+  value === "admin" || value === "business" || value === "common";
+
 /**
  * GET/PATCH `/api/auth/me`: cuerpo JSON plano `{ id, email, name, ... }`.
  * Acepta también `{ user: { ... } }` por compatibilidad con respuestas antiguas.
@@ -26,10 +29,7 @@ export const parseAuthMeResponse = (json: unknown): User => {
   const mobilePhone =
     typeof candidate.mobilePhone === "string" ? candidate.mobilePhone : "";
 
-  const role: UserRole =
-    candidate.role === "admin" || candidate.role === "common"
-      ? candidate.role
-      : "common";
+  const role: UserRole = isUserRole(candidate.role) ? candidate.role : "common";
 
   const isActive =
     typeof candidate.isActive === "boolean" ? candidate.isActive : true;
