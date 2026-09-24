@@ -7,6 +7,8 @@ type RoleBadgeProps = {
 
 const ROLE_CLASSES: Record<UserRole, string> = {
   admin: "bg-secondary text-secondary-foreground",
+  business:
+    "bg-primary/15 text-primary dark:bg-primary/25 dark:text-primary-foreground",
   common:
     "bg-chart-3/15 text-chart-3 dark:bg-chart-2/20 dark:text-chart-2",
 };

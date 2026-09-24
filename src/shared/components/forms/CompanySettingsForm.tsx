@@ -39,7 +39,7 @@ const companyInitialsFromName = (name: string) => {
   return trimmed.slice(0, 2).toUpperCase();
 };
 
-const CompanySettingsForm = () => {
+const CompanySettingsForm = ({ readOnly = false }: { readOnly?: boolean }) => {
   const queryClient = useQueryClient();
   const companyQuery = useCompany();
   const logoInputRef = useRef<HTMLInputElement>(null);
@@ -162,6 +162,7 @@ const CompanySettingsForm = () => {
   const companyName = company?.name?.trim() ?? "";
   const displayedLogoUrl = logoPreviewUrl ?? company?.logoUrl ?? null;
   const hasLogo = Boolean(displayedLogoUrl);
+  const companyMissing = !companyQuery.isPending && !company;
 
   return (
     <SectionCard
@@ -180,7 +181,25 @@ const CompanySettingsForm = () => {
         </p>
       ) : null}
 
-      {!companyQuery.isPending ? (
+      {readOnly ? (
+        <p className="mb-4 text-sm text-muted-foreground">
+          {LABELS_SETTINGS_PAGE.readOnlyCompanyNotice}
+        </p>
+      ) : null}
+
+      {companyMissing && readOnly ? (
+        <p className="mb-4 rounded-xl border border-border bg-muted/60 p-4 text-sm text-foreground">
+          {LABELS_SETTINGS_PAGE.companyNotConfiguredCommon}
+        </p>
+      ) : null}
+
+      {companyMissing && !readOnly ? (
+        <p className="mb-4 rounded-xl border border-primary/20 bg-accent p-4 text-sm text-accent-foreground">
+          {LABELS_SETTINGS_PAGE.companyNotConfiguredBusiness}
+        </p>
+      ) : null}
+
+      {!companyQuery.isPending && !(companyMissing && readOnly) ? (
         <form
           className="space-y-4"
           onSubmit={handleSubmit(onSubmit)}
@@ -206,31 +225,33 @@ const CompanySettingsForm = () => {
                   <HiPhoto className="h-6 w-6 text-muted-foreground" aria-hidden />
                 )}
               </div>
-              <div className="space-y-2">
-                <input
-                  ref={logoInputRef}
-                  id="companyLogo"
-                  type="file"
-                  accept="image/jpeg,image/png,image/svg+xml"
-                  className="sr-only"
-                  onChange={handleLogoChange}
-                />
-                <button
-                  type="button"
-                  onClick={() => logoInputRef.current?.click()}
-                  className="inline-flex items-center justify-center rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition hover:bg-muted"
-                >
-                  {hasLogo
-                    ? LABELS_SETTINGS_PAGE.companyCard.fields.logo.changeButton
-                    : LABELS_SETTINGS_PAGE.companyCard.fields.logo.uploadButton}
-                </button>
-                <p className="text-xs text-muted-foreground">
-                  {LABELS_SETTINGS_PAGE.companyCard.fields.logo.hint}
-                </p>
-                {logoError ? (
-                  <p className="text-xs font-medium text-destructive">{logoError}</p>
-                ) : null}
-              </div>
+              {!readOnly ? (
+                <div className="space-y-2">
+                  <input
+                    ref={logoInputRef}
+                    id="companyLogo"
+                    type="file"
+                    accept="image/jpeg,image/png,image/svg+xml"
+                    className="sr-only"
+                    onChange={handleLogoChange}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => logoInputRef.current?.click()}
+                    className="inline-flex items-center justify-center rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition hover:bg-muted"
+                  >
+                    {hasLogo
+                      ? LABELS_SETTINGS_PAGE.companyCard.fields.logo.changeButton
+                      : LABELS_SETTINGS_PAGE.companyCard.fields.logo.uploadButton}
+                  </button>
+                  <p className="text-xs text-muted-foreground">
+                    {LABELS_SETTINGS_PAGE.companyCard.fields.logo.hint}
+                  </p>
+                  {logoError ? (
+                    <p className="text-xs font-medium text-destructive">{logoError}</p>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
           </div>
 
@@ -244,6 +265,7 @@ const CompanySettingsForm = () => {
               required: LABELS_SETTINGS_PAGE.companyCard.fields.name.required,
             })}
             error={errors.name?.message}
+            disabled={readOnly}
           />
 
           <div className="grid gap-4 sm:grid-cols-2 sm:items-start">
@@ -264,6 +286,7 @@ const CompanySettingsForm = () => {
                     LABELS_SETTINGS_PAGE.companyCard.fields.rut.placeholder
                   }
                   value={field.value ?? ""}
+                  disabled={readOnly}
                   registration={{
                     name: field.name,
                     onBlur: field.onBlur,
@@ -295,6 +318,7 @@ const CompanySettingsForm = () => {
             }
             icon={HiMapPin}
             registration={register("address")}
+            disabled={readOnly}
           />
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -305,6 +329,7 @@ const CompanySettingsForm = () => {
                 LABELS_SETTINGS_PAGE.companyCard.fields.city.placeholder
               }
               registration={register("city")}
+              disabled={readOnly}
             />
             <FormField
               id="companyContact"
@@ -313,6 +338,7 @@ const CompanySettingsForm = () => {
                 LABELS_SETTINGS_PAGE.companyCard.fields.contact.placeholder
               }
               registration={register("contact")}
+              disabled={readOnly}
             />
           </div>
 
@@ -326,17 +352,19 @@ const CompanySettingsForm = () => {
             </p>
           ) : null}
 
-          <div className="flex justify-end pt-2">
-            <button
-              type="submit"
-              disabled={saveMutation.isPending}
-              className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {saveMutation.isPending
-                ? LABELS_SETTINGS_PAGE.companyCard.saving
-                : LABELS_SETTINGS_PAGE.companyCard.saveButton}
-            </button>
-          </div>
+          {!readOnly ? (
+            <div className="flex justify-end pt-2">
+              <button
+                type="submit"
+                disabled={saveMutation.isPending}
+                className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {saveMutation.isPending
+                  ? LABELS_SETTINGS_PAGE.companyCard.saving
+                  : LABELS_SETTINGS_PAGE.companyCard.saveButton}
+              </button>
+            </div>
+          ) : null}
         </form>
       ) : null}
     </SectionCard>

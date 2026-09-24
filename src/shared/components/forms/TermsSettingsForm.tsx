@@ -32,6 +32,7 @@ type SortableTermRowProps = {
   removeLabel: string;
   showError: boolean;
   errorMessage: string;
+  readOnly?: boolean;
   onChange: (text: string) => void;
   onRemove: () => void;
 };
@@ -44,12 +45,14 @@ const SortableTermRow = ({
   removeLabel,
   showError,
   errorMessage,
+  readOnly = false,
   onChange,
   onRemove,
 }: SortableTermRowProps) => {
   const { ref, handleRef, isDragging } = useSortable({
     id: item.id,
     index,
+    disabled: readOnly,
   });
 
   return (
@@ -59,24 +62,27 @@ const SortableTermRow = ({
         isDragging ? "opacity-60 shadow-md ring-2 ring-ring/40" : ""
       }`}
     >
-      <button
-        ref={handleRef}
-        type="button"
-        title={dragHandleLabel}
-        aria-label={dragHandleLabel}
-        className="mt-1 inline-flex h-9 w-9 shrink-0 cursor-grab items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition hover:bg-muted active:cursor-grabbing"
-      >
-        <HiBars3 className="h-4 w-4" aria-hidden />
-      </button>
+      {!readOnly ? (
+        <button
+          ref={handleRef}
+          type="button"
+          title={dragHandleLabel}
+          aria-label={dragHandleLabel}
+          className="mt-1 inline-flex h-9 w-9 shrink-0 cursor-grab items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition hover:bg-muted active:cursor-grabbing"
+        >
+          <HiBars3 className="h-4 w-4" aria-hidden />
+        </button>
+      ) : null}
       <span className="mt-2.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
         {index + 1}
       </span>
       <div className="min-w-0 flex-1">
         <input
           type="text"
-          className="w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20"
+          className="w-full rounded-lg border border-input bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-70"
           placeholder={placeholder}
           value={item.text}
+          disabled={readOnly}
           onChange={(event) => onChange(event.target.value)}
         />
         {showError ? (
@@ -85,22 +91,24 @@ const SortableTermRow = ({
           </p>
         ) : null}
       </div>
-      <div className="flex shrink-0 items-center sm:mt-1">
-        <button
-          type="button"
-          onClick={onRemove}
-          title={removeLabel}
-          aria-label={removeLabel}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-destructive/40 bg-card text-destructive transition hover:bg-destructive/10"
-        >
-          <HiTrash className="h-4 w-4" />
-        </button>
-      </div>
+      {!readOnly ? (
+        <div className="flex shrink-0 items-center sm:mt-1">
+          <button
+            type="button"
+            onClick={onRemove}
+            title={removeLabel}
+            aria-label={removeLabel}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-destructive/40 bg-card text-destructive transition hover:bg-destructive/10"
+          >
+            <HiTrash className="h-4 w-4" />
+          </button>
+        </div>
+      ) : null}
     </li>
   );
 };
 
-const TermsSettingsForm = () => {
+const TermsSettingsForm = ({ readOnly = false }: { readOnly?: boolean }) => {
   const queryClient = useQueryClient();
   const termsQuery = useCompanyTerms();
   const [items, setItems] = useState<TermItem[]>(() =>
@@ -174,6 +182,12 @@ const TermsSettingsForm = () => {
         {LABELS_SETTINGS_PAGE.termsCard.description}
       </p>
 
+      {readOnly ? (
+        <p className="mb-4 text-sm text-muted-foreground">
+          {LABELS_SETTINGS_PAGE.readOnlyCompanyNotice}
+        </p>
+      ) : null}
+
       {termsQuery.isPending ? (
         <p className="text-sm text-muted-foreground">
           {LABELS_SETTINGS_PAGE.loadingTerms}
@@ -193,7 +207,7 @@ const TermsSettingsForm = () => {
               {LABELS_SETTINGS_PAGE.termsCard.emptyList}
             </p>
           ) : (
-            <DragDropProvider onDragEnd={handleDragEnd}>
+            <DragDropProvider onDragEnd={readOnly ? undefined : handleDragEnd}>
               <ul className="space-y-3">
                 {items.map((item, index) => (
                   <SortableTermRow
@@ -211,6 +225,7 @@ const TermsSettingsForm = () => {
                     errorMessage={
                       LABELS_SETTINGS_PAGE.termsCard.fields.term.required
                     }
+                    readOnly={readOnly}
                     onChange={(text) => handleChange(item.id, text)}
                     onRemove={() => handleRemove(item.id)}
                   />
@@ -219,13 +234,15 @@ const TermsSettingsForm = () => {
             </DragDropProvider>
           )}
 
-          <button
-            type="button"
-            onClick={handleAppend}
-            className="inline-flex items-center justify-center rounded-lg border border-dashed border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary"
-          >
-            {LABELS_SETTINGS_PAGE.termsCard.addButton}
-          </button>
+          {!readOnly ? (
+            <button
+              type="button"
+              onClick={handleAppend}
+              className="inline-flex items-center justify-center rounded-lg border border-dashed border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary"
+            >
+              {LABELS_SETTINGS_PAGE.termsCard.addButton}
+            </button>
+          ) : null}
 
           <p className="text-xs italic text-muted-foreground">
             {LABELS_SETTINGS_PAGE.termsCard.footerNote}
@@ -243,18 +260,20 @@ const TermsSettingsForm = () => {
             </p>
           ) : null}
 
-          <div className="flex justify-end pt-2">
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={saveMutation.isPending || items.length === 0}
-              className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {saveMutation.isPending
-                ? LABELS_SETTINGS_PAGE.termsCard.saving
-                : LABELS_SETTINGS_PAGE.termsCard.saveButton}
-            </button>
-          </div>
+          {!readOnly ? (
+            <div className="flex justify-end pt-2">
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={saveMutation.isPending || items.length === 0}
+                className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {saveMutation.isPending
+                  ? LABELS_SETTINGS_PAGE.termsCard.saving
+                  : LABELS_SETTINGS_PAGE.termsCard.saveButton}
+              </button>
+            </div>
+          ) : null}
         </div>
       ) : null}
     </SectionCard>

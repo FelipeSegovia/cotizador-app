@@ -49,6 +49,13 @@ export const toPublicUser = (row: MockUser): User => ({
   updatedAt: row.updatedAt,
 });
 
+export const getMockUserRow = (userId: string): MockUser | undefined =>
+  mockUsers.find((u) => u.id === userId);
+
+export const getUserCompanyId = (userId: string): string | null => {
+  return getMockUserRow(userId)?.companyId ?? null;
+};
+
 export const generateMockJwt = (user: User, expInSeconds: number): string => {
   const nowInSeconds = Math.floor(Date.now() / 1000);
 
@@ -147,6 +154,12 @@ export const requireAuth = (
   return { token, user };
 };
 
+const forbidden = (message = "No tienes permisos para esta acción") =>
+  new Response(JSON.stringify({ message }), {
+    status: 403,
+    headers: { "Content-Type": "application/json" },
+  });
+
 export const requireAdmin = (
   request: Request,
 ): { token: string; user: User } | Response => {
@@ -156,33 +169,66 @@ export const requireAdmin = (
   }
 
   if (auth.user.role !== "admin") {
-    return new Response(
-      JSON.stringify({ message: "No tienes permisos para esta acción" }),
-      { status: 403, headers: { "Content-Type": "application/json" } },
-    );
+    return forbidden();
   }
 
   return auth;
 };
 
-export const generateProvisionalPassword = (): string => {
-  const chars =
-    "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$";
-  let password = "";
-  for (let i = 0; i < 12; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length));
+export const requireAdminOrBusiness = (
+  request: Request,
+): { token: string; user: User } | Response => {
+  const auth = requireAuth(request);
+  if (auth instanceof Response) {
+    return auth;
   }
-  return password;
+
+  if (auth.user.role !== "admin" && auth.user.role !== "business") {
+    return forbidden();
+  }
+
+  return auth;
 };
 
-export const simulateWelcomeEmail = (params: {
+export const requireBusiness = (
+  request: Request,
+): { token: string; user: User } | Response => {
+  const auth = requireAuth(request);
+  if (auth instanceof Response) {
+    return auth;
+  }
+
+  if (auth.user.role !== "business") {
+    return forbidden();
+  }
+
+  return auth;
+};
+
+export const requireOperational = (
+  request: Request,
+): { token: string; user: User } | Response => {
+  const auth = requireAuth(request);
+  if (auth instanceof Response) {
+    return auth;
+  }
+
+  if (auth.user.role === "admin") {
+    return forbidden("Los administradores de plataforma no operan este recurso");
+  }
+
+  return auth;
+};
+
+export const simulateInvitationEmail = (params: {
   to: string;
   name: string;
-  provisionalPassword: string;
+  token: string;
 }) => {
-  console.info("[MSW] Correo simulado — Bienvenida a QuoteFlow", {
+  const link = `${typeof window !== "undefined" ? window.location.origin : ""}/invitar?token=${params.token}`;
+  console.info("[MSW] Correo simulado — Invitación a QuoteFlow", {
     to: params.to,
-    subject: "Tu cuenta en QuoteFlow CL",
-    body: `Hola ${params.name}, tu contraseña provisional es: ${params.provisionalPassword}. Debes cambiarla en tu primer inicio de sesión.`,
+    subject: "Te invitaron a QuoteFlow",
+    body: `Hola ${params.name}, acepta tu invitación en: ${link}`,
   });
 };

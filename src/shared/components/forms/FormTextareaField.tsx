@@ -28,8 +28,8 @@ const FormTextareaField = ({
         id={id}
         aria-invalid={error ? "true" : "false"}
         className="w-full resize-none rounded-xl border border-input bg-card px-3 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/30"
-        {...registration}
         {...textareaProps}
+        {...registration}
       />
 
       {error ? (

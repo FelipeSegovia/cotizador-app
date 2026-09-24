@@ -17,9 +17,10 @@ type EditUserFormValues = {
 type EditUserModalProps = {
   user: User | null;
   onClose: () => void;
+  actorRole: "admin" | "business";
 };
 
-const EditUserModal = ({ user, onClose }: EditUserModalProps) => {
+const EditUserModal = ({ user, onClose, actorRole }: EditUserModalProps) => {
   const updateUser = useUpdateUser();
 
   const {
@@ -68,6 +69,11 @@ const EditUserModal = ({ user, onClose }: EditUserModalProps) => {
     );
   };
 
+  const roleOptions: UserRole[] =
+    actorRole === "admin"
+      ? ["admin", "business", "common"]
+      : ["business", "common"];
+
   return (
     <Modal
       isOpen={Boolean(user)}
@@ -79,7 +85,7 @@ const EditUserModal = ({ user, onClose }: EditUserModalProps) => {
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
         <FormField
           id="editName"
-          label={LABELS_ADMIN_USERS_PAGE.createModal.fields.name.label}
+          label={LABELS_ADMIN_USERS_PAGE.inviteModal.fields.name.label}
           icon={HiUser}
           registration={register("name", {
             required: LABELS_ADMIN_USERS_PAGE.validation.nameRequired,
@@ -90,7 +96,7 @@ const EditUserModal = ({ user, onClose }: EditUserModalProps) => {
         <FormField
           id="editPhone"
           type="tel"
-          label={LABELS_ADMIN_USERS_PAGE.createModal.fields.phone.label}
+          label="Teléfono de contacto"
           icon={HiDevicePhoneMobile}
           registration={register("mobilePhone")}
         />
@@ -100,7 +106,7 @@ const EditUserModal = ({ user, onClose }: EditUserModalProps) => {
             htmlFor="editRole"
             className="block text-sm font-semibold text-foreground"
           >
-            {LABELS_ADMIN_USERS_PAGE.createModal.fields.role.label}
+            {LABELS_ADMIN_USERS_PAGE.inviteModal.fields.role.label}
           </label>
           <div className="flex items-center rounded-xl border border-border bg-card px-3">
             <HiIdentification className="shrink-0 text-lg text-muted-foreground" />
@@ -111,12 +117,11 @@ const EditUserModal = ({ user, onClose }: EditUserModalProps) => {
                 required: LABELS_ADMIN_USERS_PAGE.validation.roleRequired,
               })}
             >
-              <option value="common">
-                {LABELS_ADMIN_USERS_PAGE.roles.common}
-              </option>
-              <option value="admin">
-                {LABELS_ADMIN_USERS_PAGE.roles.admin}
-              </option>
+              {roleOptions.map((role) => (
+                <option key={role} value={role}>
+                  {LABELS_ADMIN_USERS_PAGE.roles[role]}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -127,7 +132,7 @@ const EditUserModal = ({ user, onClose }: EditUserModalProps) => {
             onClick={onClose}
             className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-foreground transition hover:bg-muted"
           >
-            {LABELS_ADMIN_USERS_PAGE.createModal.cancel}
+            {LABELS_ADMIN_USERS_PAGE.inviteModal.cancel}
           </button>
           <button
             type="submit"

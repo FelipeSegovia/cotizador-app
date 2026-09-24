@@ -1,8 +1,4 @@
-import {
-  HiOutlineEnvelope,
-  HiOutlinePencilSquare,
-  HiPaperAirplane,
-} from "react-icons/hi2";
+import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { RoleBadge } from "../../shared/components/ui";
 import LABELS_ADMIN_USERS_PAGE from "../../shared/data/labels-admin-users-page";
 import type { User } from "../../shared/types/auth";
@@ -20,20 +16,16 @@ type UsersTableProps = {
   users: User[];
   currentUserId?: string;
   pendingToggleId: string | null;
-  pendingResendId: string | null;
   onEdit: (user: User) => void;
   onToggleStatus: (user: User) => void;
-  onResendPassword: (user: User) => void;
 };
 
 const UsersTable = ({
   users,
   currentUserId,
   pendingToggleId,
-  pendingResendId,
   onEdit,
   onToggleStatus,
-  onResendPassword,
 }: UsersTableProps) => {
   return (
     <div className="overflow-x-auto">
@@ -79,25 +71,14 @@ const UsersTable = ({
                 />
               </td>
               <td className="px-6 py-4">
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    title={LABELS_ADMIN_USERS_PAGE.table.edit}
-                    onClick={() => onEdit(user)}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-muted hover:text-foreground"
-                  >
-                    <HiOutlinePencilSquare className="text-lg" />
-                  </button>
-                  <button
-                    type="button"
-                    title={LABELS_ADMIN_USERS_PAGE.table.resendPassword}
-                    disabled={pendingResendId === user.id}
-                    onClick={() => onResendPassword(user)}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-muted hover:text-primary disabled:opacity-50"
-                  >
-                    <HiPaperAirplane className="text-lg" />
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  title={LABELS_ADMIN_USERS_PAGE.table.edit}
+                  onClick={() => onEdit(user)}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                >
+                  <HiOutlinePencilSquare className="text-lg" />
+                </button>
               </td>
             </tr>
           ))}
@@ -108,10 +89,6 @@ const UsersTable = ({
           {LABELS_ADMIN_USERS_PAGE.table.showing
             .replace("{count}", String(users.length))
             .replace("{total}", String(users.length))}
-        </span>
-        <span className="flex items-center gap-1">
-          <HiOutlineEnvelope className="text-sm" />
-          {users.length} usuarios en esta vista
         </span>
       </div>
     </div>

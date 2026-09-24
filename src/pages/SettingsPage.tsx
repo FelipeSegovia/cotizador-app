@@ -7,7 +7,9 @@ import {
   PersonalProfileForm,
   TermsSettingsForm,
 } from "../shared/components/forms";
-import { InfoTile } from "../shared/components/ui";
+import { Alert, InfoTile } from "../shared/components/ui";
+import useAuthStore from "../shared/store/useAuthStore";
+import { can } from "../shared/utils";
 
 const formatLongDate = (iso: string) =>
   new Date(iso).toLocaleDateString("es-CL", {
@@ -17,6 +19,8 @@ const formatLongDate = (iso: string) =>
   });
 
 const SettingsPage = () => {
+  const role = useAuthStore((s) => s.user?.role);
+  const showCompany = role === "business" || role === "common";
   const companyQuery = useCompany();
 
   const lastUpdateCopy = useMemo(() => {
@@ -43,36 +47,48 @@ const SettingsPage = () => {
         </div>
       </div>
 
+      {role === "admin" ? (
+        <div className="mt-6">
+          <Alert variant="info">{LABELS_SETTINGS_PAGE.adminSettingsHint}</Alert>
+        </div>
+      ) : null}
+
       <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:items-start">
         <div className="w-full lg:max-w-md lg:shrink-0">
           <PersonalProfileForm />
         </div>
-        <div className="min-w-0 flex-1">
-          <CompanySettingsForm />
+        {showCompany ? (
+          <div className="min-w-0 flex-1">
+            <CompanySettingsForm readOnly={!can(role, "editCompany")} />
+          </div>
+        ) : null}
+      </div>
+
+      {showCompany ? (
+        <div className="mt-8">
+          <TermsSettingsForm readOnly={!can(role, "editTerms")} />
         </div>
-      </div>
+      ) : null}
 
-      <div className="mt-8">
-        <TermsSettingsForm />
-      </div>
-
-      <section className="mt-8 grid gap-4 md:grid-cols-3">
-        <InfoTile
-          icon={HiShieldCheck}
-          title={LABELS_SETTINGS_PAGE.infoTiles.security.title}
-          description={LABELS_SETTINGS_PAGE.infoTiles.security.body}
-        />
-        <InfoTile
-          icon={HiOutlineClock}
-          title={LABELS_SETTINGS_PAGE.infoTiles.lastUpdate.title}
-          description={lastUpdateCopy}
-        />
-        <InfoTile
-          icon={HiDocumentText}
-          title={LABELS_SETTINGS_PAGE.infoTiles.pdf.title}
-          description={LABELS_SETTINGS_PAGE.infoTiles.pdf.body}
-        />
-      </section>
+      {showCompany ? (
+        <section className="mt-8 grid gap-4 md:grid-cols-3">
+          <InfoTile
+            icon={HiShieldCheck}
+            title={LABELS_SETTINGS_PAGE.infoTiles.security.title}
+            description={LABELS_SETTINGS_PAGE.infoTiles.security.body}
+          />
+          <InfoTile
+            icon={HiOutlineClock}
+            title={LABELS_SETTINGS_PAGE.infoTiles.lastUpdate.title}
+            description={lastUpdateCopy}
+          />
+          <InfoTile
+            icon={HiDocumentText}
+            title={LABELS_SETTINGS_PAGE.infoTiles.pdf.title}
+            description={LABELS_SETTINGS_PAGE.infoTiles.pdf.body}
+          />
+        </section>
+      ) : null}
     </>
   );
 };

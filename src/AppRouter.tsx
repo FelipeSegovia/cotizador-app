@@ -1,13 +1,16 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import {
+  AcceptInvitationPage,
+  AdminCompaniesPage,
   AdminUsersPage,
   FeedbackManagementPage,
+  ClientsPage,
   CompanyExpensesPage,
+  DashboardIndex,
   LoginPage,
   RecoverPasswordPage,
   QuotationCreatorPage,
   QuotationsListPage,
-  RootPage,
   SettingsPage,
 } from "./pages";
 import {
@@ -39,6 +42,14 @@ const AppRouter = () => {
           }
         />
         <Route
+          path={PATHS.INVITE}
+          element={
+            <GuestRoute>
+              <AcceptInvitationPage />
+            </GuestRoute>
+          }
+        />
+        <Route
           path={PATHS.DASHBOARD}
           element={
             <ProtectedRoute>
@@ -46,21 +57,44 @@ const AppRouter = () => {
             </ProtectedRoute>
           }
         >
-          <Route index element={<RootPage />} />
-          <Route path={PATHS.QUOTATIONS} element={<QuotationsListPage />} />
+          <Route index element={<DashboardIndex />} />
+          <Route
+            path={PATHS.QUOTATIONS}
+            element={
+              <RoleProtectedRoute allowedRoles={["business", "common"]}>
+                <QuotationsListPage />
+              </RoleProtectedRoute>
+            }
+          />
           <Route
             path={PATHS.NEW_QUOTATION}
-            element={<QuotationCreatorPage />}
+            element={
+              <RoleProtectedRoute allowedRoles={["business", "common"]}>
+                <QuotationCreatorPage />
+              </RoleProtectedRoute>
+            }
+          />
+          <Route
+            path={PATHS.CLIENTS}
+            element={
+              <RoleProtectedRoute allowedRoles={["business", "common"]}>
+                <ClientsPage />
+              </RoleProtectedRoute>
+            }
           />
           <Route
             path={PATHS.COMPANY_EXPENSES}
-            element={<CompanyExpensesPage />}
+            element={
+              <RoleProtectedRoute allowedRoles={["business", "common"]}>
+                <CompanyExpensesPage />
+              </RoleProtectedRoute>
+            }
           />
           <Route path={PATHS.SETTINGS} element={<SettingsPage />} />
           <Route
             path={PATHS.FEEDBACK}
             element={
-              <RoleProtectedRoute requiredRole="admin">
+              <RoleProtectedRoute allowedRoles={["admin"]}>
                 <FeedbackManagementPage />
               </RoleProtectedRoute>
             }
@@ -68,8 +102,16 @@ const AppRouter = () => {
           <Route
             path={PATHS.USERS}
             element={
-              <RoleProtectedRoute requiredRole="admin">
+              <RoleProtectedRoute allowedRoles={["admin", "business"]}>
                 <AdminUsersPage />
+              </RoleProtectedRoute>
+            }
+          />
+          <Route
+            path={PATHS.COMPANIES}
+            element={
+              <RoleProtectedRoute allowedRoles={["admin"]}>
+                <AdminCompaniesPage />
               </RoleProtectedRoute>
             }
           />

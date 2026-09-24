@@ -1,4 +1,6 @@
-export type UserRole = "admin" | "common";
+export type UserRole = "admin" | "business" | "common";
+
+export type InvitationRole = "business" | "common";
 
 export interface User {
   id: string;
@@ -15,14 +17,6 @@ export interface User {
 export type UpdateCurrentUserDto = {
   name: string;
   mobilePhone: string;
-};
-
-export type CreateUserDto = {
-  name: string;
-  email: string;
-  mobilePhone: string;
-  role: UserRole;
-  password: string;
 };
 
 export type UpdateUserDto = Partial<
@@ -44,10 +38,34 @@ export type ResetPasswordDto = {
   newPassword: string;
 };
 
+export interface Invitation {
+  id: string;
+  email: string;
+  name: string;
+  role: InvitationRole;
+  companyId: string;
+  expiresAt: string;
+  acceptedAt: string | null;
+  createdAt: string;
+}
+
+export type CreateInvitationDto = {
+  email: string;
+  name: string;
+  companyId?: string;
+  role?: InvitationRole;
+};
+
+export type AcceptInvitationDto = {
+  token: string;
+  password: string;
+  mobilePhone?: string;
+};
+
 export interface AuthResponse {
   user: User;
   token: string;
-  expiresIn?: number; // opcional, ya que JWT puede incluir exp
+  expiresIn?: number;
 }
 
 export interface AuthState {
@@ -56,7 +74,7 @@ export interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  expiresAt: number | null; // timestamp en ms
+  expiresAt: number | null;
 }
 
 export type AuthActions = {

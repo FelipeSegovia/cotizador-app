@@ -1,0 +1,122 @@
+import type { ClientStatus } from "../types/client";
+
+const LABELS_CLIENTS_PAGE = {
+  title: "Seguimiento de clientes potenciales",
+  subtitle:
+    "Gestiona tus leads, actualiza su estado y registra por dónde los contactaste.",
+  addButton: "Agregar cliente",
+  loading: "Cargando clientes...",
+  loadError: "No se pudo cargar el listado de clientes.",
+  empty: "No hay clientes que coincidan con la búsqueda o el filtro.",
+  searchPlaceholder: "Buscar por nombre, correo, teléfono o web",
+  stats: {
+    total: "Total",
+    notContacted: "No contactado",
+    approved: "Aprobado",
+    rejected: "Rechazado",
+  },
+  filters: {
+    all: "Todos",
+    notContacted: "No contactado",
+    approved: "Aprobado",
+    rejected: "Rechazado",
+  },
+  status: {
+    not_contacted: "No contactado",
+    approved: "Aprobado",
+    rejected: "Rechazado",
+  } satisfies Record<ClientStatus, string>,
+  table: {
+    client: "Cliente",
+    status: "Estado",
+    created: "Creado",
+    email: "Email",
+    phone: "Teléfono",
+    whatsapp: "WhatsApp",
+    actions: "Acciones",
+    edit: "Editar",
+    delete: "Eliminar",
+    openDetail: "Ver detalle",
+    showing: "Mostrando {count} de {total}",
+  },
+  createModal: {
+    title: "Agregar cliente potencial",
+    subtitle: "Solo el nombre es obligatorio. Los demás campos son opcionales.",
+    fields: {
+      name: {
+        label: "Nombre *",
+        placeholder: "Ej. Ana Torres",
+      },
+      website: {
+        label: "Web (opcional)",
+        placeholder: "https://...",
+      },
+      email: {
+        label: "Correo (opcional)",
+        placeholder: "nombre@correo.com",
+      },
+      phone: {
+        label: "Teléfono (opcional)",
+        placeholder: "+34 600 000 000",
+      },
+    },
+    cancel: "Cancelar",
+    submit: "Guardar cliente",
+    submitting: "Guardando...",
+    success: "Cliente agregado correctamente",
+  },
+  editModal: {
+    title: "Editar cliente",
+    subtitle: "Actualiza los datos de contacto del lead",
+    submit: "Guardar cambios",
+    submitting: "Guardando...",
+    success: "Cliente actualizado correctamente",
+  },
+  detailModal: {
+    title: "Detalle del cliente",
+    timeline: "Actividades",
+    emptyTimeline: "Aún no hay actividades registradas.",
+    noteLabel: "Agregar nota",
+    notePlaceholder: "Escribe una nota sobre este cliente...",
+    addNote: "Agregar nota",
+    addingNote: "Guardando...",
+    noteSuccess: "Nota agregada correctamente",
+    close: "Cerrar",
+    edit: "Editar",
+    website: "Web",
+    email: "Correo",
+    phone: "Teléfono",
+    status: "Estado",
+    created: "Creado",
+    channels: "Canales de contacto",
+  },
+  deleteModal: {
+    title: "Eliminar cliente",
+    subtitle: "Esta acción no se puede deshacer.",
+    confirm: "¿Seguro que quieres eliminar a {name}?",
+    cancel: "Cancelar",
+    submit: "Eliminar",
+    submitting: "Eliminando...",
+    success: "Cliente eliminado correctamente",
+  },
+  validation: {
+    nameRequired: "El nombre es obligatorio",
+    emailInvalid: "Ingresa un correo válido",
+    noteRequired: "La nota no puede estar vacía",
+  },
+  activity: {
+    created: "Cliente potencial creado",
+    statusChanged: "Estado cambiado de {from} a {to}",
+    channelOn: "Contacto por {channel} marcado",
+    channelOff: "Contacto por {channel} desmarcado",
+    channels: {
+      email: "Email",
+      phone: "Teléfono",
+      whatsapp: "WhatsApp",
+    },
+  },
+  updateSuccess: "Cliente actualizado correctamente",
+  updateError: "No se pudo actualizar el cliente",
+};
+
+export default LABELS_CLIENTS_PAGE;
