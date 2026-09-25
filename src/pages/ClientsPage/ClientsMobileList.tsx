@@ -8,7 +8,8 @@ import {
 import { LABELS_CLIENTS_PAGE } from "../../shared/data";
 import type { Client, ClientStatus } from "../../shared/types/client";
 import ClientStatusBadge from "./ClientStatusBadge";
-import { CLIENT_STATUS_OPTIONS } from "./client-utils";
+import ClientTagChips from "./ClientTagChips";
+import { CLIENT_STATUS_OPTIONS, formatContactPreview } from "./client-utils";
 
 type ClientsMobileListProps = {
   clients: Client[];
@@ -22,6 +23,36 @@ type ClientsMobileListProps = {
 const displayWebsite = (website?: string) => {
   if (!website) return null;
   return website.replace(/^https?:\/\//, "");
+};
+
+const ContactLines = ({
+  values,
+  icon: Icon,
+}: {
+  values: string[];
+  icon: typeof HiOutlineEnvelope;
+}) => {
+  const { visible, extra } = formatContactPreview(values);
+  if (visible.length === 0) return null;
+
+  return (
+    <>
+      {visible.map((value) => (
+        <p key={value} className="flex items-center gap-1.5 truncate">
+          <Icon className="shrink-0" />
+          {value}
+        </p>
+      ))}
+      {extra > 0 ? (
+        <p className="pl-5 text-muted-foreground/80">
+          {LABELS_CLIENTS_PAGE.table.moreContacts.replace(
+            "{count}",
+            String(extra),
+          )}
+        </p>
+      ) : null}
+    </>
+  );
 };
 
 const ClientsMobileList = ({
@@ -53,19 +84,13 @@ const ClientsMobileList = ({
                     {displayWebsite(client.website)}
                   </p>
                 ) : null}
-                {client.email ? (
-                  <p className="flex items-center gap-1.5 truncate">
-                    <HiOutlineEnvelope className="shrink-0" />
-                    {client.email}
-                  </p>
-                ) : null}
-                {client.phone ? (
-                  <p className="flex items-center gap-1.5 truncate">
-                    <HiOutlinePhone className="shrink-0" />
-                    {client.phone}
-                  </p>
-                ) : null}
+                <ContactLines
+                  values={client.emails}
+                  icon={HiOutlineEnvelope}
+                />
+                <ContactLines values={client.phones} icon={HiOutlinePhone} />
               </div>
+              <ClientTagChips tags={client.tags} className="mt-2" />
             </button>
             <div className="flex shrink-0 flex-col items-end gap-2">
               <div className="relative inline-flex">

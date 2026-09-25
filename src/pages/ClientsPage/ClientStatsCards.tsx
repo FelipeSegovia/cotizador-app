@@ -8,7 +8,11 @@ type ClientStatsCardsProps = {
 
 const ClientStatsCards = ({ clients }: ClientStatsCardsProps) => {
   const total = clients.length;
-  const notContacted = clients.filter((c) => c.status === "not_contacted").length;
+  const notContacted = clients.filter(
+    (c) => c.status === "not_contacted",
+  ).length;
+  const pending = clients.filter((c) => c.status === "pending").length;
+  const noAnswer = clients.filter((c) => c.status === "no_answer").length;
   const approved = clients.filter((c) => c.status === "approved").length;
   const rejected = clients.filter((c) => c.status === "rejected").length;
 
@@ -24,6 +28,16 @@ const ClientStatsCards = ({ clients }: ClientStatsCardsProps) => {
       dotClass: CLIENT_STATUS_DOT_CLASSES.not_contacted,
     },
     {
+      label: LABELS_CLIENTS_PAGE.stats.pending,
+      value: pending,
+      dotClass: CLIENT_STATUS_DOT_CLASSES.pending,
+    },
+    {
+      label: LABELS_CLIENTS_PAGE.stats.noAnswer,
+      value: noAnswer,
+      dotClass: CLIENT_STATUS_DOT_CLASSES.no_answer,
+    },
+    {
       label: LABELS_CLIENTS_PAGE.stats.approved,
       value: approved,
       dotClass: CLIENT_STATUS_DOT_CLASSES.approved,
@@ -36,7 +50,7 @@ const ClientStatsCards = ({ clients }: ClientStatsCardsProps) => {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+    <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
       {cards.map((card) => (
         <article
           key={card.label}

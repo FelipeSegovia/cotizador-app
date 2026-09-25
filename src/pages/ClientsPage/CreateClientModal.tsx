@@ -1,16 +1,23 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  HiGlobeAlt,
-  HiOutlineEnvelope,
-  HiOutlinePhone,
-  HiUser,
-} from "react-icons/hi2";
+import { HiGlobeAlt, HiUser } from "react-icons/hi2";
 import { toast } from "sonner";
 import { FormField } from "../../shared/components/forms";
 import { Modal } from "../../shared/components/ui";
 import { LABELS_CLIENTS_PAGE } from "../../shared/data";
 import { useCreateClient } from "../../shared/hooks";
 import type { CreateClientDto } from "../../shared/types/client";
+import {
+  isValidClientEmail,
+  MAX_CLIENT_EMAILS,
+  MAX_CLIENT_PHONES,
+  MAX_PHONE_LENGTH,
+  normalizeClientTags,
+  sanitizeClientEmails,
+  sanitizeClientPhones,
+} from "./client-utils";
+import StringListField from "./StringListField";
+import TagChipsInput from "./TagChipsInput";
 
 type CreateClientModalProps = {
   isOpen: boolean;
@@ -20,12 +27,16 @@ type CreateClientModalProps = {
 type CreateClientFormValues = {
   name: string;
   website: string;
-  email: string;
-  phone: string;
 };
 
 const CreateClientModal = ({ isOpen, onClose }: CreateClientModalProps) => {
   const createClient = useCreateClient();
+  const [emails, setEmails] = useState<string[]>([]);
+  const [phones, setPhones] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+  const [emailErrors, setEmailErrors] = useState<(string | undefined)[]>([]);
+  const [phoneErrors, setPhoneErrors] = useState<(string | undefined)[]>([]);
+  const [tagError, setTagError] = useState<string | null>(null);
 
   const {
     register,
@@ -36,22 +47,72 @@ const CreateClientModal = ({ isOpen, onClose }: CreateClientModalProps) => {
     defaultValues: {
       name: "",
       website: "",
-      email: "",
-      phone: "",
     },
   });
 
+  const resetLists = () => {
+    setEmails([]);
+    setPhones([]);
+    setTags([]);
+    setEmailErrors([]);
+    setPhoneErrors([]);
+    setTagError(null);
+  };
+
   const handleClose = () => {
     reset();
+    resetLists();
     onClose();
   };
 
+  const validateLists = () => {
+    const nextEmailErrors = emails.map((value) => {
+      const trimmed = value.trim();
+      if (!trimmed) return undefined;
+      return isValidClientEmail(trimmed)
+        ? undefined
+        : LABELS_CLIENTS_PAGE.validation.emailInvalid;
+    });
+    const nextPhoneErrors = phones.map((value) => {
+      const trimmed = value.trim();
+      if (!trimmed) return undefined;
+      return trimmed.length <= MAX_PHONE_LENGTH
+        ? undefined
+        : LABELS_CLIENTS_PAGE.validation.phoneInvalid;
+    });
+
+    setEmailErrors(nextEmailErrors);
+    setPhoneErrors(nextPhoneErrors);
+
+    return (
+      !nextEmailErrors.some(Boolean) &&
+      !nextPhoneErrors.some(Boolean) &&
+      !tagError
+    );
+  };
+
   const onSubmit = (data: CreateClientFormValues) => {
+    if (!validateLists()) return;
+
+    const cleanEmails = sanitizeClientEmails(emails);
+    const cleanPhones = sanitizeClientPhones(phones);
+    const cleanTags = normalizeClientTags(tags);
+
+    if (cleanEmails.length > MAX_CLIENT_EMAILS) {
+      toast.error(LABELS_CLIENTS_PAGE.validation.maxEmails);
+      return;
+    }
+    if (cleanPhones.length > MAX_CLIENT_PHONES) {
+      toast.error(LABELS_CLIENTS_PAGE.validation.maxPhones);
+      return;
+    }
+
     const payload: CreateClientDto = {
       name: data.name.trim(),
       website: data.website.trim() || undefined,
-      email: data.email.trim() || undefined,
-      phone: data.phone.trim() || undefined,
+      ...(cleanEmails.length > 0 ? { emails: cleanEmails } : {}),
+      ...(cleanPhones.length > 0 ? { phones: cleanPhones } : {}),
+      ...(cleanTags.length > 0 ? { tags: cleanTags } : {}),
     };
 
     createClient.mutate(payload, {
@@ -96,28 +157,41 @@ const CreateClientModal = ({ isOpen, onClose }: CreateClientModalProps) => {
           registration={register("website")}
         />
 
-        <FormField
-          id="clientEmail"
+        <StringListField
+          id="clientEmails"
+          label={LABELS_CLIENTS_PAGE.createModal.fields.emails.label}
+          placeholder={LABELS_CLIENTS_PAGE.createModal.fields.emails.placeholder}
+          addLabel={LABELS_CLIENTS_PAGE.createModal.fields.emails.add}
+          values={emails}
           type="email"
-          label={LABELS_CLIENTS_PAGE.createModal.fields.email.label}
-          placeholder={LABELS_CLIENTS_PAGE.createModal.fields.email.placeholder}
-          icon={HiOutlineEnvelope}
-          registration={register("email", {
-            validate: (value) =>
-              !value.trim() ||
-              /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()) ||
-              LABELS_CLIENTS_PAGE.validation.emailInvalid,
-          })}
-          error={errors.email?.message}
+          maxItems={MAX_CLIENT_EMAILS}
+          errors={emailErrors}
+          onChange={(next) => {
+            setEmails(next);
+            setEmailErrors([]);
+          }}
         />
 
-        <FormField
-          id="clientPhone"
+        <StringListField
+          id="clientPhones"
+          label={LABELS_CLIENTS_PAGE.createModal.fields.phones.label}
+          placeholder={LABELS_CLIENTS_PAGE.createModal.fields.phones.placeholder}
+          addLabel={LABELS_CLIENTS_PAGE.createModal.fields.phones.add}
+          values={phones}
           type="tel"
-          label={LABELS_CLIENTS_PAGE.createModal.fields.phone.label}
-          placeholder={LABELS_CLIENTS_PAGE.createModal.fields.phone.placeholder}
-          icon={HiOutlinePhone}
-          registration={register("phone")}
+          maxItems={MAX_CLIENT_PHONES}
+          errors={phoneErrors}
+          onChange={(next) => {
+            setPhones(next);
+            setPhoneErrors([]);
+          }}
+        />
+
+        <TagChipsInput
+          tags={tags}
+          onChange={setTags}
+          error={tagError}
+          onErrorChange={setTagError}
         />
 
         <div className="flex justify-end gap-3 pt-2">

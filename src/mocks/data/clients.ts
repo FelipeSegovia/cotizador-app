@@ -2,13 +2,14 @@ import type { Client } from "../../shared/types/client";
 
 const now = Date.now();
 
-export const mockClients: Client[] = [
+const baseMockClients: Client[] = [
   {
     id: "1",
     name: "Ana Torres",
     website: "https://anatorres.com",
-    email: "ana@anatorres.com",
-    phone: "+34 600 123 456",
+    emails: ["ana@anatorres.com", "facturacion@anatorres.com"],
+    phones: ["+34 600 123 456"],
+    tags: ["matriculas"],
     status: "approved",
     contacts: {
       email: true,
@@ -44,17 +45,25 @@ export const mockClients: Client[] = [
     id: "2",
     name: "Comercial Delta",
     website: "https://comercialdelta.es",
-    email: "hola@comercialdelta.es",
-    phone: "+34 911 222 333",
-    status: "not_contacted",
+    emails: ["hola@comercialdelta.es"],
+    phones: ["+34 911 222 333", "+34 600 999 888"],
+    tags: ["rondas-app", "matriculas"],
+    status: "pending",
     contacts: {
       email: false,
       phone: false,
       whatsapp: false,
     },
     createdAt: new Date(now - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    updatedAt: new Date(now - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(now - 1 * 24 * 60 * 60 * 1000).toISOString(),
     activities: [
+      {
+        id: "2-a2",
+        type: "status_changed",
+        message: "Estado cambiado de No contactado a Pendiente",
+        createdAt: new Date(now - 1 * 24 * 60 * 60 * 1000).toISOString(),
+        meta: { fromStatus: "not_contacted", toStatus: "pending" },
+      },
       {
         id: "2-a1",
         type: "created",
@@ -66,8 +75,9 @@ export const mockClients: Client[] = [
   {
     id: "3",
     name: "Luis Marín",
-    email: "luis.marin@correo.com",
-    phone: "+34 655 444 111",
+    emails: ["luis.marin@correo.com"],
+    phones: ["+34 655 444 111"],
+    tags: ["rondas-app"],
     status: "rejected",
     contacts: {
       email: true,
@@ -92,4 +102,263 @@ export const mockClients: Client[] = [
       },
     ],
   },
+  {
+    id: "4",
+    name: "Studio Norte",
+    website: "https://studionorte.cl",
+    emails: ["contacto@studionorte.cl"],
+    phones: ["+56 9 8765 4321"],
+    tags: ["matriculas"],
+    status: "no_answer",
+    contacts: {
+      email: true,
+      phone: true,
+      whatsapp: false,
+    },
+    createdAt: new Date(now - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(now - 12 * 60 * 60 * 1000).toISOString(),
+    activities: [
+      {
+        id: "4-a2",
+        type: "status_changed",
+        message: "Estado cambiado de Pendiente a No contesta",
+        createdAt: new Date(now - 12 * 60 * 60 * 1000).toISOString(),
+        meta: { fromStatus: "pending", toStatus: "no_answer" },
+      },
+      {
+        id: "4-a1",
+        type: "created",
+        message: "Cliente potencial creado",
+        createdAt: new Date(now - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
+  },
+  {
+    id: "5",
+    name: "Lead sin contacto",
+    emails: [],
+    phones: [],
+    tags: [],
+    status: "not_contacted",
+    contacts: {
+      email: false,
+      phone: false,
+      whatsapp: false,
+    },
+    createdAt: new Date(now - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(now - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    activities: [
+      {
+        id: "5-a1",
+        type: "created",
+        message: "Cliente potencial creado",
+        createdAt: new Date(now - 1 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
+  },
 ];
+
+const daysAgo = (days: number) =>
+  new Date(now - days * 24 * 60 * 60 * 1000).toISOString();
+
+const extraMockClients: Client[] = [
+  {
+    id: "6",
+    name: "Taller Andino",
+    website: "https://tallerandino.cl",
+    emails: ["hola@tallerandino.cl", "ventas@tallerandino.cl"],
+    phones: ["+56 9 1111 0001"],
+    tags: ["matriculas"],
+    status: "pending",
+    contacts: { email: true, phone: false, whatsapp: false },
+    createdAt: daysAgo(8),
+    updatedAt: daysAgo(1),
+    activities: [
+      {
+        id: "6-a1",
+        type: "created",
+        message: "Cliente potencial creado",
+        createdAt: daysAgo(8),
+      },
+    ],
+  },
+  {
+    id: "7",
+    name: "Rondas Sur",
+    website: "https://rondassur.cl",
+    emails: ["contacto@rondassur.cl"],
+    phones: ["+56 9 2222 0002", "+56 2 2345 6789"],
+    tags: ["rondas-app"],
+    status: "approved",
+    contacts: { email: true, phone: true, whatsapp: true },
+    createdAt: daysAgo(12),
+    updatedAt: daysAgo(2),
+    activities: [
+      {
+        id: "7-a1",
+        type: "created",
+        message: "Cliente potencial creado",
+        createdAt: daysAgo(12),
+      },
+    ],
+  },
+  {
+    id: "8",
+    name: "Colegio Los Aromos",
+    emails: ["direccion@losaromos.cl"],
+    phones: ["+56 9 3333 0003"],
+    tags: ["matriculas", "web-corporativa"],
+    status: "no_answer",
+    contacts: { email: true, phone: true, whatsapp: false },
+    createdAt: daysAgo(15),
+    updatedAt: daysAgo(3),
+    activities: [
+      {
+        id: "8-a1",
+        type: "created",
+        message: "Cliente potencial creado",
+        createdAt: daysAgo(15),
+      },
+    ],
+  },
+  {
+    id: "9",
+    name: "Inmobiliaria Pacífico",
+    website: "https://pacifico.cl",
+    emails: ["info@pacifico.cl"],
+    phones: ["+56 9 4444 0004"],
+    tags: ["web-corporativa"],
+    status: "rejected",
+    contacts: { email: true, phone: false, whatsapp: false },
+    createdAt: daysAgo(20),
+    updatedAt: daysAgo(6),
+    activities: [
+      {
+        id: "9-a1",
+        type: "created",
+        message: "Cliente potencial creado",
+        createdAt: daysAgo(20),
+      },
+    ],
+  },
+  {
+    id: "10",
+    name: "Clínica Valle",
+    website: "https://clinicavalle.cl",
+    emails: ["agenda@clinicavalle.cl", "admin@clinicavalle.cl"],
+    phones: ["+56 9 5555 0005"],
+    tags: ["matriculas"],
+    status: "not_contacted",
+    contacts: { email: false, phone: false, whatsapp: false },
+    createdAt: daysAgo(3),
+    updatedAt: daysAgo(3),
+    activities: [
+      {
+        id: "10-a1",
+        type: "created",
+        message: "Cliente potencial creado",
+        createdAt: daysAgo(3),
+      },
+    ],
+  },
+  {
+    id: "11",
+    name: "App Rondas Centro",
+    emails: ["ops@rondascentro.cl"],
+    phones: ["+56 9 6666 0006", "+56 9 6666 0007"],
+    tags: ["rondas-app", "web-corporativa"],
+    status: "pending",
+    contacts: { email: false, phone: true, whatsapp: true },
+    createdAt: daysAgo(9),
+    updatedAt: daysAgo(1),
+    activities: [
+      {
+        id: "11-a1",
+        type: "created",
+        message: "Cliente potencial creado",
+        createdAt: daysAgo(9),
+      },
+    ],
+  },
+  {
+    id: "12",
+    name: "Liceo Austral",
+    website: "https://liceoaustral.cl",
+    emails: ["secretaria@liceoaustral.cl"],
+    phones: ["+56 9 7777 0008"],
+    tags: ["matriculas"],
+    status: "approved",
+    contacts: { email: true, phone: false, whatsapp: false },
+    createdAt: daysAgo(18),
+    updatedAt: daysAgo(4),
+    activities: [
+      {
+        id: "12-a1",
+        type: "created",
+        message: "Cliente potencial creado",
+        createdAt: daysAgo(18),
+      },
+    ],
+  },
+  {
+    id: "13",
+    name: "Logística Norte",
+    website: "https://logisticanorte.cl",
+    emails: ["hola@logisticanorte.cl"],
+    phones: [],
+    tags: ["rondas-app"],
+    status: "no_answer",
+    contacts: { email: true, phone: false, whatsapp: false },
+    createdAt: daysAgo(11),
+    updatedAt: daysAgo(5),
+    activities: [
+      {
+        id: "13-a1",
+        type: "created",
+        message: "Cliente potencial creado",
+        createdAt: daysAgo(11),
+      },
+    ],
+  },
+  {
+    id: "14",
+    name: "Estudio Bruma",
+    emails: ["hola@estudiobruma.cl", "proyectos@estudiobruma.cl"],
+    phones: ["+56 9 8888 0009"],
+    tags: ["web-corporativa"],
+    status: "not_contacted",
+    contacts: { email: false, phone: false, whatsapp: false },
+    createdAt: daysAgo(2),
+    updatedAt: daysAgo(2),
+    activities: [
+      {
+        id: "14-a1",
+        type: "created",
+        message: "Cliente potencial creado",
+        createdAt: daysAgo(2),
+      },
+    ],
+  },
+  {
+    id: "15",
+    name: "Municipalidad Costera",
+    website: "https://municipalidadcostera.cl",
+    emails: ["contacto@municipalidadcostera.cl"],
+    phones: ["+56 9 9999 0010", "+56 32 200 1000"],
+    tags: ["matriculas", "rondas-app"],
+    status: "pending",
+    contacts: { email: true, phone: true, whatsapp: false },
+    createdAt: daysAgo(6),
+    updatedAt: daysAgo(1),
+    activities: [
+      {
+        id: "15-a1",
+        type: "created",
+        message: "Cliente potencial creado",
+        createdAt: daysAgo(6),
+      },
+    ],
+  },
+];
+
+export const mockClients: Client[] = [...baseMockClients, ...extraMockClients];

@@ -13,11 +13,11 @@ import type {
   ClientStatus,
 } from "../../shared/types/client";
 import ClientStatusBadge from "./ClientStatusBadge";
-import { CLIENT_STATUS_OPTIONS } from "./client-utils";
+import ClientTagChips from "./ClientTagChips";
+import { CLIENT_STATUS_OPTIONS, formatContactPreview } from "./client-utils";
 
 type ClientsTableProps = {
   clients: Client[];
-  totalCount: number;
   pendingId: string | null;
   onOpenDetail: (client: Client) => void;
   onStatusChange: (client: Client, status: ClientStatus) => void;
@@ -35,9 +35,38 @@ const displayWebsite = (website?: string) => {
   return website.replace(/^https?:\/\//, "");
 };
 
+const ContactLines = ({
+  values,
+  icon: Icon,
+}: {
+  values: string[];
+  icon: typeof HiOutlineEnvelope;
+}) => {
+  const { visible, extra } = formatContactPreview(values);
+  if (visible.length === 0) return null;
+
+  return (
+    <>
+      {visible.map((value) => (
+        <p key={value} className="flex items-center gap-1.5">
+          <Icon className="shrink-0" />
+          {value}
+        </p>
+      ))}
+      {extra > 0 ? (
+        <p className="pl-5 text-muted-foreground/80">
+          {LABELS_CLIENTS_PAGE.table.moreContacts.replace(
+            "{count}",
+            String(extra),
+          )}
+        </p>
+      ) : null}
+    </>
+  );
+};
+
 const ClientsTable = ({
   clients,
-  totalCount,
   pendingId,
   onOpenDetail,
   onStatusChange,
@@ -70,6 +99,8 @@ const ClientsTable = ({
         <tbody>
           {clients.map((client) => {
             const isPending = pendingId === client.id;
+            const hasEmails = client.emails.length > 0;
+            const hasPhones = client.phones.length > 0;
             return (
               <tr
                 key={client.id}
@@ -92,19 +123,16 @@ const ClientsTable = ({
                           {displayWebsite(client.website)}
                         </p>
                       ) : null}
-                      {client.email ? (
-                        <p className="flex items-center gap-1.5">
-                          <HiOutlineEnvelope className="shrink-0" />
-                          {client.email}
-                        </p>
-                      ) : null}
-                      {client.phone ? (
-                        <p className="flex items-center gap-1.5">
-                          <HiOutlinePhone className="shrink-0" />
-                          {client.phone}
-                        </p>
-                      ) : null}
+                      <ContactLines
+                        values={client.emails}
+                        icon={HiOutlineEnvelope}
+                      />
+                      <ContactLines
+                        values={client.phones}
+                        icon={HiOutlinePhone}
+                      />
                     </div>
+                    <ClientTagChips tags={client.tags} className="mt-2" />
                   </button>
                 </td>
                 <td className="px-6 py-4">
@@ -137,7 +165,7 @@ const ClientsTable = ({
                   <input
                     type="checkbox"
                     checked={client.contacts.email}
-                    disabled={isPending || !client.email}
+                    disabled={isPending || !hasEmails}
                     onChange={(e) =>
                       onChannelToggle(client, "email", e.target.checked)
                     }
@@ -149,7 +177,7 @@ const ClientsTable = ({
                   <input
                     type="checkbox"
                     checked={client.contacts.phone}
-                    disabled={isPending || !client.phone}
+                    disabled={isPending || !hasPhones}
                     onChange={(e) =>
                       onChannelToggle(client, "phone", e.target.checked)
                     }
@@ -161,7 +189,7 @@ const ClientsTable = ({
                   <input
                     type="checkbox"
                     checked={client.contacts.whatsapp}
-                    disabled={isPending || !client.phone}
+                    disabled={isPending || !hasPhones}
                     onChange={(e) =>
                       onChannelToggle(client, "whatsapp", e.target.checked)
                     }
@@ -196,11 +224,6 @@ const ClientsTable = ({
           })}
         </tbody>
       </table>
-      <div className="border-t border-border px-6 py-4 text-xs text-muted-foreground">
-        {LABELS_CLIENTS_PAGE.table.showing
-          .replace("{count}", String(clients.length))
-          .replace("{total}", String(totalCount))}
-      </div>
     </div>
   );
 };

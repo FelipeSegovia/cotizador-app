@@ -64,9 +64,9 @@ const Modal = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className={`relative z-10 w-full ${maxWidthClass} rounded-2xl border border-border bg-card shadow-2xl`}
+        className={`relative z-10 flex max-h-[calc(100dvh-2rem)] w-full ${maxWidthClass} flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-2xl`}
       >
-        <div className="flex items-start justify-between border-b border-border px-6 py-5">
+        <div className="flex shrink-0 items-start justify-between border-b border-border px-6 py-5">
           <div>
             <h2
               id="modal-title"
@@ -89,7 +89,9 @@ const Modal = ({
             </button>
           ) : null}
         </div>
-        <div className="px-6 py-5">{children}</div>
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-5">
+          {children}
+        </div>
       </div>
     </div>,
     document.body,

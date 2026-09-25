@@ -2,19 +2,21 @@
 
 Documentación para implementar en el backend NestJS externo el recurso usado por el frontend en **Clientes** (`/dashboard/clientes`).
 
+Fuente de verdad de labels y reglas de negocio: `docs/contrato-backend.md` (sección 8).
+
 ## Resumen
 
 | Método | Ruta | Auth | Descripción |
 |--------|------|------|-------------|
-| `GET` | `/api/clients` | JWT | Lista todos los clientes potenciales de la empresa del usuario |
+| `GET` | `/api/clients` | JWT | Lista leads de la empresa. Query opcional `tag` (repetible, OR) |
 | `POST` | `/api/clients` | JWT | Crea un cliente potencial |
-| `PATCH` | `/api/clients/:id` | JWT | Actualiza estado, canales de contacto u otros campos |
+| `PATCH` | `/api/clients/:id` | JWT | Edición parcial (`name`, `website`, `emails`, `phones`, `tags`, `status`, `contacts`) |
 | `DELETE` | `/api/clients/:id` | JWT | Elimina un cliente potencial |
 | `POST` | `/api/clients/:id/activities` | JWT | Agrega una nota al timeline |
 
-Los clientes son **por empresa** (compartidos entre usuarios de la misma empresa). Cualquier usuario autenticado puede listar, crear, actualizar y eliminar.
+Los clientes son **por empresa** (compartidos entre usuarios de la misma empresa). Roles `business` y `common`. Admin → 403.
 
-Al crear un lead, cambiar estado o marcar/desmarcar un canal, el backend **añade solo** un evento al timeline. Las notas las escribe el usuario vía `POST .../activities`.
+Al crear un lead, cambiar estado o marcar/desmarcar un canal, el backend **añade solo** un evento al timeline. Cambiar `tags` / `emails` / `phones` **no** genera actividad. Las notas las escribe el usuario vía `POST .../activities`.
 
 ## Shape de respuesta
 
@@ -23,8 +25,9 @@ Al crear un lead, cambiar estado o marcar/desmarcar un canal, el backend **añad
   "id": "1",
   "name": "Ana Torres",
   "website": "https://anatorres.com",
-  "email": "ana@anatorres.com",
-  "phone": "+34 600 123 456",
+  "emails": ["ana@anatorres.com", "facturacion@anatorres.com"],
+  "phones": ["+34 600 123 456"],
+  "tags": ["matriculas"],
   "status": "approved",
   "contacts": {
     "email": true,
@@ -50,12 +53,30 @@ Al crear un lead, cambiar estado o marcar/desmarcar un canal, el backend **añad
 | `id` | `string` | Identificador |
 | `name` | `string` | Nombre (obligatorio) |
 | `website` | `string?` | URL del sitio |
-| `email` | `string?` | Correo |
-| `phone` | `string?` | Teléfono |
-| `status` | `ClientStatus` | `not_contacted` \| `approved` \| `rejected` |
+| `emails` | `string[]` | Correos (máx. 10). Reemplaza el antiguo `email` |
+| `phones` | `string[]` | Teléfonos (máx. 10, cada uno 1–64). Reemplaza el antiguo `phone` |
+| `tags` | `string[]` | Etiquetas (máx. 20, cada uno 1–40) |
+| `status` | `ClientStatus` | Ver estados abajo |
 | `contacts` | `{ email, phone, whatsapp }` | Flags booleanos de canales contactados |
 | `createdAt` / `updatedAt` | ISO 8601 | Timestamps |
-| `activities` | `ClientActivity[]` | Timeline (más reciente primero o el front reordena) |
+| `activities` | `ClientActivity[]` | Timeline |
+
+### Estados
+
+| Valor | Label |
+|-------|-------|
+| `not_contacted` | Sin contactar / No contactado |
+| `pending` | Pendiente |
+| `no_answer` | No contesta |
+| `approved` | Aprobado |
+| `rejected` | Rechazado |
+
+### Tags
+
+- Lista libre por cliente (sin catálogo).
+- Normalización en servidor: trim, minúsculas, espacios internos → guion.
+- Patrón: `^[a-z0-9]+(?:-[a-z0-9]+)*$` (ej. `matriculas`, `rondas-app`).
+- Deduplicados. En `PATCH`, enviar `tags` reemplaza la lista; omitir no la toca; `[]` la vacía.
 
 ### ClientActivity
 
@@ -73,7 +94,12 @@ Al crear un lead, cambiar estado o marcar/desmarcar un canal, el backend **añad
 Archivo: `src/shared/types/client.ts`
 
 ```typescript
-export type ClientStatus = "not_contacted" | "approved" | "rejected";
+export type ClientStatus =
+  | "not_contacted"
+  | "pending"
+  | "no_answer"
+  | "approved"
+  | "rejected";
 export type ClientContactChannel = "email" | "phone" | "whatsapp";
 export type ClientActivityType =
   | "created"
@@ -87,6 +113,8 @@ export type ClientActivityType =
 ## GET /api/clients
 
 **Auth:** `Authorization: Bearer <JWT>`
+
+**Query:** `tag` repetible. Ej. `?tag=matriculas&tag=rondas-app` → clientes con **al menos uno** de esos tags.
 
 **Response `200`:** `Client[]`
 
@@ -108,8 +136,9 @@ export type ClientActivityType =
 {
   "name": "Ana Torres",
   "website": "https://anatorres.com",
-  "email": "ana@anatorres.com",
-  "phone": "+34 600 123 456"
+  "emails": ["ana@anatorres.com"],
+  "phones": ["+34 600 123 456"],
+  "tags": ["matriculas"]
 }
 ```
 
@@ -118,7 +147,7 @@ export type ClientActivityType =
 | Regla | Error |
 |-------|-------|
 | `name` obligatorio tras `trim()` | `400` |
-| `email` si viene, formato válido | `400` |
+| `emails` / `phones` / `tags` opcionales con límites | `400` |
 | Estado inicial | siempre `not_contacted` |
 | `contacts` inicial | todos `false` |
 | Actividad automática | tipo `created` |
@@ -135,17 +164,23 @@ export type ClientActivityType =
 
 ```json
 {
-  "status": "approved",
+  "status": "pending",
+  "emails": ["nuevo@correo.com"],
+  "phones": [],
+  "tags": ["rondas-app"],
   "contacts": { "email": true }
 }
 ```
 
-Campos opcionales: `name`, `website`, `email`, `phone`, `status`, `contacts` (parcial).
+Campos opcionales: `name`, `website`, `emails`, `phones`, `tags`, `status`, `contacts` (parcial).
+
+Si vienen `emails` / `phones` / `tags`, **reemplazan** la lista completa. `[]` la vacía. String vacío en `website` → `null`.
 
 ### Comportamiento
 
 - Si cambia `status`, añadir actividad `status_changed`.
 - Si cambia un flag de `contacts`, añadir actividad `channel_toggled` por cada canal modificado.
+- Cambiar solo `emails` / `phones` / `tags` no genera actividad.
 
 **Response `200`:** `Client`
 
@@ -190,7 +225,7 @@ Campos opcionales: `name`, `website`, `email`, `phone`, `status`, `contacts` (pa
 
 | Regla | Error |
 |-------|-------|
-| `message` no vacío tras `trim()` | `400` |
+| `message` no vacío tras `trim()` (1–5000) | `400` |
 
 Crea actividad tipo `note` con `createdByName` del usuario autenticado.
 

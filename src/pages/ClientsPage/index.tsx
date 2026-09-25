@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { HiMagnifyingGlass, HiPlus } from "react-icons/hi2";
 import { toast } from "sonner";
 import { Alert } from "../../shared/components/ui";
@@ -17,10 +17,14 @@ import ClientDetailModal from "./ClientDetailModal";
 import ClientFilters, { type ClientStatusFilter } from "./ClientFilters";
 import ClientStatsCards from "./ClientStatsCards";
 import ClientsMobileList from "./ClientsMobileList";
+import ClientsPagination from "./ClientsPagination";
 import ClientsTable from "./ClientsTable";
+import { clientMatchesSearch } from "./client-utils";
 import CreateClientModal from "./CreateClientModal";
 import DeleteClientModal from "./DeleteClientModal";
 import EditClientModal from "./EditClientModal";
+
+const CLIENTS_PAGE_SIZE = 5;
 
 const ClientsPage = () => {
   const { data: clients = [], isLoading, isError } = useClients();
@@ -29,32 +33,56 @@ const ClientsPage = () => {
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<ClientStatusFilter>("all");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [detailClientId, setDetailClientId] = useState<string | null>(null);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [deletingClient, setDeletingClient] = useState<Client | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+
+  const availableTags = useMemo(() => {
+    const tags = new Set<string>();
+    clients.forEach((client) => {
+      client.tags.forEach((tag) => tags.add(tag));
+    });
+    return Array.from(tags).sort((a, b) => a.localeCompare(b));
+  }, [clients]);
 
   const filteredClients = useMemo(() => {
-    const query = search.trim().toLowerCase();
     return clients.filter((client) => {
       if (statusFilter !== "all" && client.status !== statusFilter) {
         return false;
       }
-      if (!query) {
-        return true;
+      if (
+        selectedTags.length > 0 &&
+        !selectedTags.some((tag) => client.tags.includes(tag))
+      ) {
+        return false;
       }
-      const haystack = [
-        client.name,
-        client.email ?? "",
-        client.phone ?? "",
-        client.website ?? "",
-      ]
-        .join(" ")
-        .toLowerCase();
-      return haystack.includes(query);
+      return clientMatchesSearch(client, search);
     });
-  }, [clients, search, statusFilter]);
+  }, [clients, search, statusFilter, selectedTags]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredClients.length / CLIENTS_PAGE_SIZE),
+  );
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, statusFilter, selectedTags]);
+
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [page, totalPages]);
+
+  const pageClients = useMemo(() => {
+    const start = (page - 1) * CLIENTS_PAGE_SIZE;
+    return filteredClients.slice(start, start + CLIENTS_PAGE_SIZE);
+  }, [filteredClients, page]);
 
   const detailClient = useMemo(
     () => clients.find((c) => c.id === detailClientId) ?? null,
@@ -165,6 +193,9 @@ const ClientsPage = () => {
           onSearchChange={setSearch}
           statusFilter={statusFilter}
           onStatusFilterChange={setStatusFilter}
+          availableTags={availableTags}
+          selectedTags={selectedTags}
+          onSelectedTagsChange={setSelectedTags}
         />
 
         {isLoading ? (
@@ -188,8 +219,7 @@ const ClientsPage = () => {
         {!isLoading && !isError && filteredClients.length > 0 ? (
           <>
             <ClientsTable
-              clients={filteredClients}
-              totalCount={clients.length}
+              clients={pageClients}
               pendingId={pendingId}
               onOpenDetail={(c) => setDetailClientId(c.id)}
               onStatusChange={handleStatusChange}
@@ -198,12 +228,18 @@ const ClientsPage = () => {
               onRequestDelete={setDeletingClient}
             />
             <ClientsMobileList
-              clients={filteredClients}
+              clients={pageClients}
               pendingId={pendingId}
               onOpenDetail={(c) => setDetailClientId(c.id)}
               onStatusChange={handleStatusChange}
               onEdit={handleEdit}
               onRequestDelete={setDeletingClient}
+            />
+            <ClientsPagination
+              page={page}
+              pageSize={CLIENTS_PAGE_SIZE}
+              total={filteredClients.length}
+              onPageChange={setPage}
             />
           </>
         ) : null}
@@ -213,10 +249,13 @@ const ClientsPage = () => {
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
       />
-      <EditClientModal
-        client={editingClient}
-        onClose={() => setEditingClient(null)}
-      />
+      {editingClient ? (
+        <EditClientModal
+          key={editingClient.id}
+          client={editingClient}
+          onClose={() => setEditingClient(null)}
+        />
+      ) : null}
       <ClientDetailModal
         client={detailClient}
         onClose={() => setDetailClientId(null)}

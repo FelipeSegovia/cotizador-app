@@ -9,7 +9,6 @@ import {
   HiChatBubbleLeftRight,
   HiChevronDoubleLeft,
   HiChevronDoubleRight,
-  HiClipboardDocumentList,
   HiCog6Tooth,
   HiDocumentText,
   HiMagnifyingGlass,
@@ -81,14 +80,6 @@ const DashboardLayout = () => {
         label: "Clientes",
         icon: <HiUserGroup className="text-lg" />,
         to: PATHS.CLIENTS,
-      });
-    }
-
-    if (can(userRole, "expenses")) {
-      items.push({
-        label: "Gastos",
-        icon: <HiClipboardDocumentList className="text-lg" />,
-        to: PATHS.COMPANY_EXPENSES,
       });
     }
 

@@ -1,4 +1,9 @@
-export type ClientStatus = "not_contacted" | "approved" | "rejected";
+export type ClientStatus =
+  | "not_contacted"
+  | "pending"
+  | "no_answer"
+  | "approved"
+  | "rejected";
 
 export type ClientContactChannel = "email" | "phone" | "whatsapp";
 
@@ -32,8 +37,9 @@ export type Client = {
   id: string;
   name: string;
   website?: string;
-  email?: string;
-  phone?: string;
+  emails: string[];
+  phones: string[];
+  tags: string[];
   status: ClientStatus;
   contacts: ClientContacts;
   createdAt: string;
@@ -44,15 +50,17 @@ export type Client = {
 export type CreateClientDto = {
   name: string;
   website?: string;
-  email?: string;
-  phone?: string;
+  emails?: string[];
+  phones?: string[];
+  tags?: string[];
 };
 
 export type UpdateClientDto = {
   name?: string;
   website?: string;
-  email?: string;
-  phone?: string;
+  emails?: string[];
+  phones?: string[];
+  tags?: string[];
   status?: ClientStatus;
   contacts?: Partial<ClientContacts>;
 };

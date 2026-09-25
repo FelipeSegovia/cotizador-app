@@ -18,6 +18,7 @@ import type {
   ClientStatus,
 } from "../../shared/types/client";
 import ClientStatusBadge from "./ClientStatusBadge";
+import ClientTagChips from "./ClientTagChips";
 import { CLIENT_STATUS_OPTIONS } from "./client-utils";
 
 type ClientDetailModalProps = {
@@ -46,6 +47,8 @@ const ClientDetailModal = ({
   }
 
   const isPending = updateClient.isPending || createActivity.isPending;
+  const hasEmails = client.emails.length > 0;
+  const hasPhones = client.phones.length > 0;
 
   const handleStatusChange = (status: ClientStatus) => {
     if (status === client.status) return;
@@ -164,26 +167,48 @@ const ClientDetailModal = ({
               </p>
             </div>
           ) : null}
-          {client.email ? (
+          {hasEmails ? (
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {LABELS_CLIENTS_PAGE.detailModal.email}
+                {LABELS_CLIENTS_PAGE.detailModal.emails}
               </p>
-              <p className="mt-1 flex items-center gap-1.5 text-sm text-foreground">
-                <HiOutlineEnvelope className="shrink-0 text-muted-foreground" />
-                {client.email}
-              </p>
+              <ul className="mt-1 space-y-1">
+                {client.emails.map((email) => (
+                  <li
+                    key={email}
+                    className="flex items-center gap-1.5 text-sm text-foreground"
+                  >
+                    <HiOutlineEnvelope className="shrink-0 text-muted-foreground" />
+                    {email}
+                  </li>
+                ))}
+              </ul>
             </div>
           ) : null}
-          {client.phone ? (
+          {hasPhones ? (
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {LABELS_CLIENTS_PAGE.detailModal.phone}
+                {LABELS_CLIENTS_PAGE.detailModal.phones}
               </p>
-              <p className="mt-1 flex items-center gap-1.5 text-sm text-foreground">
-                <HiOutlinePhone className="shrink-0 text-muted-foreground" />
-                {client.phone}
+              <ul className="mt-1 space-y-1">
+                {client.phones.map((phone) => (
+                  <li
+                    key={phone}
+                    className="flex items-center gap-1.5 text-sm text-foreground"
+                  >
+                    <HiOutlinePhone className="shrink-0 text-muted-foreground" />
+                    {phone}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+          {client.tags.length > 0 ? (
+            <div className="sm:col-span-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {LABELS_CLIENTS_PAGE.detailModal.tags}
               </p>
+              <ClientTagChips tags={client.tags} className="mt-2" />
             </div>
           ) : null}
         </div>
@@ -198,17 +223,17 @@ const ClientDetailModal = ({
                 {
                   channel: "email" as const,
                   label: LABELS_CLIENTS_PAGE.table.email,
-                  disabled: !client.email,
+                  disabled: !hasEmails,
                 },
                 {
                   channel: "phone" as const,
                   label: LABELS_CLIENTS_PAGE.table.phone,
-                  disabled: !client.phone,
+                  disabled: !hasPhones,
                 },
                 {
                   channel: "whatsapp" as const,
                   label: LABELS_CLIENTS_PAGE.table.whatsapp,
-                  disabled: !client.phone,
+                  disabled: !hasPhones,
                 },
               ] as const
             ).map(({ channel, label, disabled }) => (
